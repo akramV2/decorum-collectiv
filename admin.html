@@ -9,6 +9,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&family=Suez+One&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -25,8 +29,20 @@
     </div>
   </header>
 
-  <!-- FORMULAIRE DE REDACTION -->
-  <main class="container admin-container">
+  <!-- ECRAN DE VERROUILLAGE MOT DE PASSE -->
+  <div id="admin-lock" class="container admin-container">
+    <h1 class="admin-title">Accès Rédaction</h1>
+    <form id="login-form" class="admin-form">
+      <div class="form-group">
+        <label for="admin-password">Mot de passe requis</label>
+        <input type="password" id="admin-password" placeholder="Entrez le mot de passe secret..." required>
+      </div>
+      <button type="submit" class="btn-submit">DEVERROUILLER</button>
+    </form>
+  </div>
+
+  <!-- FORMULAIRE DE REDACTION (MASQUE PAR DEFAUT) -->
+  <main id="admin-content" class="container admin-container" style="display: none;">
     <h1 class="admin-title">Publier un nouvel article</h1>
 
     <form id="add-article-form" class="admin-form">
@@ -54,7 +70,7 @@
 
       <div class="form-group">
         <label for="excerpt">Résumé rapide (Chapeau) *</label>
-        <textarea id="excerpt" rows="2" placeholder="Un court résumé qui s'affichera sur la carte d'accueil..." required></textarea>
+        <textarea id="excerpt" rows="2" placeholder="Un court résumé..." required></textarea>
       </div>
 
       <div class="form-group">
@@ -62,28 +78,50 @@
         <textarea id="content" rows="10" placeholder="Écris ton article complet ici..." required></textarea>
       </div>
 
-      <button type="submit" class="btn-submit">PUBLIER L'ARTICLE</button>
+      <button type="submit" class="btn-submit">PUBLIER DANS LE CLOUD</button>
     </form>
   </main>
 
   <script src="script.js"></script>
   <script>
-    document.getElementById('add-article-form').addEventListener('submit', function(e) {
+    // DEFIMIR TON MOT DE PASSE SECRET ICI
+    const SECRET_PASSWORD = "decorum2026"; 
+
+    // Vérification de la session
+    if (sessionStorage.getItem('decorum_admin_auth') === 'true') {
+      document.getElementById('admin-lock').style.display = 'none';
+      document.getElementById('admin-content').style.display = 'block';
+    }
+
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const pwd = document.getElementById('admin-password').value;
+      if (pwd === SECRET_PASSWORD) {
+        sessionStorage.setItem('decorum_admin_auth', 'true');
+        document.getElementById('admin-lock').style.display = 'none';
+        document.getElementById('admin-content').style.display = 'block';
+        showNotification('Accès autorisé.');
+      } else {
+        showNotification('Mot de passe incorrect.');
+      }
+    });
+
+    document.getElementById('add-article-form').addEventListener('submit', async function(e) {
       e.preventDefault();
 
       const newArticle = {
-        id: Date.now().toString(),
         title: document.getElementById('title').value,
         category: document.getElementById('category').value.toUpperCase(),
         author: document.getElementById('author').value,
         image: document.getElementById('image-url').value,
         excerpt: document.getElementById('excerpt').value,
         content: document.getElementById('content').value,
-        date: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase()
+        date: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      saveNewArticle(newArticle);
-      sessionStorage.setItem('decorum_toast', 'Nouvel article publié avec succès.');
+      await saveNewArticle(newArticle);
+      sessionStorage.setItem('decorum_toast', 'Article publié sur la base de données cloud.');
       window.location.href = 'index.html';
     });
   </script>
