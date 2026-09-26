@@ -1,26 +1,19 @@
-// Articles par défaut
-const initialArticles = [
-  {
-    id: "1",
-    title: "Tadao Andō : La Poétique du Béton et la Magie du Vide",
-    category: "ESSAI SPATIAL",
-    author: "La Rédaction",
-    date: "26 SEPTEMBRE 2026",
-    image: "https://images.unsplash.com/photo-1513694203232-719a280e022f",
-    excerpt: "Figure incontournable de l'architecture contemporaine, Tadao Andō a su transformer le béton brut en une matière spirituelle. Retour sur une œuvre fondée sur le silence, la lumière naturelle et la géométrie pure.",
-    content: "Ancien boxeur autodidacte né à Osaka en 1941, Tadao Andō s'est imposé comme l'un des plus grands maîtres de l'architecture mondiale. Sans formation académique traditionnelle, c'est au fil de ses voyages et d'une observation minutieuse de la nature et du patrimoine japonais qu'il a forgé sa philosophie spatiale.\n\nAu cœur du travail d'Andō se trouve un matériau singulier : le béton armé lissé, laissé à nu et rythmé par les trous d'ancrage de coffrage. Loin d'être froid ou industriel, son béton devient sous ses mains une surface extrêmement douce, presque soyeuse, façonnée pour capter les plus subtiles variations de la lumière.\n\nL'Église de la Lumière à Ibaraki illustre parfaitement cette maîtrise. Une simple fente cruciforme découpée dans un mur frontal laisse pénétrer la lumière du jour, transformant l'ombre intérieure en une expérience spirituelle poignante.\n\nDe l'île d'art de Naoshima avec le musée Chichu jusqu'à la réhabilitation récente de la Bourse de Commerce à Paris, Tadao Andō continue de prouver que l'architecture contemporaine peut être à la fois radicale, minimaliste et profondément poétique."
-  },
-  {
-    id: "2",
-    title: "Le Corbusier : Du Modulor au Brutalisme de la Cité Radieuse",
-    category: "PIONNIERS",
-    author: "La Rédaction",
-    date: "25 SEPTEMBRE 2026",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
-    excerpt: "Pionnier du modernisme, Charles-Édouard Jeanneret, dit Le Corbusier, a redéfini l'habitat au XXe siècle. Entre les cinq points de l'architecture moderne, l'invention du Modulor et l'essor du béton brut, retour sur une œuvre monumentale.",
-    content: "Théoricien exigeant, urbaniste et architecte, Le Corbusier a marqué le XXe siècle en remettant en cause la conception traditionnelle du logement. Dès les années 1920, il formule ses célèbres « cinq points d'une architecture nouvelle » : les pilotis, le toit-jardin, le plan libre, la fenêtre en bandeau et la façade libre.\n\nLa Villa Savoye à Poissy incarne parfaitement cette vision manifeste. Élevée sur pilotis pour libérer le sol, elle offre une promenade architecturale où l'intérieur et l'extérieur se répondent dans une clarté géométrique rigoureuse.\n\nAprès la Seconde Guerre mondiale, Le Corbusier s'oriente vers des structures plus sculpturales et matérielles avec l'utilisation du béton brut. La Cité Radieuse de Marseille (l'Unité d'Habitation) concrétise son concept de « village vertical », intégrant logements, commerces et espaces communautaires sous un même toit.\n\nPour concevoir ces espaces à l'échelle humaine, il crée le Modulor, un système de proportions fondé sur la taille humaine et le nombre d'or. De la chapelle Notre-Dame du Haut à Ronchamp jusqu'au complexe gouvernemental de Chandigarh en Inde, Le Corbusier a prouvé que la matière brute pouvait susciter une émotion architecturale universelle."
-  }
-];
+// Configuration Firebase officielle
+const firebaseConfig = {
+  apiKey: "AIzaSyBteD5R4XH3K-P0GtdjM5Y8e35AlKugnFU",
+  authDomain: "decorum-collectiv.firebaseapp.com",
+  projectId: "decorum-collectiv",
+  storageBucket: "decorum-collectiv.firebasestorage.app",
+  messagingSenderId: "743631473375",
+  appId: "1:743631473375:web:2c2f6078f46c9e36a5376a",
+  measurementId: "G-L6033RN4BQ"
+};
+
+// Initialisation de Firebase
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.firestore();
 
 /* ==========================================================================
    SYSTÈME DE NOTIFICATIONS (TOASTS)
@@ -51,46 +44,61 @@ function showNotification(message, duration = 3500) {
 }
 
 /* ==========================================================================
-   GESTION DES ARTICLES (LOCALSTORAGE)
+   GESTION DES ARTICLES (FIREBASE CLOUD)
    ========================================================================== */
-function getArticles() {
-  const stored = localStorage.getItem('decorum_articles');
-  if (!stored) {
-    localStorage.setItem('decorum_articles', JSON.stringify(initialArticles));
-    return initialArticles;
+async function getArticlesFromCloud() {
+  try {
+    const snapshot = await db.collection('articles').orderBy('createdAt', 'desc').get();
+    const articles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return articles;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des articles :", error);
+    return [];
   }
-  return JSON.parse(stored);
 }
 
-function saveNewArticle(article) {
-  const articles = getArticles();
-  articles.unshift(article);
-  localStorage.setItem('decorum_articles', JSON.stringify(articles));
+async function saveNewArticle(article) {
+  try {
+    await db.collection('articles').add(article);
+  } catch (error) {
+    console.error("Erreur lors de la sauvegarde :", error);
+  }
 }
 
-function deleteCurrentArticle() {
+async function deleteCurrentArticle() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
   if (!id) return;
 
-  if (confirm("Confirmer la suppression définitive de cet article ?")) {
-    let articles = getArticles();
-    articles = articles.filter(a => a.id !== id);
-    localStorage.setItem('decorum_articles', JSON.stringify(articles));
-    
-    sessionStorage.setItem('decorum_toast', 'Article supprimé avec succès.');
-    window.location.href = 'index.html';
+  if (sessionStorage.getItem('decorum_admin_auth') !== 'true') {
+    const pwd = prompt("Mot de passe administrateur requis pour supprimer :");
+    if (pwd !== "decorum2026") {
+      showNotification("Accès refusé.");
+      return;
+    }
+  }
+
+  if (confirm("Confirmer la suppression définitive de cet article sur le Cloud ?")) {
+    try {
+      await db.collection('articles').doc(id).delete();
+      sessionStorage.setItem('decorum_toast', 'Article supprimé avec succès.');
+      window.location.href = 'index.html';
+    } catch (error) {
+      showNotification("Erreur lors de la suppression.");
+    }
   }
 }
 
 /* ==========================================================================
    RENDU DES PAGES
    ========================================================================== */
-function renderArticlesGrid() {
+async function renderArticlesGrid() {
   const container = document.getElementById('articles-grid');
   if (!container) return;
 
-  const articles = getArticles();
+  container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 0;">Chargement des données du Cloud...</p>';
+
+  const articles = await getArticlesFromCloud();
   
   if (articles.length === 0) {
     container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 0;">Aucun article publié pour le moment.</p>';
@@ -114,48 +122,48 @@ function renderArticlesGrid() {
   initScrollReveal();
 }
 
-function renderSingleArticle() {
+async function renderSingleArticle() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
-  const articles = getArticles();
-  const art = articles.find(a => a.id === id) || articles[0];
+  if (!id) return;
 
-  if (!art) return;
+  try {
+    const doc = await db.collection('articles').doc(id).get();
+    if (!doc.exists) return;
 
-  document.title = `${art.title} — Decorum Collectiv`;
-  document.getElementById('art-category').innerText = art.category;
-  document.getElementById('art-title').innerText = art.title;
-  document.getElementById('art-author').innerText = `Par ${art.author}`;
-  document.getElementById('art-date').innerText = art.date;
-  document.getElementById('art-excerpt').innerText = art.excerpt;
+    const art = doc.data();
 
-  const imgContainer = document.getElementById('art-image-wrapper');
-  if (art.image) {
-    imgContainer.innerHTML = `<img src="${art.image}" style="width:100%; max-height: 500px; object-fit: cover; border-radius:4px;">`;
-  } else {
-    imgContainer.innerHTML = `<div class="placeholder-box" style="height:250px;"><span>${art.title.toUpperCase()}</span></div>`;
+    document.title = `${art.title} — Decorum Collectiv`;
+    document.getElementById('art-category').innerText = art.category;
+    document.getElementById('art-title').innerText = art.title;
+    document.getElementById('art-author').innerText = `Par ${art.author}`;
+    document.getElementById('art-date').innerText = art.date;
+    document.getElementById('art-excerpt').innerText = art.excerpt;
+
+    const imgContainer = document.getElementById('art-image-wrapper');
+    if (art.image) {
+      imgContainer.innerHTML = `<img src="${art.image}" style="width:100%; max-height: 500px; object-fit: cover; border-radius:4px;">`;
+    } else {
+      imgContainer.innerHTML = `<div class="placeholder-box" style="height:250px;"><span>${art.title.toUpperCase()}</span></div>`;
+    }
+
+    const formattedContent = art.content.split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
+    document.getElementById('art-content').innerHTML = formattedContent;
+  } catch (error) {
+    console.error("Erreur d'affichage :", error);
   }
-
-  const formattedContent = art.content.split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
-  document.getElementById('art-content').innerHTML = formattedContent;
 }
 
 /* ==========================================================================
-   ANIMATIONS & DEFILEMENT (INTERSECTION OBSERVER)
+   ANIMATIONS & MOBILE
    ========================================================================== */
 function initScrollReveal() {
   const reveals = document.querySelectorAll('.reveal, .principle-card, .highlight-box, .intro-text, .contact-card');
-  
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('active');
-      }
+      if (entry.isIntersecting) entry.target.classList.add('active');
     });
-  }, {
-    threshold: 0.1,
-    rootMargin: '0px 0px -40px 0px'
-  });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
   reveals.forEach(el => {
     el.classList.add('reveal');
@@ -166,13 +174,9 @@ function initScrollReveal() {
 function initNavbarScroll() {
   const navbar = document.querySelector('.navbar');
   if (!navbar) return;
-
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 40) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
+    if (window.scrollY > 40) navbar.classList.add('scrolled');
+    else navbar.classList.remove('scrolled');
   });
 }
 
@@ -181,20 +185,15 @@ function initMobileMenu() {
   const navLinks = document.querySelector('.nav-links');
 
   if (menuBtn && navLinks) {
-    menuBtn.addEventListener('click', () => {
-      navLinks.classList.toggle('active');
-    });
-
+    menuBtn.addEventListener('click', () => navLinks.classList.toggle('active'));
     navLinks.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        navLinks.classList.remove('active');
-      });
+      link.addEventListener('click', () => navLinks.classList.remove('active'));
     });
   }
 }
 
 /* ==========================================================================
-   INITIALISATION GLOBALE
+   INITIALISATION
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
   renderArticlesGrid();
