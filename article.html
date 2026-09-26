@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decorum Collectiv — Article</title>
+  
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,600;1,400&family=Suez+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <img src="logo.png" alt="Decorum Logo" class="logo-img">
+        <span class="brand-name">DECORUM</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">← Retour au Journal</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- CONTENU DE L'ARTICLE -->
+  <article class="article-page container">
+    <header class="article-header">
+      <span class="tag" id="art-category">CATÉGORIE</span>
+      <h1 class="article-main-title" id="art-title">Titre de l'article</h1>
+      <div class="article-meta-bar">
+        <span id="art-author">Par Auteur</span> — <time id="art-date">DATE</time>
+      </div>
+    </header>
+
+    <div id="art-image-wrapper" class="article-hero-image"></div>
+
+    <p class="article-lead" id="art-excerpt"></p>
+
+    <div class="article-body" id="art-content"></div>
+
+    <div class="article-actions">
+      <button onclick="deleteCurrentArticle()" class="btn-delete">Supprimer cet article</button>
+    </div>
+  </article>
+
+  <script src="script.js"></script>
+  <script>
+    renderSingleArticle();
+  </script>
+</body>
+</html>

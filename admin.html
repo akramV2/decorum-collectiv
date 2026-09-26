@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration — Decorum Collectiv</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&family=Suez+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <img src="logo.png" alt="Decorum Logo" class="logo-img">
+        <span class="brand-name">DECORUM (ADMIN)</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">→ Retour au site</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- FORMULAIRE DE REDACTION -->
+  <main class="container admin-container">
+    <h1 class="admin-title">Publier un nouvel article</h1>
+
+    <form id="add-article-form" class="admin-form">
+      <div class="form-group">
+        <label for="title">Titre de l'article *</label>
+        <input type="text" id="title" placeholder="ex: Tadao Andō : La Poétique du Béton" required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="category">Catégorie *</label>
+          <input type="text" id="category" placeholder="ex: ESSAI SPATIAL" required>
+        </div>
+
+        <div class="form-group">
+          <label for="author">Auteur *</label>
+          <input type="text" id="author" placeholder="ex: La Rédaction" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="image-url">Lien de l'image (URL) - optionnel</label>
+        <input type="url" id="image-url" placeholder="https://images.unsplash.com/...">
+      </div>
+
+      <div class="form-group">
+        <label for="excerpt">Résumé rapide (Chapeau) *</label>
+        <textarea id="excerpt" rows="2" placeholder="Un court résumé qui s'affichera sur la carte d'accueil..." required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="content">Contenu de l'article *</label>
+        <textarea id="content" rows="10" placeholder="Écris ton article complet ici..." required></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit">PUBLIER L'ARTICLE</button>
+    </form>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    document.getElementById('add-article-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const newArticle = {
+        id: Date.now().toString(),
+        title: document.getElementById('title').value,
+        category: document.getElementById('category').value.toUpperCase(),
+        author: document.getElementById('author').value,
+        image: document.getElementById('image-url').value,
+        excerpt: document.getElementById('excerpt').value,
+        content: document.getElementById('content').value,
+        date: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase()
+      };
+
+      saveNewArticle(newArticle);
+      sessionStorage.setItem('decorum_toast', 'Nouvel article publié avec succès.');
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>

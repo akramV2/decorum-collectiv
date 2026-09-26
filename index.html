@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decorum Collectiv — A Chronicle of Architectural Thought</title>
+  
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,600;1,400&family=Suez+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER / NAVBAR -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <img src="logo.png" alt="Decorum Logo" class="logo-img">
+        <span class="brand-name">DECORUM</span>
+      </a>
+
+      <!-- Dans la navbar de index.html -->
+<nav class="nav-links">
+  <a href="#journal">Journal</a>
+  <a href="manifesto.html">Manifesto</a>
+  <a href="admin.html" class="admin-link">+ Publier</a>
+</nav>
+
+      <button class="menu-btn" type="button">MENU</button>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">DECORUM COLLECTIV</h1>
+      <p class="hero-subtitle">A CHRONICLE OF ARCHITECTURAL THOUGHT</p>
+    </div>
+  </section>
+
+  <!-- SECTION INTRODUCTION -->
+  <section class="intro">
+    <div class="container">
+      <p class="intro-text">
+        Decorum Collectiv documente la culture architecturale et la pensée spatiale à travers des interviews, des enquêtes de fond et l'exploration d'artefacts minéraux et structurels.
+      </p>
+      <a href="#manifesto" class="btn-link">EN SAVOIR PLUS →</a>
+    </div>
+  </section>
+
+  <!-- SECTION JOURNAL -->
+  <section id="journal" class="journal">
+    <div class="container">
+      <div class="section-header">
+        <h2>Journal</h2>
+        <a href="admin.html" class="see-all">+ Publier un article</a>
+      </div>
+
+      <div class="articles-grid" id="articles-grid"></div>
+    </div>
+  </section>
+
+  <!-- SECTION MANIFESTO -->
+  <section id="manifesto" class="manifesto">
+    <div class="container manifesto-container">
+      <blockquote class="manifesto-quote">
+        « Le Decorum ne concerne pas l'ornement superficiel, mais la juste adéquation entre l'espace, la matière et la fonction. »
+      </blockquote>
+      <p class="manifesto-author">— Le Manifeste Decorum</p>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter">
+    <div class="container newsletter-container">
+      <h3>Analyses, interviews et essais directement dans votre boîte mail.</h3>
+      <form class="newsletter-form">
+        <input type="email" placeholder="Votre adresse email..." required>
+        <button type="submit">S'ABONNER</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <img src="logo.png" alt="Decorum Logo" class="logo-img-small">
+        <p>© 2026 DECORUM COLLECTIV.<br>Tous droits réservés.</p>
+      </div>
+
+      <div class="footer-links">
+        <div class="link-group">
+          <h4>NAVIGATION</h4>
+          <a href="#">Home</a>
+          <a href="#journal">Journal</a>
+          <a href="admin.html">Administration</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
