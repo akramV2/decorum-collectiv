@@ -13,6 +13,43 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,600;1,400&family=Suez+One&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* Bouton Like Vectoriel Minimaliste */
+    .btn-like-minimal {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      border-radius: 20px;
+      padding: 8px 18px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-like-minimal:hover {
+      border-color: #111;
+      color: #111;
+    }
+
+    .btn-like-minimal.liked {
+      border-color: #c0392b;
+      color: #c0392b;
+    }
+
+    .btn-like-minimal svg {
+      transition: transform 0.2s ease, fill 0.2s ease;
+    }
+
+    .btn-like-minimal:active svg {
+      transform: scale(1.25);
+    }
+  </style>
 </head>
 <body>
 
@@ -56,18 +93,28 @@
 
     <div class="article-body" id="art-content"></div>
 
-    <!-- BOUTON LIKE ARTICLE -->
-    <div class="article-like-section" style="margin-top: 50px; text-align: center; padding-top: 30px; border-top: 1px solid rgba(0,0,0,0.08);">
-      <button id="like-btn" onclick="toggleLikeArticle()" style="background: transparent; border: 1px solid #c0392b; color: #c0392b; padding: 12px 28px; border-radius: 30px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; font-size: 1rem; transition: all 0.25 ease-in-out;">
-        <span id="like-icon" style="font-size: 1.2rem;">🤍</span>
-        <span id="like-count">0</span> J'aime
+    <!-- BOUTON LIKE MINIMALISTE -->
+    <div class="article-like-section" style="margin-top: 60px; padding-top: 30px; border-top: 1px solid rgba(0,0,0,0.08); text-align: center;">
+      <button id="like-btn" onclick="toggleLikeArticle()" class="btn-like-minimal" aria-label="J'aime">
+        <svg id="like-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        <span id="like-count">0</span>
       </button>
+    </div>
+
+    <div class="article-actions" id="admin-actions" style="display: none;">
+      <button onclick="deleteCurrentArticle()" class="btn-delete">Supprimer cet article (Admin)</button>
     </div>
   </article>
 
   <script src="script.js"></script>
   <script>
     renderSingleArticle();
+    if (sessionStorage.getItem('decorum_admin_auth') === 'true') {
+      const actions = document.getElementById('admin-actions');
+      if (actions) actions.style.display = 'block';
+    }
   </script>
 </body>
 </html>
