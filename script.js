@@ -54,13 +54,14 @@ function initLogoSecret() {
 }
 
 /* ==========================================================================
-   CARTE INTERACTIVE LEAFLET.JS
+   CARTE INTERACTIVE LEAFLET.JS (OEUVRES MONDIALES)
    ========================================================================== */
 function initArchitectureMap() {
   const mapContainer = document.getElementById('architecture-map');
   if (!mapContainer || typeof L === 'undefined') return;
 
-  const map = L.map('architecture-map', { scrollWheelZoom: false }).setView([46.603354, 1.888334], 5.5);
+  // Vue globale (Monde)
+  const map = L.map('architecture-map', { scrollWheelZoom: false }).setView([20, 10], 2.3);
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; OpenStreetMap &copy; CARTO',
@@ -68,10 +69,129 @@ function initArchitectureMap() {
   }).addTo(map);
 
   const locations = [
-    { name: "Villa Cavrois", city: "Croix", coords: [50.6781, 3.1558], desc: "Robert Mallet-Stevens (1932)" },
-    { name: "Cité Radieuse", city: "Marseille", coords: [43.2612, 5.3965], desc: "Le Corbusier (1952)" },
-    { name: "Maison de Verre", city: "Paris", coords: [48.8525, 2.3218], desc: "Pierre Chareau (1932)" },
-    { name: "Couvent de La Tourette", city: "Éveux", coords: [45.8192, 4.6228], desc: "Le Corbusier (1960)" }
+    // --- LE CORBUSIER ---
+    {
+      name: "Villa Savoye",
+      city: "Poissy (France)",
+      coords: [48.9244, 2.0283],
+      desc: "Le Corbusier — Manifeste du Modernisme (1931)"
+    },
+    {
+      name: "Cité Radieuse",
+      city: "Marseille (France)",
+      coords: [43.2612, 5.3965],
+      desc: "Le Corbusier — Unité d'habitation emblématique (1952)"
+    },
+    {
+      name: "Chapelle Notre-Dame du Haut",
+      city: "Ronchamp (France)",
+      coords: [47.7044, 6.6206],
+      desc: "Le Corbusier — Expressionnisme sculptural en béton (1955)"
+    },
+    {
+      name: "Couvent de La Tourette",
+      city: "Éveux (France)",
+      coords: [45.8192, 4.6228],
+      desc: "Le Corbusier — Architecture monastique brutaliste (1960)"
+    },
+    {
+      name: "Cabanon de Le Corbusier",
+      city: "Roquebrune-Cap-Martin (France)",
+      coords: [43.7602, 7.4646],
+      desc: "Le Corbusier — Réflexion minimale sur la cellule d'habitation (1951)"
+    },
+    {
+      name: "Complexe du Capitole",
+      city: "Chandigarh (Inde)",
+      coords: [30.7593, 76.8018],
+      desc: "Le Corbusier — Urbanisme et palais gouvernementaux (1953)"
+    },
+    {
+      name: "Maison Curutchet",
+      city: "La Plata (Argentine)",
+      coords: [-34.9129, -57.9427],
+      desc: "Le Corbusier — Résidence privée avec rampe intérieure (1953)"
+    },
+    {
+      name: "Musée National d'Art Occidental",
+      city: "Tokyo (Japon)",
+      coords: [35.7154, 139.7758],
+      desc: "Le Corbusier — Musée à croissance illimitée (1959)"
+    },
+    {
+      name: "Carpenter Center",
+      city: "Cambridge (États-Unis)",
+      coords: [42.3736, -71.1147],
+      desc: "Le Corbusier — Seul bâtiment de l'architecte aux USA (1963)"
+    },
+    {
+      name: "Unité d'Habitation Berlin",
+      city: "Berlin (Allemagne)",
+      coords: [52.5113, 13.2405],
+      desc: "Le Corbusier — Type « Corbusierhaus » (1958)"
+    },
+
+    // --- TADAO ANDŌ ---
+    {
+      name: "Église de la Lumière",
+      city: "Ibaraki, Osaka (Japon)",
+      coords: [34.8161, 135.5383],
+      desc: "Tadao Andō — Fente en croix sculptée par le soleil (1989)"
+    },
+    {
+      name: "Chichu Art Museum",
+      city: "Naoshima (Japon)",
+      coords: [34.4489, 133.9877],
+      desc: "Tadao Andō — Architecture enterrée au service de l'art (2004)"
+    },
+    {
+      name: "Maison Row (Azuma)",
+      city: "Osaka (Japon)",
+      coords: [34.6083, 135.4950],
+      desc: "Tadao Andō — Maison étroite en béton brut avec patio (1976)"
+    },
+    {
+      name: "Temple de l'Eau (Honpuku-ji)",
+      city: "Île d'Awaji (Japon)",
+      coords: [34.5458, 134.9814],
+      desc: "Tadao Andō — Sanctuaire sous un bassin de lotus (1991)"
+    },
+    {
+      name: "Bourse de Commerce",
+      city: "Paris (France)",
+      coords: [48.8625, 2.3426],
+      desc: "Tadao Andō — Rotonde en béton insérée dans le monument (2021)"
+    },
+    {
+      name: "Espace de Méditation UNESCO",
+      city: "Paris (France)",
+      coords: [48.8503, 2.3056],
+      desc: "Tadao Andō — Cylindre en béton et granite d'Hiroshima (1995)"
+    },
+    {
+      name: "Punta della Dogana",
+      city: "Venise (Italie)",
+      coords: [45.4308, 12.3323],
+      desc: "Tadao Andō — Restauration et aménagement du bâtiment historique (2009)"
+    },
+    {
+      name: "Modern Art Museum of Fort Worth",
+      city: "Texas (États-Unis)",
+      coords: [32.7489, -97.3688],
+      desc: "Tadao Andō — Pavillons en verre et béton au-dessus d'un plan d'eau (2002)"
+    },
+    {
+      name: "Centro Roberto Garza Sada",
+      city: "Monterrey (Mexique)",
+      coords: [25.6611, -100.4208],
+      desc: "Tadao Andō — Bâtiment en arche de béton « Gate of Creation » (2012)"
+    },
+    {
+      name: "Poly Grand Theater",
+      city: "Shanghai (Chine)",
+      coords: [31.3562, 121.2728],
+      desc: "Tadao Andō — Cylindres en bois perçant un cube en béton (2014)"
+    }
   ];
 
   locations.forEach(loc => {
