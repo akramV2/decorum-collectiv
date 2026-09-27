@@ -9,7 +9,6 @@ const firebaseConfig = {
   measurementId: "G-L6033RN4BQ"
 };
 
-// Initialisation de Firebase
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
@@ -25,9 +24,7 @@ function initLogoSecret() {
     let clickTimer = null;
 
     logo.addEventListener('click', (e) => {
-      // Bloque le rechargement immédiat pour pouvoir compter les clics
       e.preventDefault();
-
       clickCount++;
 
       if (clickTimer) clearTimeout(clickTimer);
@@ -41,7 +38,6 @@ function initLogoSecret() {
         return;
       }
 
-      // Si pas d'autres clics dans les 400ms, comportement normal du lien
       clickTimer = setTimeout(() => {
         clickCount = 0;
         const target = logo.getAttribute('href') || 'index.html';
@@ -55,6 +51,128 @@ function initLogoSecret() {
       }, 400);
     });
   });
+}
+
+/* ==========================================================================
+   CARTE INTERACTIVE LEAFLET.JS
+   ========================================================================== */
+function initArchitectureMap() {
+  const mapContainer = document.getElementById('architecture-map');
+  if (!mapContainer || typeof L === 'undefined') return;
+
+  const map = L.map('architecture-map', { scrollWheelZoom: false }).setView([46.603354, 1.888334], 5.5);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO',
+    maxZoom: 18
+  }).addTo(map);
+
+  const locations = [
+    { name: "Villa Cavrois", city: "Croix", coords: [50.6781, 3.1558], desc: "Robert Mallet-Stevens (1932)" },
+    { name: "Cité Radieuse", city: "Marseille", coords: [43.2612, 5.3965], desc: "Le Corbusier (1952)" },
+    { name: "Maison de Verre", city: "Paris", coords: [48.8525, 2.3218], desc: "Pierre Chareau (1932)" },
+    { name: "Couvent de La Tourette", city: "Éveux", coords: [45.8192, 4.6228], desc: "Le Corbusier (1960)" }
+  ];
+
+  locations.forEach(loc => {
+    L.marker(loc.coords).addTo(map)
+      .bindPopup(`
+        <div class="popup-meta">${loc.city}</div>
+        <div class="popup-title">${loc.name}</div>
+        <div style="font-size:0.8rem; color:#ccc;">${loc.desc}</div>
+      `);
+  });
+}
+
+/* ==========================================================================
+   PROGRESSION & TEMPS DE LECTURE
+   ========================================================================== */
+function initReadingProgress() {
+  const progressBar = document.getElementById('read-progress');
+  const content = document.getElementById('art-content');
+  const timeBadge = document.getElementById('art-read-time');
+
+  if (content && timeBadge) {
+    const text = content.innerText || '';
+    const wordCount = text.trim().split(/\s+/).length;
+    const readMinutes = Math.max(1, Math.ceil(wordCount / 200));
+    timeBadge.innerText = `${readMinutes} min de lecture`;
+  }
+
+  if (progressBar) {
+    window.addEventListener('scroll', () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (window.scrollY / totalHeight) * 100;
+      progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+    });
+  }
+}
+
+/* ==========================================================================
+   IMPORT PHOTO DIRECT (IMGBB API)
+   ========================================================================== */
+async function uploadImageDirect(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const status = document.getElementById('upload-status');
+  if (status) status.innerText = "Téléversement en cours...";
+
+  const formData = new FormData();
+  formData.append('image', file);
+
+  try {
+    const response = await fetch('https://api.imgbb.com/1/upload?key=6d3a5ef91271b0453009772ccf31175c', {
+      method: 'POST',
+      body: formData
+    });
+    const data = await response.json();
+
+    if (data.success) {
+      document.getElementById('image-url').value = data.data.url;
+      if (status) status.innerText = "✓ Photo téléversée avec succès !";
+    } else {
+      if (status) status.innerText = "Erreur lors du téléversement.";
+    }
+  } catch (err) {
+    console.error(err);
+    if (status) status.innerText = "Erreur de connexion lors de l'envoi.";
+  }
+}
+
+/* ==========================================================================
+   MODALE D'APERÇU (ADMIN)
+   ========================================================================== */
+function openPreviewModal() {
+  const title = document.getElementById('title').value || 'Titre de la publication';
+  const type = document.getElementById('pub-type').value;
+  const category = (document.getElementById('category').value || 'Thématique').toUpperCase();
+  const author = document.getElementById('author').value || 'Raphaël';
+  const imageUrl = document.getElementById('image-url').value;
+  const excerpt = document.getElementById('excerpt').value || 'Extrait / Chapeau de présentation...';
+  const content = document.getElementById('content').value || 'Contenu complet de l\'article...';
+
+  document.getElementById('prev-type').innerText = type;
+  document.getElementById('prev-category').innerText = category;
+  document.getElementById('prev-title').innerText = title;
+  document.getElementById('prev-author').innerText = `Par ${author}`;
+  document.getElementById('prev-excerpt').innerText = excerpt;
+
+  const imgContainer = document.getElementById('prev-image');
+  if (imageUrl) {
+    imgContainer.innerHTML = `<img src="${imageUrl}" style="width:100%; max-height: 400px; object-fit: cover; border-radius:4px;">`;
+  } else {
+    imgContainer.innerHTML = '';
+  }
+
+  const formattedContent = content.split('\n').filter(p => p.trim() !== '').map(p => `<p style="margin-bottom:16px; line-height:1.7;">${p}</p>`).join('');
+  document.getElementById('prev-content').innerHTML = formattedContent;
+
+  document.getElementById('preview-modal').style.display = 'block';
+}
+
+function closePreviewModal() {
+  document.getElementById('preview-modal').style.display = 'none';
 }
 
 /* ==========================================================================
@@ -73,15 +191,10 @@ function showNotification(message, duration = 3500) {
   toast.innerText = message;
   container.appendChild(toast);
 
-  setTimeout(() => {
-    toast.classList.add('show');
-  }, 10);
-
+  setTimeout(() => { toast.classList.add('show'); }, 10);
   setTimeout(() => {
     toast.classList.remove('show');
-    setTimeout(() => {
-      toast.remove();
-    }, 400);
+    setTimeout(() => { toast.remove(); }, 400);
   }, duration);
 }
 
@@ -93,7 +206,7 @@ async function getArticlesFromCloud() {
     const snapshot = await db.collection('articles').orderBy('createdAt', 'desc').get();
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
-    console.error("Erreur lors de la récupération des articles :", error);
+    console.error("Erreur Cloud :", error);
     return [];
   }
 }
@@ -102,7 +215,7 @@ async function saveNewArticle(article) {
   try {
     await db.collection('articles').add(article);
   } catch (error) {
-    console.error("Erreur lors de la sauvegarde :", error);
+    console.error("Erreur sauvegarde :", error);
   }
 }
 
@@ -137,7 +250,7 @@ async function renderArticlesGrid() {
   const container = document.getElementById('articles-grid');
   if (!container) return;
 
-  container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 0;">Chargement des données Cloud...</p>';
+  container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 0;">Chargement des publications...</p>';
 
   const articles = await getArticlesFromCloud();
   
@@ -192,6 +305,8 @@ async function renderSingleArticle() {
 
     const formattedContent = art.content.split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
     document.getElementById('art-content').innerHTML = formattedContent;
+
+    initReadingProgress();
   } catch (error) {
     console.error("Erreur d'affichage :", error);
   }
@@ -244,15 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavbarScroll();
   initMobileMenu();
   initLogoSecret();
-
-  const newsletterForm = document.querySelector('.newsletter-form');
-  if (newsletterForm) {
-    newsletterForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      newsletterForm.reset();
-      showNotification('Inscription enregistrée. Merci pour votre abonnement.');
-    });
-  }
+  initArchitectureMap();
 
   const pendingToast = sessionStorage.getItem('decorum_toast');
   if (pendingToast) {
