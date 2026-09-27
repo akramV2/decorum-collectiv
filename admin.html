@@ -13,6 +13,10 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+  <!-- DOMPurify -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
 </head>
 <body>
 
@@ -29,16 +33,20 @@
     </div>
   </header>
 
-  <!-- ÉCRAN DE VERROUILLAGE MOT DE PASSE -->
+  <!-- ÉCRAN DE CONNEXION FIREBASE AUTH -->
   <div id="admin-lock" class="container admin-container">
     <h1 class="admin-title">Accès Sécurisé Rédaction</h1>
-    <p style="color: var(--text-muted); margin-bottom: 24px;">Entrez le mot de passe secret pour accéder au formulaire de publication.</p>
+    <p style="color: var(--text-muted); margin-bottom: 24px;">Connectez-vous avec vos identifiants administrateur Firebase.</p>
     <form id="login-form" class="admin-form">
       <div class="form-group">
-        <label for="admin-password">Mot de passe requis</label>
-        <input type="password" id="admin-password" placeholder="Entrez le mot de passe secret..." required autofocus>
+        <label for="admin-email">Adresse e-mail admin</label>
+        <input type="email" id="admin-email" placeholder="admin@decorum.fr" required autofocus>
       </div>
-      <button type="submit" class="btn-submit">DÉVERROUILLER L'ACCÈS</button>
+      <div class="form-group">
+        <label for="admin-password">Mot de passe</label>
+        <input type="password" id="admin-password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn-submit">SE CONNECTER</button>
     </form>
   </div>
 
@@ -139,10 +147,9 @@
 
   <script src="script.js"></script>
   <script>
-    const SECRET_PASSWORD = "decorum2026"; 
-
-    function checkAuth() {
-      if (sessionStorage.getItem('decorum_admin_auth') === 'true') {
+    // Écoute de l'état de connexion Firebase Auth
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
         document.getElementById('admin-lock').style.display = 'none';
         document.getElementById('admin-content').style.display = 'block';
         renderAdminArticlesList();
@@ -150,28 +157,34 @@
         document.getElementById('admin-lock').style.display = 'block';
         document.getElementById('admin-content').style.display = 'none';
       }
-    }
+    });
 
-    function logoutAdmin() {
-      sessionStorage.removeItem('decorum_admin_auth');
-      showNotification('Déconnexion réussie.');
-      checkAuth();
-    }
-
-    checkAuth();
-
-    document.getElementById('login-form').addEventListener('submit', function(e) {
+    // Connexion
+    document.getElementById('login-form').addEventListener('submit', async function(e) {
       e.preventDefault();
+      const email = document.getElementById('admin-email').value;
       const pwd = document.getElementById('admin-password').value;
-      if (pwd === SECRET_PASSWORD) {
-        sessionStorage.setItem('decorum_admin_auth', 'true');
-        showNotification('Accès autorisé.');
-        checkAuth();
-      } else {
-        showNotification('Mot de passe incorrect.');
+
+      try {
+        await firebase.auth().signInWithEmailAndPassword(email, pwd);
+        showNotification('Connexion réussie.');
+      } catch (error) {
+        console.error("Erreur Firebase Auth :", error);
+        showNotification('Identifiants incorrects.');
       }
     });
 
+    // Déconnexion
+    async function logoutAdmin() {
+      try {
+        await firebase.auth().signOut();
+        showNotification('Déconnexion réussie.');
+      } catch (error) {
+        console.error("Erreur déconnexion :", error);
+      }
+    }
+
+    // Soumission du formulaire
     document.getElementById('add-article-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       await executePublishing();
