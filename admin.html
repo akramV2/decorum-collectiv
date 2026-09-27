@@ -147,6 +147,22 @@
 
   <script src="script.js"></script>
   <script>
+    // Configuration Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBteD5R4XH3K-P0GTdjM5Y8e35AlKugnFU",
+      authDomain: "decorum-collectiv.firebaseapp.com",
+      projectId: "decorum-collectiv",
+      storageBucket: "decorum-collectiv.firebasestorage.app",
+      messagingSenderId: "743631473375",
+      appId: "1:743631473375:web:2c2f6078f46c9e36a5376a",
+      measurementId: "G-L6033RN4BQ"
+    };
+
+    // Initialisation de Firebase
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
     // Écoute de l'état de connexion Firebase Auth
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
