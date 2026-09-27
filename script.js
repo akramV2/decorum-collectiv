@@ -25,23 +25,34 @@ function initLogoSecret() {
     let clickTimer = null;
 
     logo.addEventListener('click', (e) => {
+      // Bloque le rechargement immédiat pour pouvoir compter les clics
+      e.preventDefault();
+
       clickCount++;
 
       if (clickTimer) clearTimeout(clickTimer);
 
       if (clickCount >= 5) {
-        e.preventDefault();
         clickCount = 0;
         showNotification('Accès rédaction déverrouillé...');
         setTimeout(() => {
           window.location.href = 'admin.html';
-        }, 600);
+        }, 500);
         return;
       }
 
+      // Si pas d'autres clics dans les 400ms, comportement normal du lien
       clickTimer = setTimeout(() => {
         clickCount = 0;
-      }, 2500);
+        const target = logo.getAttribute('href') || 'index.html';
+        const isHomePage = window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/');
+
+        if (isHomePage) {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          window.location.href = target;
+        }
+      }, 400);
     });
   });
 }
@@ -80,8 +91,7 @@ function showNotification(message, duration = 3500) {
 async function getArticlesFromCloud() {
   try {
     const snapshot = await db.collection('articles').orderBy('createdAt', 'desc').get();
-    const articles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    return articles;
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error("Erreur lors de la récupération des articles :", error);
     return [];
