@@ -183,7 +183,7 @@ async function uploadImageDirect(input) {
 }
 
 /* ==========================================================================
-   MODALE D'APERÇU (ADMIN)
+   MODALE D'APERÇU (ADMIN) — SÉCURISÉE DOMPURIFY
    ========================================================================== */
 function openPreviewModal() {
   const title = document.getElementById('title').value || 'Titre de la publication';
@@ -207,8 +207,9 @@ function openPreviewModal() {
     imgContainer.innerHTML = '';
   }
 
-  const formattedContent = content.split('\n').filter(p => p.trim() !== '').map(p => `<p style="margin-bottom:16px; line-height:1.7;">${p}</p>`).join('');
-  document.getElementById('prev-content').innerHTML = formattedContent;
+  const rawContent = content.split('\n').filter(p => p.trim() !== '').map(p => `<p style="margin-bottom:16px; line-height:1.7;">${p}</p>`).join('');
+  const cleanContent = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawContent) : rawContent;
+  document.getElementById('prev-content').innerHTML = cleanContent;
 
   document.getElementById('preview-modal').style.display = 'block';
 }
@@ -345,7 +346,7 @@ async function toggleLikeArticle() {
 }
 
 /* ==========================================================================
-   RENDU DES PAGES
+   RENDU DES PAGES (SÉCURISÉ DOMPURIFY)
    ========================================================================== */
 async function renderArticlesGrid() {
   const container = document.getElementById('articles-grid');
@@ -404,10 +405,11 @@ async function renderSingleArticle() {
       imgContainer.innerHTML = `<div class="placeholder-box" style="height:250px;"><span>${art.title.toUpperCase()}</span></div>`;
     }
 
-    const formattedContent = art.content.split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
-    document.getElementById('art-content').innerHTML = formattedContent;
+    const rawContent = art.content.split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
+    const cleanContent = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawContent) : rawContent;
+    document.getElementById('art-content').innerHTML = cleanContent;
 
-    // Mise à jour de l'état des likes (Vectoriel minimaliste)
+    // Mise à jour de l'état des likes
     const likeCountSpan = document.getElementById('like-count');
     const likeBtn = document.getElementById('like-btn');
     const likeIcon = document.getElementById('like-icon');
