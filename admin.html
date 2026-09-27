@@ -1,31 +1,31 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <!-- Nom affiché sous l'icône sur l'écran d'accueil -->
-<meta name="apple-mobile-web-app-title" content="DECORUM">
-<meta name="application-name" content="DECORUM">
-
-<!-- Icône pour l'écran d'accueil (iOS / Safari) -->
-<link rel="apple-touch-icon" href="logo.png">
-
-<!-- Optionnel : autoriser le fonctionnement en mode Web App pleine page -->
-<meta name="apple-mobile-web-app-capable" content="yes">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Espace Rédaction — Decorum Collectiv</title>
+
+  <meta name="theme-color" content="#0B111A">
+  <meta name="apple-mobile-web-app-title" content="DECORUM">
+  <meta name="application-name" content="DECORUM">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
   <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
+  <link rel="manifest" href="manifest.json">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&family=Suez+One&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 
   <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js" defer></script>
 
   <!-- DOMPurify -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js" defer></script>
 </head>
 <body>
 
@@ -154,63 +154,59 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
   <script>
-    // Initialisation Firebase sécurisée sans re-déclarer de variable globale
-    if (!firebase.apps.length) {
-      firebase.initializeApp({
-        apiKey: "AIzaSyBteD5R4XH3K-P0GTdjM5Y8e35AlKugnFU",
-        authDomain: "decorum-collectiv.firebaseapp.com",
-        projectId: "decorum-collectiv",
-        storageBucket: "decorum-collectiv.firebasestorage.app",
-        messagingSenderId: "743631473375",
-        appId: "1:743631473375:web:2c2f6078f46c9e36a5376a",
-        measurementId: "G-L6033RN4BQ"
-      });
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof firebase !== 'undefined' && firebase.auth) {
+        firebase.auth().onAuthStateChanged((user) => {
+          const lockElem = document.getElementById('admin-lock');
+          const contentElem = document.getElementById('admin-content');
 
-    // Écoute de l'état de connexion Firebase Auth
-    firebase.auth().onAuthStateChanged((user) => {
-      const lockElem = document.getElementById('admin-lock');
-      const contentElem = document.getElementById('admin-content');
+          if (user) {
+            if (lockElem) lockElem.style.display = 'none';
+            if (contentElem) contentElem.style.display = 'block';
+            if (typeof renderAdminArticlesList === 'function') {
+              renderAdminArticlesList();
+            }
+          } else {
+            if (lockElem) lockElem.style.display = 'block';
+            if (contentElem) contentElem.style.display = 'none';
+          }
+        });
+      }
 
-      if (user) {
-        if (lockElem) lockElem.style.display = 'none';
-        if (contentElem) contentElem.style.display = 'block';
-        if (typeof renderAdminArticlesList === 'function') {
-          renderAdminArticlesList();
-        }
-      } else {
-        if (lockElem) lockElem.style.display = 'block';
-        if (contentElem) contentElem.style.display = 'none';
+      const loginForm = document.getElementById('login-form');
+      if (loginForm) {
+        loginForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          const email = document.getElementById('admin-email').value;
+          const pwd = document.getElementById('admin-password').value;
+
+          try {
+            await firebase.auth().signInWithEmailAndPassword(email, pwd);
+            if (typeof showNotification === 'function') {
+              showNotification('Connexion réussie.');
+            }
+          } catch (error) {
+            console.error("Erreur Firebase Auth :", error);
+            if (typeof showNotification === 'function') {
+              showNotification('Identifiants incorrects.');
+            } else {
+              alert('Identifiants incorrects.');
+            }
+          }
+        });
+      }
+
+      const addForm = document.getElementById('add-article-form');
+      if (addForm) {
+        addForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          await executePublishing();
+        });
       }
     });
 
-    // Connexion
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-      loginForm.addEventListener('submit', async function(e) {
-        e.preventDefault(); // Empêche le rechargement de la page
-        const email = document.getElementById('admin-email').value;
-        const pwd = document.getElementById('admin-password').value;
-
-        try {
-          await firebase.auth().signInWithEmailAndPassword(email, pwd);
-          if (typeof showNotification === 'function') {
-            showNotification('Connexion réussie.');
-          }
-        } catch (error) {
-          console.error("Erreur Firebase Auth :", error);
-          if (typeof showNotification === 'function') {
-            showNotification('Identifiants incorrects.');
-          } else {
-            alert('Identifiants incorrects.');
-          }
-        }
-      });
-    }
-
-    // Déconnexion
     async function logoutAdmin() {
       try {
         await firebase.auth().signOut();
@@ -220,7 +216,6 @@
       }
     }
 
-    // Publication
     async function executePublishing() {
       const newArticle = {
         title: document.getElementById('title').value,
@@ -240,14 +235,6 @@
       }
       sessionStorage.setItem('decorum_toast', 'Publication mise en ligne avec succès !');
       window.location.href = 'index.html';
-    }
-
-    const addForm = document.getElementById('add-article-form');
-    if (addForm) {
-      addForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        await executePublishing();
-      });
     }
 
     function submitFormFromPreview() {
