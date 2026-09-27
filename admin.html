@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Administration — Decorum Collectiv</title>
+  <title>Espace Rédaction — Decorum Collectiv</title>
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,7 +21,7 @@
     <div class="nav-container">
       <a href="index.html" class="brand-logo">
         <img src="logo.png" alt="Decorum Logo" class="logo-img">
-        <span class="brand-name">DECORUM (ADMIN)</span>
+        <span class="brand-name">DECORUM (RÉDACTION)</span>
       </a>
       <nav class="nav-links">
         <a href="index.html">← Retour au site</a>
@@ -29,78 +29,103 @@
     </div>
   </header>
 
-  <!-- ECRAN DE VERROUILLAGE MOT DE PASSE -->
+  <!-- ÉCRAN DE VERROUILLAGE MOT DE PASSE -->
   <div id="admin-lock" class="container admin-container">
-    <h1 class="admin-title">Accès Rédaction</h1>
+    <h1 class="admin-title">Accès Sécurisé Rédaction</h1>
+    <p style="color: var(--text-muted); margin-bottom: 24px;">Entrez le mot de passe secret pour accéder au formulaire de publication.</p>
     <form id="login-form" class="admin-form">
       <div class="form-group">
         <label for="admin-password">Mot de passe requis</label>
-        <input type="password" id="admin-password" placeholder="Entrez le mot de passe secret..." required>
+        <input type="password" id="admin-password" placeholder="Entrez le mot de passe secret..." required autofocus>
       </div>
-      <button type="submit" class="btn-submit">DEVERROUILLER</button>
+      <button type="submit" class="btn-submit">DÉVERROUILLER L'ACCÈS</button>
     </form>
   </div>
 
-  <!-- FORMULAIRE DE REDACTION (MASQUE PAR DEFAUT) -->
+  <!-- FORMULAIRE DE RÉDACTION (MASQUÉ PAR DÉFAUT) -->
   <main id="admin-content" class="container admin-container" style="display: none;">
-    <h1 class="admin-title">Publier un nouvel article</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+      <h1 class="admin-title" style="margin-bottom:0;">Nouvelle Publication</h1>
+      <button onclick="logoutAdmin()" style="background:none; border:none; color:var(--rust); cursor:pointer; font-weight:600;">Se déconnecter</button>
+    </div>
 
     <form id="add-article-form" class="admin-form">
-      <div class="form-group">
-        <label for="title">Titre de l'article *</label>
-        <input type="text" id="title" placeholder="ex: Tadao Andō : La Poétique du Béton" required>
-      </div>
-
       <div class="form-row">
         <div class="form-group">
-          <label for="category">Catégorie *</label>
-          <input type="text" id="category" placeholder="ex: ESSAI SPATIAL" required>
+          <label for="pub-type">Type de publication *</label>
+          <select id="pub-type" class="admin-select" required>
+            <option value="ARTICLE DE JOURNAL">Article de journal</option>
+            <option value="INTERVIEW">Interview / Rencontre</option>
+            <option value="PHOTOGRAPHIE & ŒUVRE">Photographie / Œuvre</option>
+            <option value="ESSAI SPATIAL">Essai Spatial</option>
+            <option value="DOSSIER ARCHITECTURE">Dossier Architecture</option>
+          </select>
         </div>
 
         <div class="form-group">
-          <label for="author">Auteur *</label>
-          <input type="text" id="author" placeholder="ex: La Rédaction" required>
+          <label for="category">Thématique / Mots-clés *</label>
+          <input type="text" id="category" placeholder="ex: BRUTALISME, VILLA CAVROIS, BÉTON" required>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="image-url">Lien de l'image (URL) - optionnel</label>
-        <input type="url" id="image-url" placeholder="https://images.unsplash.com/...">
+        <label for="title">Titre de la publication *</label>
+        <input type="text" id="title" placeholder="ex: La Villa Cavrois : Rigueur et Poétique de Mallet-Stevens" required>
       </div>
 
       <div class="form-group">
-        <label for="excerpt">Résumé rapide (Chapeau) *</label>
-        <textarea id="excerpt" rows="2" placeholder="Un court résumé..." required></textarea>
+        <label for="author">Auteur / Photographe *</label>
+        <input type="text" id="author" value="Raphaël" placeholder="ex: Raphaël" required>
       </div>
 
       <div class="form-group">
-        <label for="content">Contenu de l'article *</label>
-        <textarea id="content" rows="10" placeholder="Écris ton article complet ici..." required></textarea>
+        <label for="image-url">Lien de la photo principale (URL) - optionnel</label>
+        <input type="url" id="image-url" placeholder="https://images.unsplash.com/photo-...">
       </div>
 
-      <button type="submit" class="btn-submit">PUBLIER DANS LE CLOUD</button>
+      <div class="form-group">
+        <label for="excerpt">Accroche / Résumé (Chapeau) *</label>
+        <textarea id="excerpt" rows="2" placeholder="Une courte description d'accroche..." required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="content">Contenu principal *</label>
+        <textarea id="content" rows="12" placeholder="Rédige ton texte complet ici. Tu peux sauter des lignes pour créer des paragraphes..." required></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit">PUBLIER EN LIGNE</button>
     </form>
   </main>
 
   <script src="script.js"></script>
   <script>
-    // DEFIMIR TON MOT DE PASSE SECRET ICI
     const SECRET_PASSWORD = "decorum2026"; 
 
-    // Vérification de la session
-    if (sessionStorage.getItem('decorum_admin_auth') === 'true') {
-      document.getElementById('admin-lock').style.display = 'none';
-      document.getElementById('admin-content').style.display = 'block';
+    function checkAuth() {
+      if (sessionStorage.getItem('decorum_admin_auth') === 'true') {
+        document.getElementById('admin-lock').style.display = 'none';
+        document.getElementById('admin-content').style.display = 'block';
+      } else {
+        document.getElementById('admin-lock').style.display = 'block';
+        document.getElementById('admin-content').style.display = 'none';
+      }
     }
+
+    function logoutAdmin() {
+      sessionStorage.removeItem('decorum_admin_auth');
+      showNotification('Déconnexion réussie.');
+      checkAuth();
+    }
+
+    checkAuth();
 
     document.getElementById('login-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const pwd = document.getElementById('admin-password').value;
       if (pwd === SECRET_PASSWORD) {
         sessionStorage.setItem('decorum_admin_auth', 'true');
-        document.getElementById('admin-lock').style.display = 'none';
-        document.getElementById('admin-content').style.display = 'block';
         showNotification('Accès autorisé.');
+        checkAuth();
       } else {
         showNotification('Mot de passe incorrect.');
       }
@@ -111,6 +136,7 @@
 
       const newArticle = {
         title: document.getElementById('title').value,
+        type: document.getElementById('pub-type').value,
         category: document.getElementById('category').value.toUpperCase(),
         author: document.getElementById('author').value,
         image: document.getElementById('image-url').value,
@@ -121,7 +147,7 @@
       };
 
       await saveNewArticle(newArticle);
-      sessionStorage.setItem('decorum_toast', 'Article publié sur la base de données cloud.');
+      sessionStorage.setItem('decorum_toast', 'Publication mise en ligne avec succès !');
       window.location.href = 'index.html';
     });
   </script>
