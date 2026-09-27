@@ -238,26 +238,30 @@ async function uploadImageDirect(input) {
 
   const status = document.getElementById('upload-status');
   if (status) status.innerText = "Téléversement en cours...";
+  
+  const API_KEY = 'a31942d73cdfaf38fdecda33d934cbba';
 
   const formData = new FormData();
   formData.append('image', file);
 
   try {
-    const response = await fetch('https://api.imgbb.com/1/upload?key=6d3a5ef91271b0453009772ccf31175c', {
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`, {
       method: 'POST',
       body: formData
     });
+    
     const data = await response.json();
 
     if (data.success) {
       document.getElementById('image-url').value = data.data.url;
       if (status) status.innerText = "✓ Photo téléversée avec succès !";
     } else {
-      if (status) status.innerText = "Erreur lors du téléversement.";
+      console.error("Erreur API ImgBB :", data);
+      if (status) status.innerText = `Erreur : ${data.error ? data.error.message : 'Téléversement refusé.'}`;
     }
   } catch (err) {
-    console.error(err);
-    if (status) status.innerText = "Erreur de connexion lors de l'envoi.";
+    console.error("Erreur réseau/fetch :", err);
+    if (status) status.innerText = "Erreur de connexion. Vérifie ton réseau ou ton adblocker.";
   }
 }
 
