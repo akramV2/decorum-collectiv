@@ -147,20 +147,17 @@
 
   <script src="script.js"></script>
   <script>
-    // Configuration Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyBteD5R4XH3K-P0GTdjM5Y8e35AlKugnFU",
-      authDomain: "decorum-collectiv.firebaseapp.com",
-      projectId: "decorum-collectiv",
-      storageBucket: "decorum-collectiv.firebasestorage.app",
-      messagingSenderId: "743631473375",
-      appId: "1:743631473375:web:2c2f6078f46c9e36a5376a",
-      measurementId: "G-L6033RN4BQ"
-    };
-
-    // Initialisation Firebase si pas encore faite
+    // Initialisation Firebase sécurisée sans re-déclarer de variable globale
     if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
+      firebase.initializeApp({
+        apiKey: "AIzaSyBteD5R4XH3K-P0GTdjM5Y8e35AlKugnFU",
+        authDomain: "decorum-collectiv.firebaseapp.com",
+        projectId: "decorum-collectiv",
+        storageBucket: "decorum-collectiv.firebasestorage.app",
+        messagingSenderId: "743631473375",
+        appId: "1:743631473375:web:2c2f6078f46c9e36a5376a",
+        measurementId: "G-L6033RN4BQ"
+      });
     }
 
     // Écoute de l'état de connexion Firebase Auth
