@@ -16,6 +16,9 @@
 </head>
 <body>
 
+  <!-- BARRE DE PROGRESSION LECTURE -->
+  <div id="read-progress" class="read-progress-bar"></div>
+
   <!-- HEADER -->
   <header class="navbar">
     <div class="nav-container">
@@ -25,6 +28,7 @@
       </a>
       <nav class="nav-links">
         <a href="index.html#journal">Journal</a>
+        <a href="index.html#carte">Carte</a>
         <a href="manifesto.html">Manifesto</a>
         <a href="index.html#contact">Contact</a>
       </nav>
@@ -37,7 +41,8 @@
     <header class="article-header">
       <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap;">
         <span class="tag-type" id="art-type">FORMAT</span>
-        <span class="tag" id="art-category">CATÉGORIE</span>
+        <span class="tag" id="art-category" style="position:static;">CATÉGORIE</span>
+        <span class="read-time-badge" id="art-read-time">calcul en cours...</span>
       </div>
       <h1 class="article-main-title" id="art-title">Titre de l'article</h1>
       <div class="article-meta-bar">
