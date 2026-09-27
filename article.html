@@ -1,69 +1,31 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <!-- Nom affiché sous l'icône sur l'écran d'accueil -->
-<meta name="apple-mobile-web-app-title" content="DECORUM">
-<meta name="application-name" content="DECORUM">
-
-<!-- Icône pour l'écran d'accueil (iOS / Safari) -->
-<link rel="apple-touch-icon" href="logo.png">
-
-<!-- Optionnel : autoriser le fonctionnement en mode Web App pleine page -->
-<meta name="apple-mobile-web-app-capable" content="yes">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Decorum Collectiv — Article</title>
   
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-
-  <!-- DOMPurify (Protection XSS) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
+  <meta name="theme-color" content="#0B111A">
+  <meta name="apple-mobile-web-app-title" content="DECORUM">
+  <meta name="application-name" content="DECORUM">
+  <meta name="apple-mobile-web-app-capable" content="yes">
 
   <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
+  <link rel="manifest" href="manifest.json">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,600;1,400&family=Suez+One&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 
-  <style>
-    /* Bouton Like Vectoriel Minimaliste */
-    .btn-like-minimal {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: transparent;
-      border: 1px solid rgba(0, 0, 0, 0.15);
-      border-radius: 20px;
-      padding: 8px 18px;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #666;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js" defer></script>
 
-    .btn-like-minimal:hover {
-      border-color: #111;
-      color: #111;
-    }
-
-    .btn-like-minimal.liked {
-      border-color: #c0392b;
-      color: #c0392b;
-    }
-
-    .btn-like-minimal svg {
-      transition: transform 0.2s ease, fill 0.2s ease;
-    }
-
-    .btn-like-minimal:active svg {
-      transform: scale(1.25);
-    }
-  </style>
+  <!-- DOMPurify (Protection XSS) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js" defer></script>
 </head>
 <body>
 
@@ -123,15 +85,18 @@
     </div>
   </article>
 
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
   <script>
-    renderSingleArticle();
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSingleArticle();
 
-    // Vérification de la session Admin via Firebase Auth
-    firebase.auth().onAuthStateChanged((user) => {
-      const actions = document.getElementById('admin-actions');
-      if (actions) {
-        actions.style.display = user ? 'block' : 'none';
+      if (typeof firebase !== 'undefined' && firebase.auth) {
+        firebase.auth().onAuthStateChanged((user) => {
+          const actions = document.getElementById('admin-actions');
+          if (actions) {
+            actions.style.display = user ? 'block' : 'none';
+          }
+        });
       }
     });
 
@@ -147,7 +112,7 @@
           window.location.href = 'index.html';
         } catch (error) {
           console.error("Erreur de suppression :", error);
-          showNotification("Erreur lors de la suppression.");
+          if (typeof showNotification === 'function') showNotification("Erreur lors de la suppression.");
         }
       }
     }
