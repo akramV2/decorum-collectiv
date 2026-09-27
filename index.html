@@ -4,6 +4,11 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- Leaflet CSS & JS pour la Carte Interactive -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Decorum Collectiv — A Chronicle of Architectural Thought</title>
@@ -26,6 +31,7 @@
 
       <nav class="nav-links">
         <a href="#journal">Journal</a>
+        <a href="#carte">Carte</a>
         <a href="manifesto.html">Manifesto</a>
         <a href="#contact">Contact</a>
       </nav>
@@ -64,6 +70,19 @@
     </div>
   </section>
 
+  <!-- SECTION CARTE INTERACTIVE -->
+  <section id="carte" class="map-section">
+    <div class="container">
+      <div class="map-header">
+        <span class="tag-outline" style="color: var(--rust); border-color: rgba(0,0,0,0.15);">GÉOLOCALISATION</span>
+        <h2>Guide Architectural</h2>
+        <p style="color: var(--text-muted); margin-top: 8px;">Explorez les œuvres et bâtiments documentés dans nos articles.</p>
+      </div>
+
+      <div id="architecture-map"></div>
+    </div>
+  </section>
+
   <!-- SECTION MANIFESTO -->
   <section id="manifesto" class="manifesto">
     <div class="container manifesto-container">
@@ -78,7 +97,7 @@
   <section id="contact" class="contact-section">
     <div class="container contact-container">
       <div class="contact-header">
-        <span class="tag-outline">CORRESPONDANCE</span>
+        <span class="tag-outline" style="color: var(--rust); border-color: rgba(0,0,0,0.15);">CORRESPONDANCE</span>
         <h2>Contact & Réseaux</h2>
         <p class="contact-intro">
           Pour toute demande éditoriale, proposition d'interview ou échange autour de l'architecture et de la photo.
@@ -86,31 +105,18 @@
       </div>
 
       <div class="contact-grid">
-        <!-- Instagram -->
         <a href="https://instagram.com/decorum.collectiv" target="_blank" rel="noopener noreferrer" class="contact-card">
           <span class="contact-label">INSTAGRAM</span>
           <span class="contact-value">@decorum.collectiv</span>
           <span class="contact-action">S'ABONNER →</span>
         </a>
 
-        <!-- Email -->
         <a href="mailto:decorumcollectiv@gmail.com" class="contact-card">
           <span class="contact-label">ÉDITORIAL & COLLABORATIONS</span>
           <span class="contact-value">decorumcollectiv@gmail.com</span>
           <span class="contact-action">ÉCRIRE UN MESSAGE →</span>
         </a>
       </div>
-    </div>
-  </section>
-
-  <!-- NEWSLETTER -->
-  <section class="newsletter">
-    <div class="container newsletter-container">
-      <h3>Analyses, interviews et essais directement dans votre boîte mail.</h3>
-      <form class="newsletter-form">
-        <input type="email" placeholder="Votre adresse email..." required>
-        <button type="submit">S'ABONNER</button>
-      </form>
     </div>
   </section>
 
@@ -127,6 +133,7 @@
           <h4>NAVIGATION</h4>
           <a href="#">Home</a>
           <a href="#journal">Journal</a>
+          <a href="#carte">Carte</a>
           <a href="manifesto.html">Manifesto</a>
           <a href="#contact">Contact</a>
         </div>
