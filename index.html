@@ -1,32 +1,37 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <!-- Nom affiché sous l'icône sur l'écran d'accueil -->
-<meta name="apple-mobile-web-app-title" content="DECORUM">
-<meta name="application-name" content="DECORUM">
-
-<!-- Icône pour l'écran d'accueil (iOS / Safari) -->
-<link rel="apple-touch-icon" href="logo.png">
-
-<!-- Optionnel : autoriser le fonctionnement en mode Web App pleine page -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
-  <!-- Leaflet CSS & JS pour la Carte Interactive -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Decorum Collectiv — A Chronicle of Architectural Thought</title>
   
+  <!-- SEO & Mobile Web App PWA -->
+  <meta name="description" content="Decorum Collectiv documente la culture architecturale et la pensée spatiale.">
+  <meta name="theme-color" content="#0B111A">
+  <meta name="apple-mobile-web-app-title" content="DECORUM">
+  <meta name="application-name" content="DECORUM">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <!-- Icônes & Web App Manifest -->
   <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Polices Google -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,600;1,400&family=Suez+One&display=swap" rel="stylesheet">
+  
+  <!-- Feuille de style principale -->
   <link rel="stylesheet" href="style.css">
+
+  <!-- Leaflet CSS & JS pour la Carte Interactive -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js" defer></script>
 </head>
 <body>
 
@@ -150,6 +155,6 @@
     </div>
   </footer>
 
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
