@@ -9,10 +9,10 @@ const firebaseConfig = {
   measurementId: "G-L6033RN4BQ"
 };
 
-if (!firebase.apps.length) {
+if (typeof firebase !== 'undefined' && !firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
-const db = firebase.firestore();
+const db = typeof firebase !== 'undefined' ? firebase.firestore() : null;
 
 /* ==========================================================================
    EASTER EGG : ACCÈS SECRET À L'ADMINISTRATION (5 CLICS SUR LE LOGO)
@@ -121,7 +121,7 @@ function initReadingProgress() {
   if (progressBar) {
     window.addEventListener('scroll', () => {
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = (window.scrollY / totalHeight) * 100;
+      const progress = totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
       progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
     });
   }
@@ -245,8 +245,9 @@ function showNotification(message, duration = 3500) {
    GESTION CLOUD FIREBASE (ARTICLES, SUPPRESSION & LIKES)
    ========================================================================== */
 async function getArticlesFromCloud() {
+  if (!db) return [];
   try {
-    const snapshot = await db.collection('articles').orderBy('createdAt', 'desc').get();
+    const snapshot = await db.collection('articles').orderBy('createdAt', 'desc').limit(20).get();
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error("Erreur Cloud :", error);
@@ -255,6 +256,7 @@ async function getArticlesFromCloud() {
 }
 
 async function saveNewArticle(article) {
+  if (!db) return;
   try {
     await db.collection('articles').add(article);
   } catch (error) {
@@ -289,6 +291,7 @@ async function renderAdminArticlesList() {
 }
 
 async function deleteArticleFromAdmin(id, title) {
+  if (!db) return;
   if (confirm(`Voulez-vous vraiment supprimer l'article "${title}" ?`)) {
     try {
       await db.collection('articles').doc(id).delete();
@@ -306,6 +309,7 @@ async function deleteArticleFromAdmin(id, title) {
    SYSTÈME DE LIKE SUR L'ARTICLE (MINIMALISTE & VECTORIEL)
    ========================================================================== */
 async function toggleLikeArticle() {
+  if (!db) return;
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
   if (!id) return;
@@ -364,7 +368,7 @@ async function renderArticlesGrid() {
   container.innerHTML = articles.map(art => `
     <article class="article-card reveal" onclick="window.location.href='article.html?id=${art.id}'">
       <div class="card-image ${!art.image ? 'placeholder-box' : ''}">
-        ${art.image ? `<img src="${art.image}" alt="${art.title}">` : `<span>${art.title.toUpperCase()}</span>`}
+        ${art.image ? `<img src="${art.image}" alt="${art.title}" loading="lazy">` : `<span>${art.title.toUpperCase()}</span>`}
         <span class="tag">${art.category}</span>
       </div>
       <div class="card-meta">
@@ -380,6 +384,7 @@ async function renderArticlesGrid() {
 }
 
 async function renderSingleArticle() {
+  if (!db) return;
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
   if (!id) return;
