@@ -278,7 +278,7 @@ async function renderAdminArticlesList() {
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.08); border-radius: 4px; margin-bottom: 12px; gap: 12px;">
       <div>
         <strong style="display: block; font-size: 0.95rem; color: var(--text-dark, #111);">${art.title}</strong>
-        <span style="font-size: 0.8rem; color: var(--text-muted);">${art.date} — ${art.category || 'Article'} (❤️ ${art.likes || 0})</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">${art.date} — ${art.category || 'Article'} (${art.likes || 0} likes)</span>
       </div>
       <button type="button" onclick="deleteArticleFromAdmin('${art.id}', '${art.title.replace(/'/g, "\\'")}')" style="background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; flex-shrink: 0;">
         Supprimer
@@ -302,7 +302,7 @@ async function deleteArticleFromAdmin(id, title) {
 }
 
 /* ==========================================================================
-   SYSTÈME DE LIKE SUR L'ARTICLE
+   SYSTÈME DE LIKE SUR L'ARTICLE (MINIMALISTE & VECTORIEL)
    ========================================================================== */
 async function toggleLikeArticle() {
   const params = new URLSearchParams(window.location.search);
@@ -313,7 +313,7 @@ async function toggleLikeArticle() {
   const likeIcon = document.getElementById('like-icon');
   const likeCountSpan = document.getElementById('like-count');
   
-  if (!likeBtn || !likeCountSpan) return;
+  if (!likeBtn || !likeCountSpan || !likeIcon) return;
 
   const storageKey = `decorum_liked_${id}`;
   const isLiked = localStorage.getItem(storageKey) === 'true';
@@ -322,22 +322,18 @@ async function toggleLikeArticle() {
 
   try {
     if (!isLiked) {
-      // Ajouter un like
       currentLikes += 1;
       localStorage.setItem(storageKey, 'true');
-      likeBtn.style.background = '#c0392b';
-      likeBtn.style.color = '#ffffff';
-      likeIcon.innerText = '❤️';
+      likeBtn.classList.add('liked');
+      likeIcon.setAttribute('fill', 'currentColor');
       await db.collection('articles').doc(id).update({
         likes: firebase.firestore.FieldValue.increment(1)
       });
     } else {
-      // Retirer le like
       currentLikes = Math.max(0, currentLikes - 1);
       localStorage.removeItem(storageKey);
-      likeBtn.style.background = 'transparent';
-      likeBtn.style.color = '#c0392b';
-      likeIcon.innerText = '🤍';
+      likeBtn.classList.remove('liked');
+      likeIcon.setAttribute('fill', 'none');
       await db.collection('articles').doc(id).update({
         likes: firebase.firestore.FieldValue.increment(-1)
       });
@@ -411,7 +407,7 @@ async function renderSingleArticle() {
     const formattedContent = art.content.split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
     document.getElementById('art-content').innerHTML = formattedContent;
 
-    // Mise à jour de l'état des likes
+    // Mise à jour de l'état des likes (Vectoriel minimaliste)
     const likeCountSpan = document.getElementById('like-count');
     const likeBtn = document.getElementById('like-btn');
     const likeIcon = document.getElementById('like-icon');
@@ -421,11 +417,11 @@ async function renderSingleArticle() {
     }
 
     if (localStorage.getItem(`decorum_liked_${id}`) === 'true') {
-      if (likeBtn) {
-        likeBtn.style.background = '#c0392b';
-        likeBtn.style.color = '#ffffff';
-      }
-      if (likeIcon) likeIcon.innerText = '❤️';
+      if (likeBtn) likeBtn.classList.add('liked');
+      if (likeIcon) likeIcon.setAttribute('fill', 'currentColor');
+    } else {
+      if (likeBtn) likeBtn.classList.remove('liked');
+      if (likeIcon) likeIcon.setAttribute('fill', 'none');
     }
 
     initReadingProgress();
