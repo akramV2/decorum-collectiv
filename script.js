@@ -230,6 +230,26 @@ function initReadingProgress() {
 }
 
 /* ==========================================================================
+   REDIRECTION INTELLIGENTE DU LIEN EMAIL (GMAIL WEB vs MOBILE MAIL)
+   ========================================================================== */
+function initSmartEmailLink() {
+  const emailLink = document.getElementById('email-contact-link');
+  if (!emailLink) return;
+
+  emailLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    const email = 'decorumcollectiv@gmail.com';
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      window.location.href = `mailto:${email}`;
+    } else {
+      window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${email}`, '_blank');
+    }
+  });
+}
+
+/* ==========================================================================
    IMPORT PHOTO DIRECT (IMGBB API)
    ========================================================================== */
 async function uploadImageDirect(input) {
@@ -485,6 +505,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileMenu();
   initLogoSecret();
   initArchitectureMap();
+  initSmartEmailLink();
 
   const pendingToast = sessionStorage.getItem('decorum_toast');
   if (pendingToast) {
