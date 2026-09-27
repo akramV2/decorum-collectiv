@@ -16,6 +16,37 @@ if (!firebase.apps.length) {
 const db = firebase.firestore();
 
 /* ==========================================================================
+   EASTER EGG : ACCÈS SECRET À L'ADMINISTRATION (5 CLICS SUR LE LOGO)
+   ========================================================================== */
+function initLogoSecret() {
+  const logos = document.querySelectorAll('.brand-logo');
+  logos.forEach(logo => {
+    let clickCount = 0;
+    let clickTimer = null;
+
+    logo.addEventListener('click', (e) => {
+      clickCount++;
+
+      if (clickTimer) clearTimeout(clickTimer);
+
+      if (clickCount >= 5) {
+        e.preventDefault();
+        clickCount = 0;
+        showNotification('Accès rédaction déverrouillé...');
+        setTimeout(() => {
+          window.location.href = 'admin.html';
+        }, 600);
+        return;
+      }
+
+      clickTimer = setTimeout(() => {
+        clickCount = 0;
+      }, 2500);
+    });
+  });
+}
+
+/* ==========================================================================
    SYSTÈME DE NOTIFICATIONS (TOASTS)
    ========================================================================== */
 function showNotification(message, duration = 3500) {
@@ -78,10 +109,10 @@ async function deleteCurrentArticle() {
     }
   }
 
-  if (confirm("Confirmer la suppression définitive de cet article sur le Cloud ?")) {
+  if (confirm("Confirmer la suppression définitive de cette publication ?")) {
     try {
       await db.collection('articles').doc(id).delete();
-      sessionStorage.setItem('decorum_toast', 'Article supprimé avec succès.');
+      sessionStorage.setItem('decorum_toast', 'Publication supprimée avec succès.');
       window.location.href = 'index.html';
     } catch (error) {
       showNotification("Erreur lors de la suppression.");
@@ -96,12 +127,12 @@ async function renderArticlesGrid() {
   const container = document.getElementById('articles-grid');
   if (!container) return;
 
-  container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 0;">Chargement des données du Cloud...</p>';
+  container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 0;">Chargement des données Cloud...</p>';
 
   const articles = await getArticlesFromCloud();
   
   if (articles.length === 0) {
-    container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 0;">Aucun article publié pour le moment.</p>';
+    container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 0;">Aucune publication pour le moment.</p>';
     return;
   }
 
@@ -112,6 +143,7 @@ async function renderArticlesGrid() {
         <span class="tag">${art.category}</span>
       </div>
       <div class="card-meta">
+        <span style="color: var(--rust); font-weight: 600; text-transform: uppercase; margin-right: 8px;">${art.type || 'ARTICLE'}</span>
         <time>${art.date}</time>
       </div>
       <h3 class="card-title">${art.title}</h3>
@@ -134,6 +166,7 @@ async function renderSingleArticle() {
     const art = doc.data();
 
     document.title = `${art.title} — Decorum Collectiv`;
+    document.getElementById('art-type').innerText = art.type || 'ARTICLE';
     document.getElementById('art-category').innerText = art.category;
     document.getElementById('art-title').innerText = art.title;
     document.getElementById('art-author').innerText = `Par ${art.author}`;
@@ -142,7 +175,7 @@ async function renderSingleArticle() {
 
     const imgContainer = document.getElementById('art-image-wrapper');
     if (art.image) {
-      imgContainer.innerHTML = `<img src="${art.image}" style="width:100%; max-height: 500px; object-fit: cover; border-radius:4px;">`;
+      imgContainer.innerHTML = `<img src="${art.image}" style="width:100%; max-height: 550px; object-fit: cover; border-radius:4px;">`;
     } else {
       imgContainer.innerHTML = `<div class="placeholder-box" style="height:250px;"><span>${art.title.toUpperCase()}</span></div>`;
     }
@@ -200,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollReveal();
   initNavbarScroll();
   initMobileMenu();
+  initLogoSecret();
 
   const newsletterForm = document.querySelector('.newsletter-form');
   if (newsletterForm) {
