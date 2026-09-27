@@ -54,16 +54,14 @@ function initLogoSecret() {
 }
 
 /* ==========================================================================
-   CARTE INTERACTIVE LEAFLET.JS (FIX : SANS CLÉ API)
+   CARTE INTERACTIVE LEAFLET.JS (SANS CLÉ API)
    ========================================================================== */
 function initArchitectureMap() {
   const mapContainer = document.getElementById('architecture-map');
   if (!mapContainer || typeof L === 'undefined') return;
 
-  // Vue globale (Monde)
   const map = L.map('architecture-map', { scrollWheelZoom: false }).setView([20, 10], 2.3);
 
-  // Fond de carte OpenStreetMap officiel (100 % gratuit, sans clé API)
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors',
     maxZoom: 19
@@ -71,128 +69,28 @@ function initArchitectureMap() {
 
   const locations = [
     // --- LE CORBUSIER ---
-    {
-      name: "Villa Savoye",
-      city: "Poissy (France)",
-      coords: [48.9244, 2.0283],
-      desc: "Le Corbusier — Manifeste du Modernisme (1931)"
-    },
-    {
-      name: "Cité Radieuse",
-      city: "Marseille (France)",
-      coords: [43.2612, 5.3965],
-      desc: "Le Corbusier — Unité d'habitation emblématique (1952)"
-    },
-    {
-      name: "Chapelle Notre-Dame du Haut",
-      city: "Ronchamp (France)",
-      coords: [47.7044, 6.6206],
-      desc: "Le Corbusier — Expressionnisme sculptural en béton (1955)"
-    },
-    {
-      name: "Couvent de La Tourette",
-      city: "Éveux (France)",
-      coords: [45.8192, 4.6228],
-      desc: "Le Corbusier — Architecture monastique brutaliste (1960)"
-    },
-    {
-      name: "Cabanon de Le Corbusier",
-      city: "Roquebrune-Cap-Martin (France)",
-      coords: [43.7602, 7.4646],
-      desc: "Le Corbusier — Réflexion minimale sur la cellule d'habitation (1951)"
-    },
-    {
-      name: "Complexe du Capitole",
-      city: "Chandigarh (Inde)",
-      coords: [30.7593, 76.8018],
-      desc: "Le Corbusier — Urbanisme et palais gouvernementaux (1953)"
-    },
-    {
-      name: "Maison Curutchet",
-      city: "La Plata (Argentine)",
-      coords: [-34.9129, -57.9427],
-      desc: "Le Corbusier — Résidence privée avec rampe intérieure (1953)"
-    },
-    {
-      name: "Musée National d'Art Occidental",
-      city: "Tokyo (Japon)",
-      coords: [35.7154, 139.7758],
-      desc: "Le Corbusier — Musée à croissance illimitée (1959)"
-    },
-    {
-      name: "Carpenter Center",
-      city: "Cambridge (États-Unis)",
-      coords: [42.3736, -71.1147],
-      desc: "Le Corbusier — Seul bâtiment de l'architecte aux USA (1963)"
-    },
-    {
-      name: "Unité d'Habitation Berlin",
-      city: "Berlin (Allemagne)",
-      coords: [52.5113, 13.2405],
-      desc: "Le Corbusier — Type « Corbusierhaus » (1958)"
-    },
+    { name: "Villa Savoye", city: "Poissy (France)", coords: [48.9244, 2.0283], desc: "Le Corbusier — Manifeste du Modernisme (1931)" },
+    { name: "Cité Radieuse", city: "Marseille (France)", coords: [43.2612, 5.3965], desc: "Le Corbusier — Unité d'habitation emblématique (1952)" },
+    { name: "Chapelle Notre-Dame du Haut", city: "Ronchamp (France)", coords: [47.7044, 6.6206], desc: "Le Corbusier — Expressionnisme sculptural en béton (1955)" },
+    { name: "Couvent de La Tourette", city: "Éveux (France)", coords: [45.8192, 4.6228], desc: "Le Corbusier — Architecture monastique brutaliste (1960)" },
+    { name: "Cabanon de Le Corbusier", city: "Roquebrune-Cap-Martin (France)", coords: [43.7602, 7.4646], desc: "Le Corbusier — Réflexion minimale sur la cellule d'habitation (1951)" },
+    { name: "Complexe du Capitole", city: "Chandigarh (Inde)", coords: [30.7593, 76.8018], desc: "Le Corbusier — Urbanisme et palais gouvernementaux (1953)" },
+    { name: "Maison Curutchet", city: "La Plata (Argentine)", coords: [-34.9129, -57.9427], desc: "Le Corbusier — Résidence privée avec rampe intérieure (1953)" },
+    { name: "Musée National d'Art Occidental", city: "Tokyo (Japon)", coords: [35.7154, 139.7758], desc: "Le Corbusier — Musée à croissance illimitée (1959)" },
+    { name: "Carpenter Center", city: "Cambridge (États-Unis)", coords: [42.3736, -71.1147], desc: "Le Corbusier — Seul bâtiment de l'architecte aux USA (1963)" },
+    { name: "Unité d'Habitation Berlin", city: "Berlin (Allemagne)", coords: [52.5113, 13.2405], desc: "Le Corbusier — Type « Corbusierhaus » (1958)" },
 
     // --- TADAO ANDŌ ---
-    {
-      name: "Église de la Lumière",
-      city: "Ibaraki, Osaka (Japon)",
-      coords: [34.8161, 135.5383],
-      desc: "Tadao Andō — Fente en croix sculptée par le soleil (1989)"
-    },
-    {
-      name: "Chichu Art Museum",
-      city: "Naoshima (Japon)",
-      coords: [34.4489, 133.9877],
-      desc: "Tadao Andō — Architecture enterrée au service de l'art (2004)"
-    },
-    {
-      name: "Maison Row (Azuma)",
-      city: "Osaka (Japon)",
-      coords: [34.6083, 135.4950],
-      desc: "Tadao Andō — Maison étroite en béton brut avec patio (1976)"
-    },
-    {
-      name: "Temple de l'Eau (Honpuku-ji)",
-      city: "Île d'Awaji (Japon)",
-      coords: [34.5458, 134.9814],
-      desc: "Tadao Andō — Sanctuaire sous un bassin de lotus (1991)"
-    },
-    {
-      name: "Bourse de Commerce",
-      city: "Paris (France)",
-      coords: [48.8625, 2.3426],
-      desc: "Tadao Andō — Rotonde en béton insérée dans le monument (2021)"
-    },
-    {
-      name: "Espace de Méditation UNESCO",
-      city: "Paris (France)",
-      coords: [48.8503, 2.3056],
-      desc: "Tadao Andō — Cylindre en béton et granite d'Hiroshima (1995)"
-    },
-    {
-      name: "Punta della Dogana",
-      city: "Venise (Italie)",
-      coords: [45.4308, 12.3323],
-      desc: "Tadao Andō — Restauration et aménagement du bâtiment historique (2009)"
-    },
-    {
-      name: "Modern Art Museum of Fort Worth",
-      city: "Texas (États-Unis)",
-      coords: [32.7489, -97.3688],
-      desc: "Tadao Andō — Pavillons en verre et béton au-dessus d'un plan d'eau (2002)"
-    },
-    {
-      name: "Centro Roberto Garza Sada",
-      city: "Monterrey (Mexique)",
-      coords: [25.6611, -100.4208],
-      desc: "Tadao Andō — Bâtiment en arche de béton « Gate of Creation » (2012)"
-    },
-    {
-      name: "Poly Grand Theater",
-      city: "Shanghai (Chine)",
-      coords: [31.3562, 121.2728],
-      desc: "Tadao Andō — Cylindres en bois perçant un cube en béton (2014)"
-    }
+    { name: "Église de la Lumière", city: "Ibaraki, Osaka (Japon)", coords: [34.8161, 135.5383], desc: "Tadao Andō — Fente en croix sculptée par le soleil (1989)" },
+    { name: "Chichu Art Museum", city: "Naoshima (Japon)", coords: [34.4489, 133.9877], desc: "Tadao Andō — Architecture enterrée au service de l'art (2004)" },
+    { name: "Maison Row (Azuma)", city: "Osaka (Japon)", coords: [34.6083, 135.4950], desc: "Tadao Andō — Maison étroite en béton brut avec patio (1976)" },
+    { name: "Temple de l'Eau (Honpuku-ji)", city: "Île d'Awaji (Japon)", coords: [34.5458, 134.9814], desc: "Tadao Andō — Sanctuaire sous un bassin de lotus (1991)" },
+    { name: "Bourse de Commerce", city: "Paris (France)", coords: [48.8625, 2.3426], desc: "Tadao Andō — Rotonde en béton insérée dans le monument (2021)" },
+    { name: "Espace de Méditation UNESCO", city: "Paris (France)", coords: [48.8503, 2.3056], desc: "Tadao Andō — Cylindre en béton et granite d'Hiroshima (1995)" },
+    { name: "Punta della Dogana", city: "Venise (Italie)", coords: [45.4308, 12.3323], desc: "Tadao Andō — Restauration et aménagement du bâtiment historique (2009)" },
+    { name: "Modern Art Museum of Fort Worth", city: "Texas (États-Unis)", coords: [32.7489, -97.3688], desc: "Tadao Andō — Pavillons en verre et béton au-dessus d'un plan d'eau (2002)" },
+    { name: "Centro Roberto Garza Sada", city: "Monterrey (Mexique)", coords: [25.6611, -100.4208], desc: "Tadao Andō — Bâtiment en arche de béton « Gate of Creation » (2012)" },
+    { name: "Poly Grand Theater", city: "Shanghai (Chine)", coords: [31.3562, 121.2728], desc: "Tadao Andō — Cylindres en bois perçant un cube en béton (2014)" }
   ];
 
   locations.forEach(loc => {
@@ -260,7 +158,6 @@ async function uploadImageDirect(input) {
   if (status) status.innerText = "Téléversement en cours...";
   
   const API_KEY = 'a31942d73cdfaf38fdecda33d934cbba';
-
   const formData = new FormData();
   formData.append('image', file);
 
@@ -344,7 +241,7 @@ function showNotification(message, duration = 3500) {
 }
 
 /* ==========================================================================
-   GESTION DES ARTICLES (FIREBASE CLOUD)
+   GESTION CLOUD FIREBASE (ARTICLES, SUPPRESSION & LIKES)
    ========================================================================== */
 async function getArticlesFromCloud() {
   try {
@@ -364,27 +261,90 @@ async function saveNewArticle(article) {
   }
 }
 
-async function deleteCurrentArticle() {
+// Affiche la liste des articles à supprimer dans admin.html
+async function renderAdminArticlesList() {
+  const container = document.getElementById('admin-articles-list');
+  if (!container) return;
+
+  container.innerHTML = '<p style="color: var(--text-muted);">Chargement des publications...</p>';
+  const articles = await getArticlesFromCloud();
+
+  if (articles.length === 0) {
+    container.innerHTML = '<p style="color: var(--text-muted);">Aucun article publié pour le moment.</p>';
+    return;
+  }
+
+  container.innerHTML = articles.map(art => `
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.08); border-radius: 4px; margin-bottom: 12px; gap: 12px;">
+      <div>
+        <strong style="display: block; font-size: 0.95rem; color: var(--text-dark, #111);">${art.title}</strong>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">${art.date} — ${art.category || 'Article'} (❤️ ${art.likes || 0})</span>
+      </div>
+      <button type="button" onclick="deleteArticleFromAdmin('${art.id}', '${art.title.replace(/'/g, "\\'")}')" style="background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; flex-shrink: 0;">
+        Supprimer
+      </button>
+    </div>
+  `).join('');
+}
+
+async function deleteArticleFromAdmin(id, title) {
+  if (confirm(`Voulez-vous vraiment supprimer l'article "${title}" ?`)) {
+    try {
+      await db.collection('articles').doc(id).delete();
+      showNotification("Article supprimé avec succès.");
+      renderAdminArticlesList();
+      renderArticlesGrid();
+    } catch (error) {
+      console.error("Erreur de suppression :", error);
+      showNotification("Erreur lors de la suppression.");
+    }
+  }
+}
+
+/* ==========================================================================
+   SYSTÈME DE LIKE SUR L'ARTICLE
+   ========================================================================== */
+async function toggleLikeArticle() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
   if (!id) return;
 
-  if (sessionStorage.getItem('decorum_admin_auth') !== 'true') {
-    const pwd = prompt("Mot de passe administrateur requis pour supprimer :");
-    if (pwd !== "decorum2026") {
-      showNotification("Accès refusé.");
-      return;
-    }
-  }
+  const likeBtn = document.getElementById('like-btn');
+  const likeIcon = document.getElementById('like-icon');
+  const likeCountSpan = document.getElementById('like-count');
+  
+  if (!likeBtn || !likeCountSpan) return;
 
-  if (confirm("Confirmer la suppression définitive de cette publication ?")) {
-    try {
-      await db.collection('articles').doc(id).delete();
-      sessionStorage.setItem('decorum_toast', 'Publication supprimée avec succès.');
-      window.location.href = 'index.html';
-    } catch (error) {
-      showNotification("Erreur lors de la suppression.");
+  const storageKey = `decorum_liked_${id}`;
+  const isLiked = localStorage.getItem(storageKey) === 'true';
+
+  let currentLikes = parseInt(likeCountSpan.innerText) || 0;
+
+  try {
+    if (!isLiked) {
+      // Ajouter un like
+      currentLikes += 1;
+      localStorage.setItem(storageKey, 'true');
+      likeBtn.style.background = '#c0392b';
+      likeBtn.style.color = '#ffffff';
+      likeIcon.innerText = '❤️';
+      await db.collection('articles').doc(id).update({
+        likes: firebase.firestore.FieldValue.increment(1)
+      });
+    } else {
+      // Retirer le like
+      currentLikes = Math.max(0, currentLikes - 1);
+      localStorage.removeItem(storageKey);
+      likeBtn.style.background = 'transparent';
+      likeBtn.style.color = '#c0392b';
+      likeIcon.innerText = '🤍';
+      await db.collection('articles').doc(id).update({
+        likes: firebase.firestore.FieldValue.increment(-1)
+      });
     }
+    likeCountSpan.innerText = currentLikes;
+  } catch (err) {
+    console.error("Erreur lors de la mise à jour des likes :", err);
   }
 }
 
@@ -450,6 +410,23 @@ async function renderSingleArticle() {
 
     const formattedContent = art.content.split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
     document.getElementById('art-content').innerHTML = formattedContent;
+
+    // Mise à jour de l'état des likes
+    const likeCountSpan = document.getElementById('like-count');
+    const likeBtn = document.getElementById('like-btn');
+    const likeIcon = document.getElementById('like-icon');
+
+    if (likeCountSpan) {
+      likeCountSpan.innerText = art.likes || 0;
+    }
+
+    if (localStorage.getItem(`decorum_liked_${id}`) === 'true') {
+      if (likeBtn) {
+        likeBtn.style.background = '#c0392b';
+        likeBtn.style.color = '#ffffff';
+      }
+      if (likeIcon) likeIcon.innerText = '❤️';
+    }
 
     initReadingProgress();
   } catch (error) {
