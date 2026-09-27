@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
   <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Decorum Collectiv — Article</title>
@@ -19,7 +19,7 @@
   <!-- HEADER -->
   <header class="navbar">
     <div class="nav-container">
-      <a href="index.html" class="brand-logo">
+      <a href="index.html" class="brand-logo" title="Accueil (5 clics pour accès rédaction)">
         <img src="logo.png" alt="Decorum Logo" class="logo-img">
         <span class="brand-name">DECORUM</span>
       </a>
@@ -27,7 +27,6 @@
         <a href="index.html#journal">Journal</a>
         <a href="manifesto.html">Manifesto</a>
         <a href="index.html#contact">Contact</a>
-        <a href="admin.html" class="admin-link">+ Publier</a>
       </nav>
       <button class="menu-btn" type="button">MENU</button>
     </div>
@@ -36,7 +35,10 @@
   <!-- CONTENU DE L'ARTICLE -->
   <article class="article-page container">
     <header class="article-header">
-      <span class="tag" id="art-category">CATÉGORIE</span>
+      <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap;">
+        <span class="tag-type" id="art-type">FORMAT</span>
+        <span class="tag" id="art-category">CATÉGORIE</span>
+      </div>
       <h1 class="article-main-title" id="art-title">Titre de l'article</h1>
       <div class="article-meta-bar">
         <span id="art-author">Par Auteur</span> — <time id="art-date">DATE</time>
@@ -49,14 +51,18 @@
 
     <div class="article-body" id="art-content"></div>
 
-    <div class="article-actions">
-      <button onclick="deleteCurrentArticle()" class="btn-delete">Supprimer cet article</button>
+    <div class="article-actions" id="admin-actions" style="display: none;">
+      <button onclick="deleteCurrentArticle()" class="btn-delete">Supprimer cet article (Admin)</button>
     </div>
   </article>
 
   <script src="script.js"></script>
   <script>
     renderSingleArticle();
+    if (sessionStorage.getItem('decorum_admin_auth') === 'true') {
+      const actions = document.getElementById('admin-actions');
+      if (actions) actions.style.display = 'block';
+    }
   </script>
 </body>
 </html>
