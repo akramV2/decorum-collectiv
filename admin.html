@@ -158,54 +158,63 @@
       measurementId: "G-L6033RN4BQ"
     };
 
-    // Initialisation de Firebase
+    // Initialisation Firebase si pas encore faite
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
     }
 
     // Écoute de l'état de connexion Firebase Auth
     firebase.auth().onAuthStateChanged((user) => {
+      const lockElem = document.getElementById('admin-lock');
+      const contentElem = document.getElementById('admin-content');
+
       if (user) {
-        document.getElementById('admin-lock').style.display = 'none';
-        document.getElementById('admin-content').style.display = 'block';
-        renderAdminArticlesList();
+        if (lockElem) lockElem.style.display = 'none';
+        if (contentElem) contentElem.style.display = 'block';
+        if (typeof renderAdminArticlesList === 'function') {
+          renderAdminArticlesList();
+        }
       } else {
-        document.getElementById('admin-lock').style.display = 'block';
-        document.getElementById('admin-content').style.display = 'none';
+        if (lockElem) lockElem.style.display = 'block';
+        if (contentElem) contentElem.style.display = 'none';
       }
     });
 
     // Connexion
-    document.getElementById('login-form').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const email = document.getElementById('admin-email').value;
-      const pwd = document.getElementById('admin-password').value;
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+      loginForm.addEventListener('submit', async function(e) {
+        e.preventDefault(); // Empêche le rechargement de la page
+        const email = document.getElementById('admin-email').value;
+        const pwd = document.getElementById('admin-password').value;
 
-      try {
-        await firebase.auth().signInWithEmailAndPassword(email, pwd);
-        showNotification('Connexion réussie.');
-      } catch (error) {
-        console.error("Erreur Firebase Auth :", error);
-        showNotification('Identifiants incorrects.');
-      }
-    });
+        try {
+          await firebase.auth().signInWithEmailAndPassword(email, pwd);
+          if (typeof showNotification === 'function') {
+            showNotification('Connexion réussie.');
+          }
+        } catch (error) {
+          console.error("Erreur Firebase Auth :", error);
+          if (typeof showNotification === 'function') {
+            showNotification('Identifiants incorrects.');
+          } else {
+            alert('Identifiants incorrects.');
+          }
+        }
+      });
+    }
 
     // Déconnexion
     async function logoutAdmin() {
       try {
         await firebase.auth().signOut();
-        showNotification('Déconnexion réussie.');
+        if (typeof showNotification === 'function') showNotification('Déconnexion réussie.');
       } catch (error) {
         console.error("Erreur déconnexion :", error);
       }
     }
 
-    // Soumission du formulaire
-    document.getElementById('add-article-form').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      await executePublishing();
-    });
-
+    // Publication
     async function executePublishing() {
       const newArticle = {
         title: document.getElementById('title').value,
@@ -220,13 +229,23 @@
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      await saveNewArticle(newArticle);
+      if (typeof saveNewArticle === 'function') {
+        await saveNewArticle(newArticle);
+      }
       sessionStorage.setItem('decorum_toast', 'Publication mise en ligne avec succès !');
       window.location.href = 'index.html';
     }
 
+    const addForm = document.getElementById('add-article-form');
+    if (addForm) {
+      addForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await executePublishing();
+      });
+    }
+
     function submitFormFromPreview() {
-      closePreviewModal();
+      if (typeof closePreviewModal === 'function') closePreviewModal();
       executePublishing();
     }
   </script>
