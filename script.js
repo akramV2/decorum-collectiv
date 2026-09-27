@@ -1,6 +1,6 @@
 // Configuration Firebase officielle
 const firebaseConfig = {
-  apiKey: "AIzaSyBteD5R4XH3K-P0GtdjM5Y8e35AlKugnFU",
+  apiKey: "AIzaSyBteD5R4XH3K-P0GTdjM5Y8e35AlKugnFU",
   authDomain: "decorum-collectiv.firebaseapp.com",
   projectId: "decorum-collectiv",
   storageBucket: "decorum-collectiv.firebasestorage.app",
