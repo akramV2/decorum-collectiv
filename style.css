@@ -1159,3 +1159,38 @@ img {
   cursor: pointer;
   color: var(--navy);
 }
+
+/* Bouton Like Minimaliste */
+.btn-like-minimal {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted, #666);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-like-minimal:hover {
+  border-color: #111;
+  color: #111;
+}
+
+.btn-like-minimal.liked {
+  border-color: var(--rust, #c0392b);
+  color: var(--rust, #c0392b);
+}
+
+.btn-like-minimal svg {
+  transition: transform 0.2s ease, fill 0.2s ease;
+}
+
+.btn-like-minimal:active svg {
+  transform: scale(1.2);
+}
