@@ -54,7 +54,7 @@ function initLogoSecret() {
 }
 
 /* ==========================================================================
-   CARTE INTERACTIVE LEAFLET.JS (OEUVRES MONDIALES)
+   CARTE INTERACTIVE LEAFLET.JS (FIX : SANS CLÉ API)
    ========================================================================== */
 function initArchitectureMap() {
   const mapContainer = document.getElementById('architecture-map');
@@ -63,9 +63,10 @@ function initArchitectureMap() {
   // Vue globale (Monde)
   const map = L.map('architecture-map', { scrollWheelZoom: false }).setView([20, 10], 2.3);
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OpenStreetMap &copy; CARTO',
-    maxZoom: 18
+  // Fond de carte OpenStreetMap officiel (100 % gratuit, sans clé API)
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors',
+    maxZoom: 19
   }).addTo(map);
 
   const locations = [
