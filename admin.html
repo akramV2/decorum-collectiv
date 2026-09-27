@@ -42,7 +42,7 @@
     </form>
   </div>
 
-  <!-- FORMULAIRE DE RÉDACTION -->
+  <!-- FORMULAIRE DE RÉDACTION ET GESTION -->
   <main id="admin-content" class="container admin-container" style="display: none;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
       <h1 class="admin-title" style="margin-bottom:0;">Nouvelle Publication</h1>
@@ -106,6 +106,14 @@
         <button type="submit" class="btn-submit" style="margin-top:0;">PUBLIER EN LIGNE</button>
       </div>
     </form>
+
+    <!-- SECTION GESTION & SUPPRESSION DES ARTICLES -->
+    <section class="admin-manage-section" style="margin-top: 60px; padding-top: 40px; border-top: 1px solid rgba(0,0,0,0.12);">
+      <h2 style="font-family: 'Suez One', serif; font-size: 1.4rem; margin-bottom: 20px;">Gérer & supprimer des articles</h2>
+      <div id="admin-articles-list">
+        <p style="color: var(--text-muted);">Chargement des publications...</p>
+      </div>
+    </section>
   </main>
 
   <!-- MODALE D'APERÇU -->
@@ -137,6 +145,7 @@
       if (sessionStorage.getItem('decorum_admin_auth') === 'true') {
         document.getElementById('admin-lock').style.display = 'none';
         document.getElementById('admin-content').style.display = 'block';
+        renderAdminArticlesList();
       } else {
         document.getElementById('admin-lock').style.display = 'block';
         document.getElementById('admin-content').style.display = 'none';
@@ -177,6 +186,7 @@
         image: document.getElementById('image-url').value,
         excerpt: document.getElementById('excerpt').value,
         content: document.getElementById('content').value,
+        likes: 0,
         date: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase(),
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
