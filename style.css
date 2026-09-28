@@ -46,12 +46,12 @@ body {
   }
 }
 
-/* CURSEUR TEXTE SUR LES ÉCRITURES */
+/* CURSEUR TEXTE POUR LES ÉCRITURES */
 p, h1, h2, h3, h4, h5, h6, blockquote, span:not(.tag):not(.tag-type):not(.btn-link) {
   cursor: text;
 }
 
-a, button, .article-card, .btn-link, .btn-submit, .btn-preview, .scroll-down-badge {
+a, button, .article-card, .btn-link, .btn-submit, .btn-preview {
   cursor: pointer;
 }
 
@@ -74,22 +74,36 @@ img {
 }
 
 /* ==========================================================================
-   ANIMATIONS DE DEFILEMENT (SCROLL REVEAL)
+   CURSEUR SUIVEUR SCROLL DOWN
    ========================================================================== */
-.reveal {
+#custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background-color: var(--navy);
+  color: var(--white);
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   opacity: 0;
-  transform: translateY(35px);
-  transition: opacity 0.8s var(--transition-smooth), transform 0.8s var(--transition-smooth);
-  will-change: opacity, transform;
+  transform: translate(-50%, -50%) scale(0.8);
+  transition: opacity 0.3s ease, transform 0.15s ease-out;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
 }
 
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
+.hero {
+  cursor: none; /* Cache la souris par défaut dans la section Hero */
 }
 
 /* ==========================================================================
-   NAVBAR
+   NAVBAR & LOGO HOVER
    ========================================================================== */
 .navbar {
   position: fixed;
@@ -102,7 +116,7 @@ img {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  transition: padding 0.4s var(--transition-smooth), background-color 0.4s ease, box-shadow 0.4s ease;
+  transition: padding 0.4s var(--transition-smooth), background-color 0.4s ease;
 }
 
 .navbar.scrolled {
@@ -120,7 +134,6 @@ img {
   align-items: center;
 }
 
-/* LOGO SURVOL : LOGO PAR DÉFAUT -> TEXTE AU SURVOL (STYLE JOUTERS) */
 .brand-logo {
   display: inline-flex;
   align-items: center;
@@ -130,7 +143,6 @@ img {
   min-width: 40px;
   cursor: pointer;
   user-select: none;
-  text-decoration: none;
 }
 
 .logo-img {
@@ -168,14 +180,6 @@ img {
   pointer-events: auto;
 }
 
-.logo-img-small {
-  width: 32px;
-  height: 32px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 12px;
-}
-
 /* MENU À SEGMENTS / ONGLETS (STYLE JOUTERS EN BLEU MARINE) */
 .nav-links {
   display: flex;
@@ -185,7 +189,6 @@ img {
   overflow: hidden;
   border: 1px solid rgba(0, 0, 0, 0.15);
   padding: 0;
-  gap: 0;
 }
 
 .nav-links a {
@@ -196,7 +199,6 @@ img {
   letter-spacing: 1px;
   font-weight: 700;
   padding: 8px 16px;
-  text-decoration: none;
   background-color: transparent;
   transition: background-color 0.25s ease, color 0.25s ease;
   border-right: 1px solid rgba(0, 0, 0, 0.15);
@@ -223,16 +225,10 @@ img {
   font-size: 0.8rem;
   letter-spacing: 1.5px;
   cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.menu-btn:hover {
-  border-color: var(--white);
-  background-color: rgba(255, 255, 255, 0.05);
 }
 
 /* ==========================================================================
-   HERO SECTION & BADGE SCROLL DOWN
+   HERO SECTION
    ========================================================================== */
 .hero {
   position: relative;
@@ -251,9 +247,6 @@ img {
 .hero-content {
   position: relative;
   z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .hero-title {
@@ -273,35 +266,8 @@ img {
   opacity: 0.7;
 }
 
-/* BADGE SCROLL DOWN BLEU MARINE (ARRONDI) */
-.scroll-down-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 36px;
-  padding: 8px 18px;
-  background-color: var(--navy);
-  color: var(--white);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  transition: all 0.3s var(--transition-smooth);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  text-decoration: none;
-}
-
-.scroll-down-badge:hover {
-  background-color: var(--rust);
-  color: var(--white);
-  transform: translateY(3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-}
-
 /* ==========================================================================
-   SECTION INTRO
+   SECTION INTRO & JOURNAL
    ========================================================================== */
 .intro {
   padding: 90px 0;
@@ -323,31 +289,17 @@ img {
   font-size: 0.85rem;
   letter-spacing: 1.5px;
   color: var(--rust);
-  transition: letter-spacing 0.3s var(--transition-smooth), color 0.3s ease;
 }
 
-.btn-link:hover {
-  letter-spacing: 3px;
-}
-
-/* ==========================================================================
-   SECTION JOURNAL & CARTES
-   ========================================================================== */
 .journal {
   padding: 100px 0;
   background-color: var(--beige);
 }
 
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 48px;
-}
-
 .section-header h2 {
   font-family: var(--font-title);
   font-size: 2.5rem;
+  margin-bottom: 48px;
 }
 
 .articles-grid {
@@ -357,7 +309,6 @@ img {
 }
 
 .article-card {
-  cursor: pointer;
   transition: transform 0.4s var(--transition-smooth);
 }
 
@@ -384,18 +335,6 @@ img {
   transform: scale(1.05);
 }
 
-.placeholder-box {
-  background-color: var(--beige-card);
-  border: 1px dashed rgba(0, 0, 0, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-muted);
-  font-weight: 600;
-  letter-spacing: 2px;
-  font-size: 0.9rem;
-}
-
 .tag {
   position: absolute;
   top: 14px;
@@ -407,19 +346,6 @@ img {
   letter-spacing: 1.5px;
   padding: 5px 12px;
   border-radius: 2px;
-  z-index: 2;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.tag-type {
-  background-color: var(--rust);
-  color: var(--white);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  padding: 4px 10px;
-  border-radius: 2px;
-  text-transform: uppercase;
 }
 
 .card-meta {
@@ -432,25 +358,122 @@ img {
   font-family: var(--font-title);
   font-size: 1.3rem;
   line-height: 1.3;
-  transition: color 0.3s ease;
-}
-
-.article-card:hover .card-title {
-  color: var(--rust);
 }
 
 /* ==========================================================================
-   SECTION MANIFESTO & NEWSLETTER
+   CARTE INTERACTIVE LEAFLET (STYLE ÉDITORIAL & SOMBRE)
+   ========================================================================== */
+.map-section {
+  padding: 90px 0;
+  background-color: var(--navy);
+  color: var(--white);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.map-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.map-header h2 {
+  font-family: var(--font-title);
+  font-size: 2.2rem;
+  color: var(--white);
+  margin-top: 8px;
+}
+
+#architecture-map {
+  width: 100%;
+  height: 520px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+/* Filtre pour assombrir la carte OpenStreetMap */
+#architecture-map .leaflet-tile-pane {
+  filter: grayscale(100%) invert(92%) contrast(90%);
+}
+
+/* PINS MARQUEURS CUSTOMS */
+.custom-map-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-map-pin .pin-inner {
+  width: 12px;
+  height: 12px;
+  background-color: var(--rust);
+  border: 2px solid var(--white);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(200, 90, 50, 0.8);
+  transition: transform 0.25s ease, background-color 0.25s ease;
+}
+
+.custom-map-pin:hover .pin-inner {
+  transform: scale(1.6);
+  background-color: var(--white);
+  border-color: var(--rust);
+}
+
+/* POPUPS LEAFLET CUSTOMS DECORUM */
+.leaflet-popup-content-wrapper {
+  background-color: var(--navy) !important;
+  color: var(--white) !important;
+  border-radius: 4px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6) !important;
+  padding: 12px 16px !important;
+  font-family: var(--font-body) !important;
+}
+
+.leaflet-popup-tip {
+  background-color: var(--navy) !important;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  color: rgba(255, 255, 255, 0.6) !important;
+  padding: 8px !important;
+}
+
+.leaflet-container a.leaflet-popup-close-button:hover {
+  color: var(--rust) !important;
+}
+
+.popup-meta {
+  font-size: 0.7rem;
+  color: var(--rust);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.popup-title {
+  font-family: var(--font-title);
+  font-size: 1.15rem;
+  color: var(--white);
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+
+.popup-desc {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   MANIFESTO, CONTACT & FOOTER
    ========================================================================== */
 .manifesto {
   padding: 120px 0;
-  background-color: var(--navy);
+  background-color: var(--navy-light);
   color: var(--white);
   text-align: center;
-}
-
-.manifesto-container {
-  max-width: 800px;
 }
 
 .manifesto-quote {
@@ -460,104 +483,14 @@ img {
   margin-bottom: 24px;
 }
 
-.manifesto-author {
-  font-size: 0.9rem;
-  letter-spacing: 2px;
-  color: var(--rust);
-  text-transform: uppercase;
-}
-
-.newsletter {
-  padding: 90px 0;
-  background-color: var(--navy-light);
-  color: var(--white);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.newsletter-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  max-width: 650px;
-}
-
-.newsletter h3 {
-  font-family: var(--font-title);
-  font-size: 1.5rem;
-  margin-bottom: 24px;
-  font-weight: 400;
-}
-
-.newsletter-form {
-  display: flex;
-  width: 100%;
-  gap: 12px;
-}
-
-.newsletter-form input {
-  flex: 1;
-  padding: 14px 18px;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: var(--white);
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  outline: none;
-  transition: border-color 0.3s ease;
-}
-
-.newsletter-form input:focus {
-  border-color: var(--white);
-}
-
-.newsletter-form button {
-  padding: 14px 28px;
-  background-color: var(--white);
-  color: var(--navy);
-  border: none;
-  font-weight: 700;
-  font-size: 0.8rem;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-}
-
-.newsletter-form button:hover {
-  background-color: var(--rust);
-  color: var(--white);
-}
-
-/* ==========================================================================
-   SECTION CONTACT
-   ========================================================================== */
 .contact-section {
   padding: 100px 0;
   background-color: var(--beige);
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.contact-container {
-  max-width: 900px;
 }
 
 .contact-header {
   text-align: center;
   margin-bottom: 56px;
-}
-
-.contact-header h2 {
-  font-family: var(--font-title);
-  font-size: 2.5rem;
-  margin: 16px 0 12px 0;
-  color: var(--navy);
-}
-
-.contact-intro {
-  font-size: 1.05rem;
-  color: var(--text-muted);
-  max-width: 600px;
-  margin: 0 auto;
 }
 
 .contact-grid {
@@ -573,47 +506,9 @@ img {
   border-radius: 4px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   gap: 16px;
-  transition: transform 0.3s var(--transition-smooth), box-shadow 0.3s var(--transition-smooth), border-color 0.3s ease;
 }
 
-.contact-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
-  border-color: var(--rust);
-}
-
-.contact-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: var(--rust);
-}
-
-.contact-value {
-  font-family: var(--font-title);
-  font-size: 1.25rem;
-  color: var(--navy);
-  word-break: break-all;
-}
-
-.contact-action {
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  color: var(--navy);
-  margin-top: 8px;
-  transition: color 0.3s ease;
-}
-
-.contact-card:hover .contact-action {
-  color: var(--rust);
-}
-
-/* ==========================================================================
-   FOOTER
-   ========================================================================== */
 .footer {
   padding: 60px 0;
   background-color: var(--navy);
@@ -629,95 +524,11 @@ img {
   gap: 40px;
 }
 
-.footer-links {
-  display: flex;
-  gap: 60px;
-}
-
-.link-group h4 {
-  color: var(--white);
-  font-size: 0.75rem;
-  letter-spacing: 1.5px;
-  margin-bottom: 16px;
-}
-
-.link-group a {
-  display: block;
-  margin-bottom: 8px;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.link-group a:hover {
-  color: var(--white);
-}
-
-/* ==========================================================================
-   RESPONSIVE (MOBILE)
-   ========================================================================== */
 @media (max-width: 768px) {
-  .nav-links {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background-color: var(--navy);
-    padding: 24px;
-    gap: 12px;
-    border-radius: 0;
-    border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+  #custom-cursor {
+    display: none; /* Désactivé sur écran tactile */
   }
-
-  .nav-links a {
-    color: var(--white);
-    border-right: none;
-    width: 100%;
-    text-align: center;
+  .hero {
+    cursor: auto;
   }
-
-  .nav-links.active {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
-
-  .menu-btn {
-    display: block;
-  }
-}
-
-/* ==========================================================================
-   CARTE INTERACTIVE LEAFLET
-   ========================================================================== */
-.map-section {
-  padding: 90px 0;
-  background-color: var(--beige-card);
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.map-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.map-header h2 {
-  font-family: var(--font-title);
-  font-size: 2.2rem;
-  color: var(--navy);
-  margin-top: 8px;
-}
-
-#architecture-map {
-  width: 100%;
-  height: 480px;
-  border-radius: 4px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  z-index: 1;
 }
