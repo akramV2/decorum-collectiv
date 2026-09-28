@@ -1009,3 +1009,108 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   display: block;
   flex-shrink: 0;
 }
+
+/* ==========================================================================
+   STYLE DU BOUTON LIKE MINIMALISTE
+   ========================================================================== */
+.like-container {
+  display: flex;
+  justify-content: center;
+  margin: 40px 0 20px;
+}
+
+.like-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: transparent;
+  border: 1.5px solid var(--encre, #111111);
+  border-radius: 30px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.like-button .heart-icon {
+  fill: none;
+  stroke: var(--encre, #111111);
+  stroke-width: 2;
+  transition: transform 0.2s ease, fill 0.25s ease, stroke 0.25s ease;
+}
+
+.like-button:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.like-button:hover .heart-icon {
+  transform: scale(1.15);
+}
+
+.like-button.liked {
+  border-color: #e63946;
+  color: #e63946;
+}
+
+.like-button.liked .heart-icon {
+  fill: #e63946;
+  stroke: #e63946;
+}
+
+/* ==========================================================================
+   MEILLEURE MISE EN PAGE & TYPOGRAPHIE DU CONTENU ARTICLE
+   ========================================================================== */
+#art-content {
+  max-width: 680px;
+  margin: 0 auto;
+  font-size: 1.125rem;
+  line-height: 1.8;
+  color: var(--encre, #111111);
+}
+
+/* Paragraphes */
+#art-content p {
+  margin-bottom: 1.8em;
+  text-align: justify;
+}
+
+/* Lettrine sur le tout premier paragraphe */
+#art-content p:first-of-type::first-letter {
+  font-size: 3.4em;
+  float: left;
+  line-height: 0.8;
+  margin-right: 12px;
+  font-weight: 700;
+  color: var(--encre, #111111);
+}
+
+/* Titres H2 au sein des articles */
+#art-content h2 {
+  font-size: 1.5rem;
+  margin-top: 2.4em;
+  margin-bottom: 0.8em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  border-bottom: 2px solid var(--encre, #111111);
+  padding-bottom: 6px;
+}
+
+/* Titres H3 */
+#art-content h3 {
+  font-size: 1.25rem;
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  font-weight: 600;
+}
+
+/* Citations en exergue */
+#art-content blockquote {
+  margin: 2em 0;
+  padding: 16px 24px;
+  border-left: 4px solid var(--coral, #ff471a);
+  background: rgba(0, 0, 0, 0.02);
+  font-style: italic;
+  font-size: 1.2rem;
+}
