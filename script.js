@@ -15,6 +15,35 @@ if (typeof firebase !== 'undefined' && !firebase.apps.length) {
 const db = typeof firebase !== 'undefined' ? firebase.firestore() : null;
 
 /* ==========================================================================
+   FORMATAGE DE DATE (EX: JUN 8, 2024)
+   ========================================================================== */
+function formatDate(dateInput) {
+  if (!dateInput) return '';
+
+  let d = new Date(dateInput);
+
+  // Conversion si la date est en français (ex: "26 SEPTEMBRE 2026")
+  if (isNaN(d.getTime())) {
+    const str = String(dateInput).trim().toLowerCase();
+    const frMonths = {
+      'janvier': 0, 'février': 1, 'fevrier': 1, 'mars': 2, 'avril': 3, 'mai': 4, 'juin': 5,
+      'juillet': 6, 'août': 7, 'aout': 7, 'septembre': 8, 'octobre': 9, 'novembre': 10, 'décembre': 11, 'decembre': 11
+    };
+    const parts = str.split(/\s+/);
+    if (parts.length === 3 && frMonths[parts[1]] !== undefined) {
+      d = new Date(parseInt(parts[2]), frMonths[parts[1]], parseInt(parts[0]));
+    }
+  }
+
+  if (isNaN(d.getTime())) {
+    return String(dateInput).toUpperCase();
+  }
+
+  const monthsEn = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  return `${monthsEn[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+}
+
+/* ==========================================================================
    SMOOTH SCROLLING FLUIDE (LENIS)
    ========================================================================== */
 let lenisInstance = null;
@@ -251,7 +280,6 @@ function showNotification(message, duration = 3000) {
     document.body.appendChild(container);
   }
 
-  // Remplace le toast existant au lieu de les accumuler
   container.innerHTML = '';
 
   const toast = document.createElement('div');
@@ -301,7 +329,7 @@ async function renderArticlesGrid() {
       </div>
       <div class="card-meta">
         <span style="color: var(--coral); font-weight: 600; text-transform: uppercase; margin-right: 8px;">${art.type || 'ARTICLE'}</span>
-        <time>${art.date || ''}</time>
+        <time>${formatDate(art.date)}</time>
       </div>
       <h3 class="card-title">${art.title || 'Sans titre'}</h3>
       <p style="font-size: 0.85rem; color: var(--encre); margin-top: 8px; line-height: 1.5;">${art.excerpt || ''}</p>
@@ -346,7 +374,7 @@ async function renderSingleArticle() {
     if (authorEl) authorEl.textContent = `Par ${data.author || 'Decorum'}`;
 
     const dateEl = document.getElementById('art-date');
-    if (dateEl) dateEl.textContent = data.date || '';
+    if (dateEl) dateEl.textContent = formatDate(data.date);
 
     const imgWrapper = document.getElementById('art-image-wrapper');
     if (imgWrapper) {
@@ -362,14 +390,23 @@ async function renderSingleArticle() {
 
     const contentEl = document.getElementById('art-content');
     if (contentEl) {
-      const cleanHtml = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(data.content) : data.content;
+      let rawContent = data.content || '';
+
+      // Si le texte n'a pas de balises HTML, découpage auto des saut de lignes en paragraphes espacés
+      if (!/<[a-z][\s\S]*>/i.test(rawContent)) {
+        rawContent = rawContent
+          .split(/\n\s*\n/)
+          .map(p => `<p style="margin-bottom: 1.8rem; line-height: 1.85; font-size: 1.1rem; text-align: justify;">${p.trim()}</p>`)
+          .join('');
+      }
+
+      const cleanHtml = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawContent) : rawContent;
       contentEl.innerHTML = cleanHtml || '<p>Aucun contenu rédigé.</p>';
     }
 
     const likeCountEl = document.getElementById('like-count');
     if (likeCountEl) likeCountEl.textContent = data.likes || 0;
 
-    // Marque le cœur en rouge si cet article a déjà été aimé sur cet appareil
     const storageKey = `liked_${articleId}`;
     if (localStorage.getItem(storageKey)) {
       const btn = document.getElementById('like-btn');
@@ -393,7 +430,6 @@ async function toggleLikeArticle() {
 
   const storageKey = `liked_${articleId}`;
 
-  // Vérification de la présence d'un vote dans le cache du navigateur
   if (localStorage.getItem(storageKey)) {
     showNotification('Vous avez déjà aimé cet article.');
     return;
@@ -414,7 +450,6 @@ async function toggleLikeArticle() {
       if (countEl) countEl.textContent = newLikes;
     });
 
-    // Enregistrement du like
     localStorage.setItem(storageKey, 'true');
     if (btn) {
       btn.classList.add('liked');
@@ -573,7 +608,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initArchitectureMap();
   initSmartEmailLink();
 
-  // Affichage des notifications enregistrées lors des redirections
   const pendingToast = sessionStorage.getItem('decorum_toast');
   if (pendingToast) {
     showNotification(pendingToast);
