@@ -15,7 +15,36 @@ if (typeof firebase !== 'undefined' && !firebase.apps.length) {
 const db = typeof firebase !== 'undefined' ? firebase.firestore() : null;
 
 /* ==========================================================================
-   EASTER EGG : ACCÈS SECRET À L'ADMINISTRATION (5 CLICS SUR LE LOGO)
+   CURSEUR SUIVEUR DE SOURIS (SECTION HERO)
+   ========================================================================== */
+function initCustomCursor() {
+  const cursor = document.getElementById('custom-cursor');
+  const hero = document.querySelector('.hero');
+
+  if (!cursor || !hero) return;
+
+  hero.addEventListener('mousemove', (e) => {
+    cursor.style.left = `${e.clientX}px`;
+    cursor.style.top = `${e.clientY}px`;
+    cursor.style.opacity = '1';
+    cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+  });
+
+  hero.addEventListener('mouseleave', () => {
+    cursor.style.opacity = '0';
+    cursor.style.transform = 'translate(-50%, -50%) scale(0.8)';
+  });
+
+  hero.addEventListener('click', () => {
+    const nextSection = document.getElementById('intro');
+    if (nextSection) {
+      nextSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+}
+
+/* ==========================================================================
+   EASTER EGG : ACCÈS SECRET À L'ADMINISTRATION
    ========================================================================== */
 function initLogoSecret() {
   const logos = document.querySelectorAll('.brand-logo');
@@ -54,7 +83,7 @@ function initLogoSecret() {
 }
 
 /* ==========================================================================
-   CARTE INTERACTIVE LEAFLET.JS (SANS CLÉ API)
+   CARTE INTERACTIVE LEAFLET (AVEC DESIGN SOMBRE & MARQUEURS CUSTOM)
    ========================================================================== */
 function initArchitectureMap() {
   const mapContainer = document.getElementById('architecture-map');
@@ -66,6 +95,14 @@ function initArchitectureMap() {
     attribution: '&copy; OpenStreetMap contributors',
     maxZoom: 19
   }).addTo(map);
+
+  // Marqueur minimaliste personnalisé
+  const customPinIcon = L.divIcon({
+    className: 'custom-map-pin',
+    html: `<div class="pin-inner"></div>`,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10]
+  });
 
   const locations = [
     // --- LE CORBUSIER ---
@@ -94,11 +131,11 @@ function initArchitectureMap() {
   ];
 
   locations.forEach(loc => {
-    L.marker(loc.coords).addTo(map)
+    L.marker(loc.coords, { icon: customPinIcon }).addTo(map)
       .bindPopup(`
         <div class="popup-meta">${loc.city}</div>
         <div class="popup-title">${loc.name}</div>
-        <div style="font-size:0.8rem; color:#ccc;">${loc.desc}</div>
+        <div class="popup-desc">${loc.desc}</div>
       `);
   });
 }
@@ -128,7 +165,7 @@ function initReadingProgress() {
 }
 
 /* ==========================================================================
-   REDIRECTION INTELLIGENTE DU LIEN EMAIL (GMAIL WEB vs MOBILE MAIL)
+   REDIRECTION INTELLIGENTE DU LIEN EMAIL
    ========================================================================== */
 function initSmartEmailLink() {
   const emailLink = document.getElementById('email-contact-link');
@@ -145,77 +182,6 @@ function initSmartEmailLink() {
       window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${email}`, '_blank');
     }
   });
-}
-
-/* ==========================================================================
-   IMPORT PHOTO DIRECT (IMGBB API)
-   ========================================================================== */
-async function uploadImageDirect(input) {
-  const file = input.files[0];
-  if (!file) return;
-
-  const status = document.getElementById('upload-status');
-  if (status) status.innerText = "Téléversement en cours...";
-  
-  const API_KEY = 'a31942d73cdfaf38fdecda33d934cbba';
-  const formData = new FormData();
-  formData.append('image', file);
-
-  try {
-    const response = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`, {
-      method: 'POST',
-      body: formData
-    });
-    
-    const data = await response.json();
-
-    if (data.success) {
-      document.getElementById('image-url').value = data.data.url;
-      if (status) status.innerText = "✓ Photo téléversée avec succès !";
-    } else {
-      console.error("Erreur API ImgBB :", data);
-      if (status) status.innerText = `Erreur : ${data.error ? data.error.message : 'Téléversement refusé.'}`;
-    }
-  } catch (err) {
-    console.error("Erreur réseau/fetch :", err);
-    if (status) status.innerText = "Erreur de connexion. Vérifie ton réseau ou ton adblocker.";
-  }
-}
-
-/* ==========================================================================
-   MODALE D'APERÇU (ADMIN) — SÉCURISÉE DOMPURIFY
-   ========================================================================== */
-function openPreviewModal() {
-  const title = document.getElementById('title').value || 'Titre de la publication';
-  const type = document.getElementById('pub-type').value;
-  const category = (document.getElementById('category').value || 'Thématique').toUpperCase();
-  const author = document.getElementById('author').value || 'Raphaël';
-  const imageUrl = document.getElementById('image-url').value;
-  const excerpt = document.getElementById('excerpt').value || 'Extrait / Chapeau de présentation...';
-  const content = document.getElementById('content').value || 'Contenu complet de l\'article...';
-
-  document.getElementById('prev-type').innerText = type;
-  document.getElementById('prev-category').innerText = category;
-  document.getElementById('prev-title').innerText = title;
-  document.getElementById('prev-author').innerText = `Par ${author}`;
-  document.getElementById('prev-excerpt').innerText = excerpt;
-
-  const imgContainer = document.getElementById('prev-image');
-  if (imageUrl) {
-    imgContainer.innerHTML = `<img src="${imageUrl}" style="width:100%; max-height: 400px; object-fit: cover; border-radius:4px;">`;
-  } else {
-    imgContainer.innerHTML = '';
-  }
-
-  const rawContent = content.split('\n').filter(p => p.trim() !== '').map(p => `<p style="margin-bottom:16px; line-height:1.7;">${p}</p>`).join('');
-  const cleanContent = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawContent) : rawContent;
-  document.getElementById('prev-content').innerHTML = cleanContent;
-
-  document.getElementById('preview-modal').style.display = 'block';
-}
-
-function closePreviewModal() {
-  document.getElementById('preview-modal').style.display = 'none';
 }
 
 /* ==========================================================================
@@ -242,7 +208,7 @@ function showNotification(message, duration = 3500) {
 }
 
 /* ==========================================================================
-   GESTION CLOUD FIREBASE (ARTICLES, SUPPRESSION & LIKES)
+   GESTION CLOUD FIREBASE
    ========================================================================== */
 async function getArticlesFromCloud() {
   if (!db) return [];
@@ -255,103 +221,6 @@ async function getArticlesFromCloud() {
   }
 }
 
-async function saveNewArticle(article) {
-  if (!db) return;
-  try {
-    await db.collection('articles').add(article);
-  } catch (error) {
-    console.error("Erreur sauvegarde :", error);
-  }
-}
-
-// Affiche la liste des articles à supprimer dans admin.html
-async function renderAdminArticlesList() {
-  const container = document.getElementById('admin-articles-list');
-  if (!container) return;
-
-  container.innerHTML = '<p style="color: var(--text-muted);">Chargement des publications...</p>';
-  const articles = await getArticlesFromCloud();
-
-  if (articles.length === 0) {
-    container.innerHTML = '<p style="color: var(--text-muted);">Aucun article publié pour le moment.</p>';
-    return;
-  }
-
-  container.innerHTML = articles.map(art => `
-    <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.08); border-radius: 4px; margin-bottom: 12px; gap: 12px;">
-      <div>
-        <strong style="display: block; font-size: 0.95rem; color: var(--text-dark, #111);">${art.title}</strong>
-        <span style="font-size: 0.8rem; color: var(--text-muted);">${art.date} — ${art.category || 'Article'} (${art.likes || 0} likes)</span>
-      </div>
-      <button type="button" onclick="deleteArticleFromAdmin('${art.id}', '${art.title.replace(/'/g, "\\'")}')" style="background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; flex-shrink: 0;">
-        Supprimer
-      </button>
-    </div>
-  `).join('');
-}
-
-async function deleteArticleFromAdmin(id, title) {
-  if (!db) return;
-  if (confirm(`Voulez-vous vraiment supprimer l'article "${title}" ?`)) {
-    try {
-      await db.collection('articles').doc(id).delete();
-      showNotification("Article supprimé avec succès.");
-      renderAdminArticlesList();
-      renderArticlesGrid();
-    } catch (error) {
-      console.error("Erreur de suppression :", error);
-      showNotification("Erreur lors de la suppression.");
-    }
-  }
-}
-
-/* ==========================================================================
-   SYSTÈME DE LIKE SUR L'ARTICLE (MINIMALISTE & VECTORIEL)
-   ========================================================================== */
-async function toggleLikeArticle() {
-  if (!db) return;
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-  if (!id) return;
-
-  const likeBtn = document.getElementById('like-btn');
-  const likeIcon = document.getElementById('like-icon');
-  const likeCountSpan = document.getElementById('like-count');
-  
-  if (!likeBtn || !likeCountSpan || !likeIcon) return;
-
-  const storageKey = `decorum_liked_${id}`;
-  const isLiked = localStorage.getItem(storageKey) === 'true';
-
-  let currentLikes = parseInt(likeCountSpan.innerText) || 0;
-
-  try {
-    if (!isLiked) {
-      currentLikes += 1;
-      localStorage.setItem(storageKey, 'true');
-      likeBtn.classList.add('liked');
-      likeIcon.setAttribute('fill', 'currentColor');
-      await db.collection('articles').doc(id).update({
-        likes: firebase.firestore.FieldValue.increment(1)
-      });
-    } else {
-      currentLikes = Math.max(0, currentLikes - 1);
-      localStorage.removeItem(storageKey);
-      likeBtn.classList.remove('liked');
-      likeIcon.setAttribute('fill', 'none');
-      await db.collection('articles').doc(id).update({
-        likes: firebase.firestore.FieldValue.increment(-1)
-      });
-    }
-    likeCountSpan.innerText = currentLikes;
-  } catch (err) {
-    console.error("Erreur lors de la mise à jour des likes :", err);
-  }
-}
-
-/* ==========================================================================
-   RENDU DES PAGES (SÉCURISÉ DOMPURIFY)
-   ========================================================================== */
 async function renderArticlesGrid() {
   const container = document.getElementById('articles-grid');
   if (!container) return;
@@ -381,60 +250,6 @@ async function renderArticlesGrid() {
   `).join('');
 
   initScrollReveal();
-}
-
-async function renderSingleArticle() {
-  if (!db) return;
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-  if (!id) return;
-
-  try {
-    const doc = await db.collection('articles').doc(id).get();
-    if (!doc.exists) return;
-
-    const art = doc.data();
-
-    document.title = `${art.title} — Decorum Collectiv`;
-    document.getElementById('art-type').innerText = art.type || 'ARTICLE';
-    document.getElementById('art-category').innerText = art.category;
-    document.getElementById('art-title').innerText = art.title;
-    document.getElementById('art-author').innerText = `Par ${art.author}`;
-    document.getElementById('art-date').innerText = art.date;
-    document.getElementById('art-excerpt').innerText = art.excerpt;
-
-    const imgContainer = document.getElementById('art-image-wrapper');
-    if (art.image) {
-      imgContainer.innerHTML = `<img src="${art.image}" style="width:100%; max-height: 550px; object-fit: cover; border-radius:4px;">`;
-    } else {
-      imgContainer.innerHTML = `<div class="placeholder-box" style="height:250px;"><span>${art.title.toUpperCase()}</span></div>`;
-    }
-
-    const rawContent = art.content.split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
-    const cleanContent = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawContent) : rawContent;
-    document.getElementById('art-content').innerHTML = cleanContent;
-
-    // Mise à jour de l'état des likes
-    const likeCountSpan = document.getElementById('like-count');
-    const likeBtn = document.getElementById('like-btn');
-    const likeIcon = document.getElementById('like-icon');
-
-    if (likeCountSpan) {
-      likeCountSpan.innerText = art.likes || 0;
-    }
-
-    if (localStorage.getItem(`decorum_liked_${id}`) === 'true') {
-      if (likeBtn) likeBtn.classList.add('liked');
-      if (likeIcon) likeIcon.setAttribute('fill', 'currentColor');
-    } else {
-      if (likeBtn) likeBtn.classList.remove('liked');
-      if (likeIcon) likeIcon.setAttribute('fill', 'none');
-    }
-
-    initReadingProgress();
-  } catch (error) {
-    console.error("Erreur d'affichage :", error);
-  }
 }
 
 /* ==========================================================================
@@ -479,6 +294,7 @@ function initMobileMenu() {
    INITIALISATION
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
+  initCustomCursor();
   renderArticlesGrid();
   initScrollReveal();
   initNavbarScroll();
@@ -486,10 +302,4 @@ document.addEventListener('DOMContentLoaded', () => {
   initLogoSecret();
   initArchitectureMap();
   initSmartEmailLink();
-
-  const pendingToast = sessionStorage.getItem('decorum_toast');
-  if (pendingToast) {
-    showNotification(pendingToast);
-    sessionStorage.removeItem('decorum_toast');
-  }
 });
