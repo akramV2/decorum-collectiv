@@ -374,3 +374,55 @@ document.addEventListener('DOMContentLoaded', () => {
   initArchitectureMap();
   initSmartEmailLink();
 });
+
+// Chargement d'un article individuel dans article.html
+async function renderSingleArticle() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const articleId = urlParams.get('id');
+
+  if (!articleId) {
+    window.location.href = 'index.html';
+    return;
+  }
+
+  try {
+    const docRef = db.collection('articles').doc(articleId);
+    const doc = await docRef.get();
+
+    if (!doc.exists) {
+      console.error("Aucun article trouvé avec cet ID.");
+      return;
+    }
+
+    const data = doc.data();
+
+    // Mise à jour des éléments dans la page
+    document.title = `${data.title} — Decorum Collectiv`;
+    
+    const titleEl = document.querySelector('h1') || document.getElementById('article-title');
+    if (titleEl) titleEl.textContent = data.title;
+
+    const authorDateEl = document.querySelector('.article-meta') || document.getElementById('article-meta');
+    if (authorDateEl) authorDateEl.textContent = `Par ${data.author || 'Decorum'} — ${data.date || ''}`;
+
+    const contentEl = document.getElementById('article-content');
+    if (contentEl) contentEl.innerHTML = data.content || '';
+
+    const categoryEl = document.querySelector('.category-tag');
+    if (categoryEl) categoryEl.textContent = data.category || 'ARCHITECTURE';
+
+    const formatEl = document.querySelector('.format-tag');
+    if (formatEl) formatEl.textContent = data.format || 'ESSAI';
+
+    // Temps de lecture
+    const readTimeEl = document.getElementById('read-time') || document.querySelector('.read-time');
+    if (readTimeEl && data.content) {
+      const words = data.content.replace(/<[^>]*>/g, '').split(/\s+/).length;
+      const minutes = Math.max(1, Math.ceil(words / 200));
+      readTimeEl.textContent = `${minutes} min de lecture`;
+    }
+
+  } catch (error) {
+    console.error("Erreur de récupération de l'article :", error);
+  }
+}
