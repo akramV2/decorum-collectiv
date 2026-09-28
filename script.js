@@ -15,6 +15,39 @@ if (typeof firebase !== 'undefined' && !firebase.apps.length) {
 const db = typeof firebase !== 'undefined' ? firebase.firestore() : null;
 
 /* ==========================================================================
+   SCROLLSPY : DÉTECTION AUTOMATIQUE DE LA SECTION ACTIVE DANS LE MENU
+   ========================================================================== */
+function initScrollSpy() {
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+
+  if (!sections.length || !navLinks.length) return;
+
+  const observerOptions = {
+    root: null,
+    rootMargin: '-20% 0px -60% 0px',
+    threshold: 0
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const activeId = entry.target.getAttribute('id');
+        navLinks.forEach(link => {
+          if (link.getAttribute('href') === `#${activeId}`) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+      }
+    });
+  }, observerOptions);
+
+  sections.forEach(section => observer.observe(section));
+}
+
+/* ==========================================================================
    CURSEUR SUIVEUR DE SOURIS (SECTION HERO)
    ========================================================================== */
 function initCustomCursor() {
@@ -83,7 +116,7 @@ function initLogoSecret() {
 }
 
 /* ==========================================================================
-   CARTE INTERACTIVE LEAFLET (AVEC DESIGN SOMBRE & MARQUEURS CUSTOM)
+   CARTE INTERACTIVE LEAFLET
    ========================================================================== */
 function initArchitectureMap() {
   const mapContainer = document.getElementById('architecture-map');
@@ -96,7 +129,6 @@ function initArchitectureMap() {
     maxZoom: 19
   }).addTo(map);
 
-  // Marqueur minimaliste personnalisé
   const customPinIcon = L.divIcon({
     className: 'custom-map-pin',
     html: `<div class="pin-inner"></div>`,
@@ -295,6 +327,7 @@ function initMobileMenu() {
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
   initCustomCursor();
+  initScrollSpy();
   renderArticlesGrid();
   initScrollReveal();
   initNavbarScroll();
