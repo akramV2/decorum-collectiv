@@ -15,14 +15,21 @@ if (typeof firebase !== 'undefined' && !firebase.apps.length) {
 const db = typeof firebase !== 'undefined' ? firebase.firestore() : null;
 
 /* ==========================================================================
-   FORMATAGE DE DATE (EX: JUN 8, 2024)
+   FORMATAGE DE DATE UNIFIÉ (EX: JUN 8, 2024)
    ========================================================================== */
 function formatDate(dateInput) {
   if (!dateInput) return '';
 
-  let d = new Date(dateInput);
+  let d;
 
-  // Conversion si la date est en français (ex: "26 SEPTEMBRE 2026")
+  // Gestion des Timestamps Firestore
+  if (dateInput && typeof dateInput.toDate === 'function') {
+    d = dateInput.toDate();
+  } else {
+    d = new Date(dateInput);
+  }
+
+  // Conversion si la date est saisie en texte français (ex: "26 SEPTEMBRE 2026")
   if (isNaN(d.getTime())) {
     const str = String(dateInput).trim().toLowerCase();
     const frMonths = {
@@ -329,7 +336,7 @@ async function renderArticlesGrid() {
       </div>
       <div class="card-meta">
         <span style="color: var(--coral); font-weight: 600; text-transform: uppercase; margin-right: 8px;">${art.type || 'ARTICLE'}</span>
-        <time>${formatDate(art.date)}</time>
+        <time>${formatDate(art.date || art.createdAt)}</time>
       </div>
       <h3 class="card-title">${art.title || 'Sans titre'}</h3>
       <p style="font-size: 0.85rem; color: var(--encre); margin-top: 8px; line-height: 1.5;">${art.excerpt || ''}</p>
@@ -340,7 +347,7 @@ async function renderArticlesGrid() {
 }
 
 /* ==========================================================================
-   PAGE ARTICLE INDIVIDUELLE
+   PAGE ARTICLE INDIVIDUELLE (AFFICHAGE ÉDITORIAL AVANCÉ)
    ========================================================================== */
 async function renderSingleArticle() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -359,10 +366,10 @@ async function renderSingleArticle() {
 
     const data = doc.data();
 
-    document.title = `${data.title} — Decorum Collectiv`;
+    document.title = `${data.title || 'Article'} — Decorum Collectiv`;
     
     const titleEl = document.getElementById('art-title');
-    if (titleEl) titleEl.textContent = data.title;
+    if (titleEl) titleEl.textContent = data.title || 'Sans titre';
 
     const formatEl = document.getElementById('art-type');
     if (formatEl) formatEl.textContent = data.type || 'ESSAI';
@@ -374,12 +381,12 @@ async function renderSingleArticle() {
     if (authorEl) authorEl.textContent = `Par ${data.author || 'Decorum'}`;
 
     const dateEl = document.getElementById('art-date');
-    if (dateEl) dateEl.textContent = formatDate(data.date);
+    if (dateEl) dateEl.textContent = formatDate(data.date || data.createdAt);
 
     const imgWrapper = document.getElementById('art-image-wrapper');
     if (imgWrapper) {
       if (data.image) {
-        imgWrapper.innerHTML = `<img src="${data.image}" alt="${data.title}" style="width:100%; height:auto; border: 2px solid var(--encre); margin-bottom: 24px;">`;
+        imgWrapper.innerHTML = `<img src="${data.image}" alt="${data.title || ''}">`;
       } else {
         imgWrapper.innerHTML = '';
       }
@@ -392,12 +399,19 @@ async function renderSingleArticle() {
     if (contentEl) {
       let rawContent = data.content || '';
 
-      // Si le texte n'a pas de balises HTML, découpage auto des saut de lignes en paragraphes espacés
+      // Si le contenu n'a pas encore de balises HTML, découpage dynamique
       if (!/<[a-z][\s\S]*>/i.test(rawContent)) {
-        rawContent = rawContent
-          .split(/\n\s*\n/)
-          .map(p => `<p style="margin-bottom: 1.8rem; line-height: 1.85; font-size: 1.1rem; text-align: justify;">${p.trim()}</p>`)
-          .join('');
+        const blocks = rawContent.split(/\n\s*\n/);
+        rawContent = blocks.map(block => {
+          const trimmed = block.trim();
+          if (!trimmed) return '';
+          
+          // Détection automatique des sous-titres (lignes courtes sans point final)
+          if (trimmed.length < 80 && !trimmed.endsWith('.') && !trimmed.endsWith('?') && !trimmed.endsWith('!')) {
+            return `<h2>${trimmed}</h2>`;
+          }
+          return `<p>${trimmed}</p>`;
+        }).join('');
       }
 
       const cleanHtml = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawContent) : rawContent;
