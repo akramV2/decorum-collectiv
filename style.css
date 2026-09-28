@@ -1070,47 +1070,59 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   color: var(--encre, #111111);
 }
 
-/* Paragraphes */
+/* Alignement gauche plus fluide + gestion des mots longs */
 #art-content p {
-  margin-bottom: 1.8em;
-  text-align: justify;
+  margin-bottom: 1.8rem;
+  text-align: left;
+  letter-spacing: -0.01em;
+  word-break: break-word;
 }
 
-/* Lettrine sur le tout premier paragraphe */
-#art-content p:first-of-type::first-letter {
-  font-size: 3.4em;
-  float: left;
-  line-height: 0.8;
-  margin-right: 12px;
-  font-weight: 700;
-  color: var(--encre, #111111);
+/* Chapeau (premier paragraphe plus grand et structurant) */
+#art-content p:first-of-type {
+  font-size: 1.25rem;
+  line-height: 1.7;
+  font-weight: 500;
+  margin-bottom: 2.2rem;
+  color: #222222;
 }
 
-/* Titres H2 au sein des articles */
+/* Titres H2 - Style éditorial net */
 #art-content h2 {
   font-size: 1.5rem;
-  margin-top: 2.4em;
-  margin-bottom: 0.8em;
   font-weight: 700;
-  letter-spacing: -0.02em;
-  border-bottom: 2px solid var(--encre, #111111);
-  padding-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  margin-top: 3.2rem;
+  margin-bottom: 1.2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid var(--encre, #111111);
 }
 
 /* Titres H3 */
 #art-content h3 {
   font-size: 1.25rem;
-  margin-top: 1.8em;
-  margin-bottom: 0.6em;
-  font-weight: 600;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 0.8rem;
 }
 
-/* Citations en exergue */
+/* Citation / Exergue moderne */
 #art-content blockquote {
-  margin: 2em 0;
-  padding: 16px 24px;
+  margin: 2.5rem 0;
+  padding: 1.2rem 1.8rem;
+  background-color: rgba(0, 0, 0, 0.03);
   border-left: 4px solid var(--coral, #ff471a);
-  background: rgba(0, 0, 0, 0.02);
-  font-style: italic;
   font-size: 1.2rem;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* Puces & listes */
+#art-content ul, #art-content ol {
+  margin: 1.5rem 0 1.8rem 1.5rem;
+}
+
+#art-content li {
+  margin-bottom: 0.6rem;
 }
