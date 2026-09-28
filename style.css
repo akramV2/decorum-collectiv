@@ -991,3 +991,21 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   display: inline-block;
   vertical-align: middle;
 }
+
+/* Alignement parfait de l'icône et du titre dans les en-têtes de section */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.section-header h2 {
+  margin: 0;
+  line-height: 1;
+}
+
+.section-header .brand-icon {
+  display: block;
+  flex-shrink: 0;
+}
