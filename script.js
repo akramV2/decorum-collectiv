@@ -241,15 +241,18 @@ function initSmartEmailLink() {
 }
 
 /* ==========================================================================
-   SYSTÈME DE NOTIFICATIONS (TOASTS)
+   SYSTÈME DE NOTIFICATIONS (TOASTS) - SANS EMPILLEMENT
    ========================================================================== */
-function showNotification(message, duration = 3500) {
+function showNotification(message, duration = 3000) {
   let container = document.getElementById('toast-container');
   if (!container) {
     container = document.createElement('div');
     container.id = 'toast-container';
     document.body.appendChild(container);
   }
+
+  // Remplace le toast existant au lieu de les accumuler
+  container.innerHTML = '';
 
   const toast = document.createElement('div');
   toast.className = 'toast';
@@ -259,7 +262,7 @@ function showNotification(message, duration = 3500) {
   setTimeout(() => { toast.classList.add('show'); }, 10);
   setTimeout(() => {
     toast.classList.remove('show');
-    setTimeout(() => { toast.remove(); }, 400);
+    setTimeout(() => { toast.remove(); }, 300);
   }, duration);
 }
 
@@ -366,6 +369,13 @@ async function renderSingleArticle() {
     const likeCountEl = document.getElementById('like-count');
     if (likeCountEl) likeCountEl.textContent = data.likes || 0;
 
+    // Marque le cœur en rouge si cet article a déjà été aimé sur cet appareil
+    const storageKey = `liked_${articleId}`;
+    if (localStorage.getItem(storageKey)) {
+      const btn = document.getElementById('like-btn');
+      if (btn) btn.classList.add('liked');
+    }
+
     initReadingProgress();
 
   } catch (error) {
@@ -373,10 +383,24 @@ async function renderSingleArticle() {
   }
 }
 
+/* ==========================================================================
+   GESTION DES LIKES (1 SEUL VOTE AUTORISÉ)
+   ========================================================================== */
 async function toggleLikeArticle() {
   const urlParams = new URLSearchParams(window.location.search);
   const articleId = urlParams.get('id');
   if (!articleId || !db) return;
+
+  const storageKey = `liked_${articleId}`;
+
+  // Vérification de la présence d'un vote dans le cache du navigateur
+  if (localStorage.getItem(storageKey)) {
+    showNotification('Vous avez déjà aimé cet article.');
+    return;
+  }
+
+  const btn = document.getElementById('like-btn');
+  if (btn) btn.disabled = true;
 
   const docRef = db.collection('articles').doc(articleId);
   try {
@@ -385,12 +409,21 @@ async function toggleLikeArticle() {
       if (!doc.exists) return;
       const newLikes = (doc.data().likes || 0) + 1;
       transaction.update(docRef, { likes: newLikes });
+
       const countEl = document.getElementById('like-count');
       if (countEl) countEl.textContent = newLikes;
     });
+
+    // Enregistrement du like
+    localStorage.setItem(storageKey, 'true');
+    if (btn) {
+      btn.classList.add('liked');
+      btn.disabled = false;
+    }
     showNotification('Merci pour votre soutien !');
   } catch (error) {
     console.error("Erreur lors du like :", error);
+    if (btn) btn.disabled = false;
   }
 }
 
@@ -532,6 +565,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCustomCursor();
   initScrollSpy();
   renderArticlesGrid();
+  renderSingleArticle();
   initScrollReveal();
   initNavbarScroll();
   initMobileMenu();
