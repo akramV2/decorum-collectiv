@@ -25,11 +25,30 @@
 }
 
 html {
-  scroll-behavior: smooth;
   font-family: var(--font-body);
   background-color: var(--beige);
   color: var(--text-dark);
   -webkit-tap-highlight-color: transparent;
+}
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
 
 body {
@@ -435,7 +454,7 @@ img {
 }
 
 /* ==========================================================================
-   CARTE INTERACTIVE LEAFLET (SOMBRE & ÉDITORIALE)
+   CARTE INTERACTIVE LEAFLET
    ========================================================================== */
 .map-section {
   padding: 90px 0;
@@ -750,7 +769,7 @@ img {
 }
 
 /* ==========================================================================
-   ADMIN & ARTICLE (ESPACES RÉDACTION ET PAGE ARTICLE)
+   ADMIN & ARTICLE
    ========================================================================== */
 .admin-container {
   padding-top: 140px;
