@@ -1,16 +1,17 @@
 {
+  "name": "DECORUM COLLECTIV",
   "short_name": "DECORUM",
-  "name": "DECORUM Collectiv",
+  "description": "A Chronicle of Architectural Thought",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#F5F3EE",
+  "theme_color": "#2A38F5",
   "icons": [
     {
-      "src": "logo.png",
-      "sizes": "192x192 512x512",
-      "type": "image/png",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'><rect width='250' height='500' fill='%232A38F5'/><path d='M250 0 C388.071 0 500 111.929 500 250 C500 388.071 388.071 500 250 500 V0Z' fill='%23FF5A3C'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     }
-  ],
-  "start_url": "/index.html",
-  "background_color": "#0B111A",
-  "theme_color": "#0B111A",
-  "display": "standalone"
+  ]
 }
