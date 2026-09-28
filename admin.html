@@ -14,9 +14,9 @@
   <link rel="apple-touch-icon" href="logo.png">
   <link rel="manifest" href="manifest.json">
 
- <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Schibsted+Grotesk:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Schibsted+Grotesk:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 
   <!-- Firebase SDK -->
@@ -33,7 +33,10 @@
   <header class="navbar">
     <div class="nav-container">
       <a href="index.html" class="brand-logo">
-        <img src="logo.png" alt="Decorum Logo" class="logo-img">
+        <svg class="logo-d-icon" width="36" height="36" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="250" height="500" fill="#2A38F5" />
+          <path d="M250 0 C388.071 0 500 111.929 500 250 C500 388.071 388.071 500 250 500 V0Z" fill="#FF5A3C" />
+        </svg>
         <span class="brand-name">DECORUM (RÉDACTION)</span>
       </a>
       <nav class="nav-links">
@@ -63,7 +66,7 @@
   <main id="admin-content" class="container admin-container" style="display: none;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
       <h1 class="admin-title" style="margin-bottom:0;">Nouvelle Publication</h1>
-      <button onclick="logoutAdmin()" style="background:none; border:none; color:var(--rust); cursor:pointer; font-weight:600;">Se déconnecter</button>
+      <button onclick="logoutAdmin()" style="background:none; border:none; color:var(--coral); cursor:pointer; font-weight:700;">Se déconnecter</button>
     </div>
 
     <form id="add-article-form" class="admin-form">
@@ -105,7 +108,7 @@
             <input type="file" id="file-input" accept="image/*" style="display:none;" onchange="uploadImageDirect(this)">
           </label>
         </div>
-        <span id="upload-status" style="font-size: 0.8rem; color: var(--rust); font-weight: 600;"></span>
+        <span id="upload-status" style="font-size: 0.8rem; color: var(--coral); font-weight: 700;"></span>
       </div>
 
       <div class="form-group">
@@ -125,10 +128,10 @@
     </form>
 
     <!-- SECTION GESTION & SUPPRESSION DES ARTICLES -->
-    <section class="admin-manage-section" style="margin-top: 60px; padding-top: 40px; border-top: 1px solid rgba(0,0,0,0.12);">
-      <h2 style="font-family: 'Suez One', serif; font-size: 1.4rem; margin-bottom: 20px;">Gérer & supprimer des articles</h2>
+    <section class="admin-manage-section" style="margin-top: 60px; padding-top: 40px; border-top: 2px solid var(--encre);">
+      <h2 style="font-family: var(--font-title); font-size: 1.6rem; margin-bottom: 20px;">Gérer & supprimer des articles</h2>
       <div id="admin-articles-list">
-        <p style="color: var(--text-muted);">Chargement des publications...</p>
+        <p style="color: var(--encre);">Chargement des publications...</p>
       </div>
     </section>
   </main>
