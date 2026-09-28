@@ -35,7 +35,6 @@ function initSmoothScroll() {
   }
   requestAnimationFrame(raf);
 
-  // Gestion des liens d'ancres avec transition fluide Lenis
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
       const targetId = this.getAttribute('href');
@@ -122,12 +121,12 @@ function initLogoSecret() {
     let clickTimer = null;
 
     logo.addEventListener('click', (e) => {
-      e.preventDefault();
       clickCount++;
 
       if (clickTimer) clearTimeout(clickTimer);
 
       if (clickCount >= 5) {
+        e.preventDefault();
         clickCount = 0;
         showNotification('Accès rédaction déverrouillé...');
         setTimeout(() => {
@@ -138,15 +137,6 @@ function initLogoSecret() {
 
       clickTimer = setTimeout(() => {
         clickCount = 0;
-        const target = logo.getAttribute('href') || 'index.html';
-        const isHomePage = window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/');
-
-        if (isHomePage) {
-          if (lenisInstance) lenisInstance.scrollTo(0);
-          else window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          window.location.href = target;
-        }
       }, 400);
     });
   });
@@ -174,7 +164,6 @@ function initArchitectureMap() {
   });
 
   const locations = [
-    // --- LE CORBUSIER ---
     { name: "Villa Savoye", city: "Poissy (France)", coords: [48.9244, 2.0283], desc: "Le Corbusier — Manifeste du Modernisme (1931)" },
     { name: "Cité Radieuse", city: "Marseille (France)", coords: [43.2612, 5.3965], desc: "Le Corbusier — Unité d'habitation emblématique (1952)" },
     { name: "Chapelle Notre-Dame du Haut", city: "Ronchamp (France)", coords: [47.7044, 6.6206], desc: "Le Corbusier — Expressionnisme sculptural en béton (1955)" },
@@ -185,8 +174,6 @@ function initArchitectureMap() {
     { name: "Musée National d'Art Occidental", city: "Tokyo (Japon)", coords: [35.7154, 139.7758], desc: "Le Corbusier — Musée à croissance illimitée (1959)" },
     { name: "Carpenter Center", city: "Cambridge (États-Unis)", coords: [42.3736, -71.1147], desc: "Le Corbusier — Seul bâtiment de l'architecte aux USA (1963)" },
     { name: "Unité d'Habitation Berlin", city: "Berlin (Allemagne)", coords: [52.5113, 13.2405], desc: "Le Corbusier — Type « Corbusierhaus » (1958)" },
-
-    // --- TADAO ANDŌ ---
     { name: "Église de la Lumière", city: "Ibaraki, Osaka (Japon)", coords: [34.8161, 135.5383], desc: "Tadao Andō — Fente en croix sculptée par le soleil (1989)" },
     { name: "Chichu Art Museum", city: "Naoshima (Japon)", coords: [34.4489, 133.9877], desc: "Tadao Andō — Architecture enterrée au service de l'art (2004)" },
     { name: "Maison Row (Azuma)", city: "Osaka (Japon)", coords: [34.6083, 135.4950], desc: "Tadao Andō — Maison étroite en béton brut avec patio (1976)" },
@@ -219,7 +206,7 @@ function initReadingProgress() {
 
   if (content && timeBadge) {
     const text = content.innerText || '';
-    const wordCount = text.trim().split(/\s+/).length;
+    const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
     const readMinutes = Math.max(1, Math.ceil(wordCount / 200));
     timeBadge.innerText = `${readMinutes} min de lecture`;
   }
@@ -294,31 +281,209 @@ async function renderArticlesGrid() {
   const container = document.getElementById('articles-grid');
   if (!container) return;
 
-  container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 0;">Chargement des publications...</p>';
+  container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--encre); padding: 40px 0;">Chargement des publications...</p>';
 
   const articles = await getArticlesFromCloud();
   
   if (articles.length === 0) {
-    container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 0;">Aucune publication pour le moment.</p>';
+    container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--encre); padding: 40px 0;">Aucune publication pour le moment.</p>';
     return;
   }
 
   container.innerHTML = articles.map(art => `
     <article class="article-card reveal" onclick="window.location.href='article.html?id=${art.id}'">
       <div class="card-image ${!art.image ? 'placeholder-box' : ''}">
-        ${art.image ? `<img src="${art.image}" alt="${art.title}" loading="lazy">` : `<span>${art.title.toUpperCase()}</span>`}
-        <span class="tag">${art.category}</span>
+        ${art.image ? `<img src="${art.image}" alt="${art.title}" loading="lazy">` : `<span>${(art.title || '').toUpperCase()}</span>`}
+        <span class="tag">${art.category || 'ARCHITECTURE'}</span>
       </div>
       <div class="card-meta">
-        <span style="color: var(--rust); font-weight: 600; text-transform: uppercase; margin-right: 8px;">${art.type || 'ARTICLE'}</span>
-        <time>${art.date}</time>
+        <span style="color: var(--coral); font-weight: 600; text-transform: uppercase; margin-right: 8px;">${art.type || 'ARTICLE'}</span>
+        <time>${art.date || ''}</time>
       </div>
-      <h3 class="card-title">${art.title}</h3>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; line-height: 1.5;">${art.excerpt}</p>
+      <h3 class="card-title">${art.title || 'Sans titre'}</h3>
+      <p style="font-size: 0.85rem; color: var(--encre); margin-top: 8px; line-height: 1.5;">${art.excerpt || ''}</p>
     </article>
   `).join('');
 
   initScrollReveal();
+}
+
+/* ==========================================================================
+   PAGE ARTICLE INDIVIDUELLE
+   ========================================================================== */
+async function renderSingleArticle() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const articleId = urlParams.get('id');
+
+  if (!articleId || !db) return;
+
+  try {
+    const docRef = db.collection('articles').doc(articleId);
+    const doc = await docRef.get();
+
+    if (!doc.exists) {
+      console.error("Aucun article trouvé avec cet ID.");
+      return;
+    }
+
+    const data = doc.data();
+
+    document.title = `${data.title} — Decorum Collectiv`;
+    
+    const titleEl = document.getElementById('art-title');
+    if (titleEl) titleEl.textContent = data.title;
+
+    const formatEl = document.getElementById('art-type');
+    if (formatEl) formatEl.textContent = data.type || 'ESSAI';
+
+    const categoryEl = document.getElementById('art-category');
+    if (categoryEl) categoryEl.textContent = data.category || 'ARCHITECTURE';
+
+    const authorEl = document.getElementById('art-author');
+    if (authorEl) authorEl.textContent = `Par ${data.author || 'Decorum'}`;
+
+    const dateEl = document.getElementById('art-date');
+    if (dateEl) dateEl.textContent = data.date || '';
+
+    const imgWrapper = document.getElementById('art-image-wrapper');
+    if (imgWrapper) {
+      if (data.image) {
+        imgWrapper.innerHTML = `<img src="${data.image}" alt="${data.title}" style="width:100%; height:auto; border: 2px solid var(--encre); margin-bottom: 24px;">`;
+      } else {
+        imgWrapper.innerHTML = '';
+      }
+    }
+
+    const excerptEl = document.getElementById('art-excerpt');
+    if (excerptEl) excerptEl.textContent = data.excerpt || '';
+
+    const contentEl = document.getElementById('art-content');
+    if (contentEl) {
+      const cleanHtml = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(data.content) : data.content;
+      contentEl.innerHTML = cleanHtml || '<p>Aucun contenu rédigé.</p>';
+    }
+
+    const likeCountEl = document.getElementById('like-count');
+    if (likeCountEl) likeCountEl.textContent = data.likes || 0;
+
+    initReadingProgress();
+
+  } catch (error) {
+    console.error("Erreur de récupération de l'article :", error);
+  }
+}
+
+async function toggleLikeArticle() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const articleId = urlParams.get('id');
+  if (!articleId || !db) return;
+
+  const docRef = db.collection('articles').doc(articleId);
+  try {
+    await db.runTransaction(async (transaction) => {
+      const doc = await transaction.get(docRef);
+      if (!doc.exists) return;
+      const newLikes = (doc.data().likes || 0) + 1;
+      transaction.update(docRef, { likes: newLikes });
+      const countEl = document.getElementById('like-count');
+      if (countEl) countEl.textContent = newLikes;
+    });
+    showNotification('Merci pour votre soutien !');
+  } catch (error) {
+    console.error("Erreur lors du like :", error);
+  }
+}
+
+/* ==========================================================================
+   ESPACE RÉDACTION / ADMIN
+   ========================================================================== */
+function uploadImageDirect(input) {
+  const status = document.getElementById('upload-status');
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    if (file.size > 2 * 1024 * 1024) {
+      if (status) status.innerText = 'Fichier trop lourd (max 2 Mo)';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('image-url').value = e.target.result;
+      if (status) status.innerText = 'Image chargée avec succès !';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function openPreviewModal() {
+  const modal = document.getElementById('preview-modal');
+  if (!modal) return;
+
+  document.getElementById('prev-type').innerText = document.getElementById('pub-type').value;
+  document.getElementById('prev-category').innerText = document.getElementById('category').value.toUpperCase();
+  document.getElementById('prev-title').innerText = document.getElementById('title').value || 'Titre de l\'article';
+  document.getElementById('prev-author').innerText = `Par ${document.getElementById('author').value}`;
+  document.getElementById('prev-excerpt').innerText = document.getElementById('excerpt').value;
+  
+  const rawContent = document.getElementById('content').value;
+  document.getElementById('prev-content').innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawContent) : rawContent;
+
+  const imgUrl = document.getElementById('image-url').value;
+  const imgBox = document.getElementById('prev-image');
+  if (imgUrl && imgBox) {
+    imgBox.innerHTML = `<img src="${imgUrl}" alt="Aperçu" style="width:100%; border:2px solid var(--encre); margin-bottom:20px;">`;
+  } else if (imgBox) {
+    imgBox.innerHTML = '';
+  }
+
+  modal.style.display = 'block';
+}
+
+function closePreviewModal() {
+  const modal = document.getElementById('preview-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function saveNewArticle(articleData) {
+  if (!db) return;
+  try {
+    await db.collection('articles').add(articleData);
+  } catch (error) {
+    console.error("Erreur lors de la publication :", error);
+    throw error;
+  }
+}
+
+async function renderAdminArticlesList() {
+  const listContainer = document.getElementById('admin-articles-list');
+  if (!listContainer || !db) return;
+
+  const articles = await getArticlesFromCloud();
+  if (articles.length === 0) {
+    listContainer.innerHTML = '<p style="color: var(--encre);">Aucun article publié pour le moment.</p>';
+    return;
+  }
+
+  listContainer.innerHTML = articles.map(art => `
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border: 2px solid var(--encre); background: var(--white); margin-bottom: 12px;">
+      <div>
+        <strong>${art.title}</strong>
+        <span style="font-size: 0.8rem; color: var(--coral); margin-left: 8px;">[${art.type || 'ARTICLE'}]</span>
+      </div>
+      <button onclick="deleteArticleFromAdmin('${art.id}')" class="btn-delete" style="padding: 6px 12px; font-size: 0.8rem;">Supprimer</button>
+    </div>
+  `).join('');
+}
+
+async function deleteArticleFromAdmin(id) {
+  if (!db || !confirm("Confirmer la suppression définitive de cet article ?")) return;
+  try {
+    await db.collection('articles').doc(id).delete();
+    showNotification("Article supprimé avec succès.");
+    renderAdminArticlesList();
+  } catch (error) {
+    console.error("Erreur de suppression :", error);
+    showNotification("Erreur lors de la suppression.");
+  }
 }
 
 /* ==========================================================================
@@ -373,96 +538,11 @@ document.addEventListener('DOMContentLoaded', () => {
   initLogoSecret();
   initArchitectureMap();
   initSmartEmailLink();
+
+  // Affichage des notifications enregistrées lors des redirections
+  const pendingToast = sessionStorage.getItem('decorum_toast');
+  if (pendingToast) {
+    showNotification(pendingToast);
+    sessionStorage.removeItem('decorum_toast');
+  }
 });
-
-// Chargement d'un article individuel dans article.html
-async function renderSingleArticle() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const articleId = urlParams.get('id');
-
-  if (!articleId) {
-    window.location.href = 'index.html';
-    return;
-  }
-
-  try {
-    const docRef = db.collection('articles').doc(articleId);
-    const doc = await docRef.get();
-
-    if (!doc.exists) {
-      console.error("Aucun article trouvé avec cet ID.");
-      return;
-    }
-
-    const data = doc.data();
-
-    // Titre de la page & H1
-    document.title = `${data.title} — Decorum Collectiv`;
-    const titleEl = document.getElementById('article-title') || document.querySelector('h1');
-    if (titleEl) titleEl.textContent = data.title;
-
-    // Badges Format & Catégorie
-    const formatEl = document.getElementById('article-format');
-    if (formatEl) formatEl.textContent = data.format || 'ESSAI';
-
-    const categoryEl = document.getElementById('article-category');
-    if (categoryEl) categoryEl.textContent = data.category || 'ARCHITECTURE';
-
-    // Meta (Auteur et Date)
-    const metaEl = document.getElementById('article-meta');
-    if (metaEl) {
-      const author = data.author || 'Decorum';
-      const date = data.date || '';
-      metaEl.textContent = `Par ${author}${date ? ' — ' + date : ''}`;
-    }
-
-    // Temps de lecture
-    const readTimeEl = document.getElementById('read-time');
-    if (readTimeEl && data.content) {
-      const textOnly = data.content.replace(/<[^>]*>/g, '');
-      const words = textOnly.trim().split(/\s+/).length;
-      const minutes = Math.max(1, Math.ceil(words / 200));
-      readTimeEl.textContent = `${minutes} min de lecture`;
-    }
-
-    // Contenu texte de l'article
-    const contentEl = document.getElementById('article-content');
-    if (contentEl) {
-      contentEl.innerHTML = data.content || '<p>Aucun contenu rédigé.</p>';
-    }
-
-  } catch (error) {
-    console.error("Erreur lors de la récupération de l'article :", error);
-  }
-}
-
-    // Mise à jour des éléments dans la page
-    document.title = `${data.title} — Decorum Collectiv`;
-    
-    const titleEl = document.querySelector('h1') || document.getElementById('article-title');
-    if (titleEl) titleEl.textContent = data.title;
-
-    const authorDateEl = document.querySelector('.article-meta') || document.getElementById('article-meta');
-    if (authorDateEl) authorDateEl.textContent = `Par ${data.author || 'Decorum'} — ${data.date || ''}`;
-
-    const contentEl = document.getElementById('article-content');
-    if (contentEl) contentEl.innerHTML = data.content || '';
-
-    const categoryEl = document.querySelector('.category-tag');
-    if (categoryEl) categoryEl.textContent = data.category || 'ARCHITECTURE';
-
-    const formatEl = document.querySelector('.format-tag');
-    if (formatEl) formatEl.textContent = data.format || 'ESSAI';
-
-    // Temps de lecture
-    const readTimeEl = document.getElementById('read-time') || document.querySelector('.read-time');
-    if (readTimeEl && data.content) {
-      const words = data.content.replace(/<[^>]*>/g, '').split(/\s+/).length;
-      const minutes = Math.max(1, Math.ceil(words / 200));
-      readTimeEl.textContent = `${minutes} min de lecture`;
-    }
-
-  } catch (error) {
-    console.error("Erreur de récupération de l'article :", error);
-  }
-}
