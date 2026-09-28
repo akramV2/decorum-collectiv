@@ -974,3 +974,20 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================================
+   STYLE DES ILLUSTRATIONS VECTORIELLES ET ICÔNES
+   ========================================================================== */
+.illustration-card {
+  transition: transform 0.2s ease;
+  background-color: var(--white);
+}
+
+.illustration-card:hover {
+  transform: translate(-4px, -4px);
+}
+
+.brand-icon {
+  display: inline-block;
+  vertical-align: middle;
+}
