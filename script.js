@@ -15,6 +15,42 @@ if (typeof firebase !== 'undefined' && !firebase.apps.length) {
 const db = typeof firebase !== 'undefined' ? firebase.firestore() : null;
 
 /* ==========================================================================
+   SMOOTH SCROLLING FLUIDE (LENIS)
+   ========================================================================== */
+let lenisInstance = null;
+
+function initSmoothScroll() {
+  if (typeof Lenis === 'undefined') return;
+
+  lenisInstance = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true,
+    touchMultiplier: 1.5
+  });
+
+  function raf(time) {
+    lenisInstance.raf(time);
+    requestAnimationFrame(raf);
+  }
+  requestAnimationFrame(raf);
+
+  // Gestion des liens d'ancres avec transition fluide Lenis
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const targetId = this.getAttribute('href');
+      if (targetId === '#') return;
+      
+      const targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        e.preventDefault();
+        lenisInstance.scrollTo(targetElement, { offset: -60 });
+      }
+    });
+  });
+}
+
+/* ==========================================================================
    SCROLLSPY : DÉTECTION AUTOMATIQUE DE LA SECTION ACTIVE DANS LE MENU
    ========================================================================== */
 function initScrollSpy() {
@@ -70,8 +106,8 @@ function initCustomCursor() {
 
   hero.addEventListener('click', () => {
     const nextSection = document.getElementById('intro');
-    if (nextSection) {
-      nextSection.scrollIntoView({ behavior: 'smooth' });
+    if (nextSection && lenisInstance) {
+      lenisInstance.scrollTo(nextSection, { offset: -60 });
     }
   });
 }
@@ -106,7 +142,8 @@ function initLogoSecret() {
         const isHomePage = window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/');
 
         if (isHomePage) {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          if (lenisInstance) lenisInstance.scrollTo(0);
+          else window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
           window.location.href = target;
         }
@@ -326,6 +363,7 @@ function initMobileMenu() {
    INITIALISATION
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
+  initSmoothScroll();
   initCustomCursor();
   initScrollSpy();
   renderArticlesGrid();
