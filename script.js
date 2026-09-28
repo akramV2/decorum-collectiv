@@ -396,6 +396,46 @@ async function renderSingleArticle() {
 
     const data = doc.data();
 
+    // Titre de la page & H1
+    document.title = `${data.title} — Decorum Collectiv`;
+    const titleEl = document.getElementById('article-title') || document.querySelector('h1');
+    if (titleEl) titleEl.textContent = data.title;
+
+    // Badges Format & Catégorie
+    const formatEl = document.getElementById('article-format');
+    if (formatEl) formatEl.textContent = data.format || 'ESSAI';
+
+    const categoryEl = document.getElementById('article-category');
+    if (categoryEl) categoryEl.textContent = data.category || 'ARCHITECTURE';
+
+    // Meta (Auteur et Date)
+    const metaEl = document.getElementById('article-meta');
+    if (metaEl) {
+      const author = data.author || 'Decorum';
+      const date = data.date || '';
+      metaEl.textContent = `Par ${author}${date ? ' — ' + date : ''}`;
+    }
+
+    // Temps de lecture
+    const readTimeEl = document.getElementById('read-time');
+    if (readTimeEl && data.content) {
+      const textOnly = data.content.replace(/<[^>]*>/g, '');
+      const words = textOnly.trim().split(/\s+/).length;
+      const minutes = Math.max(1, Math.ceil(words / 200));
+      readTimeEl.textContent = `${minutes} min de lecture`;
+    }
+
+    // Contenu texte de l'article
+    const contentEl = document.getElementById('article-content');
+    if (contentEl) {
+      contentEl.innerHTML = data.content || '<p>Aucun contenu rédigé.</p>';
+    }
+
+  } catch (error) {
+    console.error("Erreur lors de la récupération de l'article :", error);
+  }
+}
+
     // Mise à jour des éléments dans la page
     document.title = `${data.title} — Decorum Collectiv`;
     
