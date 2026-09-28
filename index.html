@@ -45,7 +45,7 @@
   <!-- HEADER / NAVBAR -->
   <header class="navbar">
     <div class="nav-container">
-      <a href="index.html" class="brand-logo" title="Accueil (5 clics pour accès rédaction)">
+      <a href="#home" class="brand-logo" title="Accueil (5 clics pour accès rédaction)">
         <svg class="logo-d-icon" width="36" height="36" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="0" y="0" width="250" height="500" fill="#2A38F5" />
           <path d="M250 0 C388.071 0 500 111.929 500 250 C500 388.071 388.071 500 250 500 V0Z" fill="#FF5A3C" />
@@ -57,7 +57,7 @@
         <a href="#home">HOME</a>
         <a href="#journal">JOURNAL</a>
         <a href="#carte">CARTE</a>
-        <a href="manifesto.html">MANIFESTO</a>
+        <a href="#manifesto">MANIFESTO</a>
         <a href="#contact">CONTACT</a>
       </nav>
 
@@ -69,7 +69,7 @@
   <section id="home" class="hero">
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <h1 class="hero-title">DECORUM COLLECTIV</h1>
+      <h1 class="hero-title">decorum collectiv</h1>
       <p class="hero-subtitle">A CHRONICLE OF ARCHITECTURAL THOUGHT</p>
     </div>
   </section>
@@ -80,7 +80,7 @@
       <p class="intro-text">
         Decorum Collectiv documente la culture architecturale et la pensée spatiale à travers des analyses, des interviews, des séries photographiques et l'exploration d'œuvres majeures.
       </p>
-      <a href="manifesto.html" class="btn-link">DÉCOUVRIR LE MANIFESTE →</a>
+      <a href="#manifesto" class="btn-link">DÉCOUVRIR LE MANIFESTE →</a>
     </div>
   </section>
 
@@ -99,22 +99,97 @@
   <section id="carte" class="map-section">
     <div class="container">
       <div class="map-header">
-        <span class="tag-outline" style="color: var(--rust); border-color: rgba(0,0,0,0.15);">GÉOLOCALISATION</span>
+        <span class="tag-outline">GÉOLOCALISATION</span>
         <h2>Guide Architectural</h2>
-        <p style="color: var(--text-muted); margin-top: 8px;">Explorez les œuvres et bâtiments documentés dans nos articles.</p>
+        <p style="color: var(--papier); opacity: 0.8; margin-top: 8px;">Explorez les œuvres et bâtiments documentés dans nos articles.</p>
       </div>
 
       <div id="architecture-map"></div>
     </div>
   </section>
 
-  <!-- SECTION MANIFESTO -->
-  <section id="manifesto" class="manifesto">
-    <div class="container manifesto-container">
-      <blockquote class="manifesto-quote">
-        « Le Decorum ne concerne pas l'ornement superficiel, mais la juste adéquation entre l'espace, la matière et la fonction. »
-      </blockquote>
-      <p class="manifesto-author">— Le Manifeste Decorum</p>
+  <!-- SECTION MANIFESTO INTÉGRÉE -->
+  <section id="manifesto" class="manifesto-section">
+    <!-- HERO BANNER MANIFESTO -->
+    <div class="manifesto-hero">
+      <div class="container manifesto-hero-content">
+        <span class="tag-outline">MANIFESTE ÉDITORIAL</span>
+        <h2 class="manifesto-hero-title">Regarder l'architecture autrement</h2>
+        <p class="manifesto-hero-subtitle">Par Raphaël — Créateur de Decorum Collectiv</p>
+      </div>
+    </div>
+
+    <!-- CITATION CENTRALE -->
+    <div class="manifesto-quote-banner">
+      <div class="container">
+        <blockquote>
+          « L'architecture commence quand vous mettez deux briques ensemble avec précaution. C'est là que commence l'art. »
+        </blockquote>
+        <cite>— Ludwig Mies van der Rohe</cite>
+      </div>
+    </div>
+
+    <!-- GENÈSE DU PROJET -->
+    <div class="about-section">
+      <div class="container about-grid">
+        <div class="about-text">
+          <h2>Le déclic Cavrois</h2>
+          <p class="lead-text">
+            Moi c'est Raphaël. Je suis étudiant, passionné de photo, de dev web et d'architecture.
+          </p>
+          <p>
+            Pendant longtemps, la ville était juste un décor en arrière-plan. Tout a changé le jour où j'ai franchi la porte de la <strong>Villa Cavrois</strong> à Croix, dessinée par Robert Mallet-Stevens. La claque. La précision des lignes, le jeu de la lumière sur les façades, la recherche dans le moindre détail... J'ai compris ce jour-là que l'architecture n'était pas juste du béton et des murs, mais une expérience visuelle et émotionnelle à part entière.
+          </p>
+          <p>
+            Depuis, c'est devenu une habitude quotidienne : observer la structure d'un bâtiment, cadrer des angles à l'objectif, comprendre comment l'espace a été pensé. La photo me permet de figer ces impressions, et le code web d'en faire un lieu d'échange.
+          </p>
+        </div>
+
+        <div class="about-highlights">
+          <div class="highlight-box">
+            <h4>LE REGARD</h4>
+            <p>Utiliser l'objectif photo pour capter le rythme des façades, la géométrie des pièces et la brutalité des matières.</p>
+          </div>
+          <div class="highlight-box">
+            <h4>LE CODE</h4>
+            <p>Développer mon propre espace web de A à Z pour partager cette passion en toute liberté, sans algorithme imposé.</p>
+          </div>
+          <div class="highlight-box">
+            <h4>LA CURIOSITÉ</h4>
+            <p>Explorer le travail des architectes, des figures du Modernisme aux créations contemporaines les plus audacieuses.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PILIERS -->
+    <div class="manifesto-principles container">
+      <h2 style="font-family: var(--font-title); text-align: center; font-size: 2.2rem; margin-top: 60px; margin-bottom: 48px; color: var(--encre);">Ce qu'on cherche à faire</h2>
+      <div class="principles-grid">
+        <article class="principle-card">
+          <span class="principle-number">01</span>
+          <h3>Partager une vision</h3>
+          <p>Créer un espace pour ceux qui aiment observer les formes, comprendre les lieux et prendre le temps de regarder la ville autour d'eux.</p>
+        </article>
+
+        <article class="principle-card">
+          <span class="principle-number">02</span>
+          <h3>Sortir du jargon</h3>
+          <p>Parler d'architecture de manière claire, directe et visuelle. Pas besoin d'un diplôme de sociologie pour apprécier la beauté d'un volume ou d'un matériau.</p>
+        </article>
+
+        <article class="principle-card">
+          <span class="principle-number">03</span>
+          <h3>Aller plus loin qu'Insta</h3>
+          <p>Ne pas se contenter d'une jolie photo sur un réseau social. Raconter l'histoire d'un bâtiment, l'intention derrière la ligne et le contexte de sa création.</p>
+        </article>
+
+        <article class="principle-card">
+          <span class="principle-number">04</span>
+          <h3>Création indépendante</h3>
+          <p>Un média 100 % fait maison, pensé et codé pour offrir une vraie pause de lecture, propre et sans distractions.</p>
+        </article>
+      </div>
     </div>
   </section>
 
@@ -122,7 +197,7 @@
   <section id="contact" class="contact-section">
     <div class="container contact-container">
       <div class="contact-header">
-        <span class="tag-outline" style="color: var(--rust); border-color: rgba(0,0,0,0.15);">CORRESPONDANCE</span>
+        <span class="tag-outline">CORRESPONDANCE</span>
         <h2>Contact & Réseaux</h2>
         <p class="contact-intro">
           Pour toute demande éditoriale, proposition d'interview ou échange autour de l'architecture et de la photo.
@@ -162,7 +237,7 @@
           <a href="#home">Home</a>
           <a href="#journal">Journal</a>
           <a href="#carte">Carte</a>
-          <a href="manifesto.html">Manifesto</a>
+          <a href="#manifesto">Manifesto</a>
           <a href="#contact">Contact</a>
         </div>
       </div>
