@@ -16,20 +16,18 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Schibsted+Grotesk:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&family=Plus+Jakarta+Sans:wght@500;600;700&family=Schibsted+Grotesk:ital,wght@0,400..700;1,400..700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 
-  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" defer></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js" defer></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js" defer></script>
 
-  <!-- DOMPurify -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js" defer></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
 
-  <!-- HEADER -->
   <header class="navbar">
     <div class="nav-container">
       <a href="index.html" class="brand-logo">
@@ -45,10 +43,9 @@
     </div>
   </header>
 
-  <!-- ÉCRAN DE CONNEXION FIREBASE AUTH -->
   <div id="admin-lock" class="container admin-container">
     <h1 class="admin-title">Accès Sécurisé Rédaction</h1>
-    <p style="color: var(--text-muted); margin-bottom: 24px;">Connectez-vous avec vos identifiants administrateur Firebase.</p>
+    <p style="color: var(--encre-subtile, #444); margin-bottom: 24px;">Connectez-vous avec vos identifiants administrateur Firebase.</p>
     <form id="login-form" class="admin-form">
       <div class="form-group">
         <label for="admin-email">Adresse e-mail admin</label>
@@ -62,7 +59,6 @@
     </form>
   </div>
 
-  <!-- FORMULAIRE DE RÉDACTION ET GESTION -->
   <main id="admin-content" class="container admin-container" style="display: none;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
       <h1 class="admin-title" style="margin-bottom:0;">Nouvelle Publication</h1>
@@ -98,7 +94,6 @@
         <input type="text" id="author" value="Raphaël" placeholder="ex: Raphaël" required>
       </div>
 
-      <!-- TÉLÉVERSEMENT PHOTO DIRECT -->
       <div class="form-group">
         <label for="image-url">Photo Principale (Lien ou Import Direct)</label>
         <div class="upload-box">
@@ -127,7 +122,6 @@
       </div>
     </form>
 
-    <!-- SECTION GESTION & SUPPRESSION DES ARTICLES -->
     <section class="admin-manage-section" style="margin-top: 60px; padding-top: 40px; border-top: 2px solid var(--encre);">
       <h2 style="font-family: var(--font-title); font-size: 1.6rem; margin-bottom: 20px;">Gérer & supprimer des articles</h2>
       <div id="admin-articles-list">
@@ -136,7 +130,6 @@
     </section>
   </main>
 
-  <!-- MODALE D'APERÇU -->
   <div id="preview-modal" class="modal">
     <div class="modal-content">
       <button class="modal-close" onclick="closePreviewModal()">&times;</button>
@@ -157,7 +150,6 @@
     </div>
   </div>
 
-  <script src="script.js" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof firebase !== 'undefined' && firebase.auth) {
