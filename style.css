@@ -7,19 +7,25 @@
   --coral: #FF5A3C;
   --citron: #FFE14D;
   --encre: #111114;
+  --encre-subtile: #444444;
   --papier: #F5F3EE;
   --white: #FFFFFF;
+  --bg-summary: #f8f8f6;
 
   /* Typographies */
   --font-title: 'Bricolage Grotesque', sans-serif;
+  --font-heading: 'Space Grotesk', -apple-system, sans-serif;
   --font-body: 'Schibsted Grotesk', sans-serif;
+  --font-article-body: 'Lora', Georgia, serif;
+  --font-summary: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  --font-ui: 'Inter', sans-serif;
 
   /* Transitions */
   --transition-fast: 0.2s ease;
   --transition-smooth: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Réinitialisation géométrique stricte (aucun coin arrondi, aucune ombre) */
+/* Réinitialisation géométrique stricte */
 * {
   margin: 0;
   padding: 0;
@@ -55,7 +61,6 @@ body {
   to { opacity: 1; }
 }
 
-/* Curseur & Sélections */
 p, h1, h2, h3, h4, h5, h6, blockquote, span:not(.tag):not(.tag-type):not(.btn-link):not(.brand-name) {
   cursor: text;
 }
@@ -82,7 +87,6 @@ img {
   padding: 0 24px;
 }
 
-/* Typographies de marque */
 h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   font-family: var(--font-title);
   font-weight: 800;
@@ -90,7 +94,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 }
 
 /* ==========================================================================
-   CURSEUR SUIVEUR "SCROLL DOWN"
+   CURSEUR SUIVEUR
    ========================================================================== */
 #custom-cursor {
   position: fixed;
@@ -184,7 +188,6 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   pointer-events: auto;
 }
 
-/* Menu d'onglets géométriques */
 .nav-links {
   display: flex;
   align-items: center;
@@ -769,7 +772,6 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   color: var(--encre);
 }
 
-/* Styles stricts pour les champs de saisie Admin */
 .admin-form input, 
 .admin-form textarea,
 .admin-select {
@@ -861,7 +863,6 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   background: var(--encre);
 }
 
-/* Modale */
 .modal {
   display: none;
   position: fixed;
@@ -895,7 +896,6 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   color: var(--encre);
 }
 
-/* Toasts */
 #toast-container {
   position: fixed;
   bottom: 24px;
@@ -935,9 +935,6 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   z-index: 2000;
 }
 
-/* ==========================================================================
-   RESPONSIVE (MOBILE)
-   ========================================================================== */
 @media (max-width: 768px) {
   #custom-cursor { display: none; }
   .hero { cursor: auto; }
@@ -976,7 +973,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 }
 
 /* ==========================================================================
-   STYLE DES ILLUSTRATIONS VECTORIELLES ET ICÔNES
+   ILLUSTRATIONS ET ICÔNES
    ========================================================================== */
 .illustration-card {
   transition: transform 0.2s ease;
@@ -992,7 +989,6 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   vertical-align: middle;
 }
 
-/* Alignement parfait de l'icône et du titre dans les en-têtes de section */
 .section-header {
   display: flex;
   align-items: center;
@@ -1011,7 +1007,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 }
 
 /* ==========================================================================
-   STYLE DU BOUTON LIKE MINIMALISTE
+   BOUTON LIKE MINIMALISTE
    ========================================================================== */
 .like-container {
   display: flex;
@@ -1025,7 +1021,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   gap: 10px;
   padding: 10px 20px;
   background: transparent;
-  border: 1.5px solid var(--encre, #111111);
+  border: 1.5px solid var(--encre);
   border-radius: 30px;
   font-family: inherit;
   font-size: 0.95rem;
@@ -1036,7 +1032,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 
 .like-button .heart-icon {
   fill: none;
-  stroke: var(--encre, #111111);
+  stroke: var(--encre);
   stroke-width: 2;
   transition: transform 0.2s ease, fill 0.25s ease, stroke 0.25s ease;
 }
@@ -1062,27 +1058,12 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 /* ==========================================================================
    CHARTE TYPOGRAPHIQUE ÉDITORIALE & DESIGN
    ========================================================================== */
-
-:root {
-  --font-heading: 'Space Grotesk', -apple-system, sans-serif;
-  --font-summary: 'Plus Jakarta Sans', -apple-system, sans-serif;
-  --font-body: 'Lora', Georgia, serif; /* Pour le corps littéraire / revue */
-  --font-ui: 'Inter', sans-serif;
-  
-  --encre: #111111;
-  --encre-subtile: #444444;
-  --bg-summary: #f8f8f6;
-  --coral: #ff471a;
-}
-
-/* Base de l'article */
 .article-container {
   max-width: 720px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
-/* Header de l'article */
 .article-header {
   margin-bottom: 2.5rem;
 }
@@ -1108,21 +1089,15 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   margin-bottom: 2rem;
 }
 
-/* ==========================================================================
-   LE RÉSUMÉ / CHAPEAU (MISE EN VALEUR PUISSANTE)
-   ========================================================================== */
-
 #art-excerpt,
 .article-excerpt,
 #art-content p:first-of-type {
   font-family: var(--font-summary);
-  font-size: 1.35rem; /* ~22px */
+  font-size: 1.35rem;
   font-weight: 500;
   line-height: 1.6;
   color: var(--encre);
   letter-spacing: -0.01em;
-  
-  /* Mise en forme type magazine */
   margin-bottom: 3rem;
   padding: 1.8rem 2rem;
   background-color: var(--bg-summary);
@@ -1130,30 +1105,24 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   border-radius: 0 8px 8px 0;
 }
 
-/* ==========================================================================
-   CORPS DE L'ARTICLE (CONFORT DE LECTURE OPTIMAL)
-   ========================================================================== */
-
 #art-content {
-  font-family: var(--font-body);
-  font-size: 1.18rem; /* 19px */
+  font-family: var(--font-article-body);
+  font-size: 1.18rem;
   line-height: 1.85;
   color: var(--encre);
 }
 
-/* Annulation du style résumé pour les paragraphes suivants */
 #art-content p:not(:first-of-type) {
-  font-family: var(--font-body);
+  font-family: var(--font-article-body);
   font-size: 1.18rem;
   font-weight: 400;
   margin-bottom: 2rem;
-  text-align: left; /* Plus fluide que justify sur le web */
+  text-align: left;
   background: transparent;
   padding: 0;
   border: none;
 }
 
-/* Titres H2 au sein du texte */
 #art-content h2 {
   font-family: var(--font-heading);
   font-size: 1.75rem;
@@ -1161,7 +1130,6 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   line-height: 1.25;
   letter-spacing: -0.02em;
   color: var(--encre);
-  
   margin-top: 3.5rem;
   margin-bottom: 1.2rem;
   padding-bottom: 8px;
@@ -1169,7 +1137,6 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   text-transform: uppercase;
 }
 
-/* Titres H3 */
 #art-content h3 {
   font-family: var(--font-heading);
   font-size: 1.35rem;
@@ -1180,7 +1147,6 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   margin-bottom: 0.8rem;
 }
 
-/* Citations en exergue (Pull quotes) */
 #art-content blockquote {
   font-family: var(--font-heading);
   font-size: 1.4rem;
@@ -1188,14 +1154,12 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   line-height: 1.45;
   letter-spacing: -0.01em;
   color: var(--encre);
-  
   margin: 3rem 0;
   padding: 1.5rem 0 1.5rem 2rem;
   border-left: 3px solid var(--coral);
   font-style: italic;
 }
 
-/* Listes à puces */
 #art-content ul, #art-content ol {
   margin: 1.8rem 0 2rem 1.8rem;
 }
@@ -1205,7 +1169,6 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   padding-left: 0.4rem;
 }
 
-/* Adaptabilité Mobile */
 @media (max-width: 768px) {
   #art-excerpt,
   .article-excerpt,
