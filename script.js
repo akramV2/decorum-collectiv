@@ -22,14 +22,12 @@ function formatDate(dateInput) {
 
   let d;
 
-  // Gestion des Timestamps Firestore
   if (dateInput && typeof dateInput.toDate === 'function') {
     d = dateInput.toDate();
   } else {
     d = new Date(dateInput);
   }
 
-  // Conversion si la date est saisie en texte français (ex: "26 SEPTEMBRE 2026")
   if (isNaN(d.getTime())) {
     const str = String(dateInput).trim().toLowerCase();
     const frMonths = {
@@ -277,7 +275,7 @@ function initSmartEmailLink() {
 }
 
 /* ==========================================================================
-   SYSTÈME DE NOTIFICATIONS (TOASTS) - SANS EMPILLEMENT
+   SYSTÈME DE NOTIFICATIONS (TOASTS)
    ========================================================================== */
 function showNotification(message, duration = 3000) {
   let container = document.getElementById('toast-container');
@@ -347,7 +345,7 @@ async function renderArticlesGrid() {
 }
 
 /* ==========================================================================
-   PAGE ARTICLE INDIVIDUELLE (AFFICHAGE ÉDITORIAL AVANCÉ)
+   PAGE ARTICLE INDIVIDUELLE
    ========================================================================== */
 async function renderSingleArticle() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -399,14 +397,12 @@ async function renderSingleArticle() {
     if (contentEl) {
       let rawContent = data.content || '';
 
-      // Si le contenu n'a pas encore de balises HTML, découpage dynamique
       if (!/<[a-z][\s\S]*>/i.test(rawContent)) {
         const blocks = rawContent.split(/\n\s*\n/);
         rawContent = blocks.map(block => {
           const trimmed = block.trim();
           if (!trimmed) return '';
           
-          // Détection automatique des sous-titres (lignes courtes sans point final)
           if (trimmed.length < 80 && !trimmed.endsWith('.') && !trimmed.endsWith('?') && !trimmed.endsWith('!')) {
             return `<h2>${trimmed}</h2>`;
           }
@@ -435,7 +431,7 @@ async function renderSingleArticle() {
 }
 
 /* ==========================================================================
-   GESTION DES LIKES (1 SEUL VOTE AUTORISÉ)
+   GESTION DES LIKES
    ========================================================================== */
 async function toggleLikeArticle() {
   const urlParams = new URLSearchParams(window.location.search);
