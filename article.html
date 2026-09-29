@@ -3,85 +3,126 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Article — Decorum</title>
+  <title>Decorum Collectiv — Article</title>
+  
+  <meta name="theme-color" content="#2A38F5">
+  <meta name="apple-mobile-web-app-title" content="DECORUM">
+  <meta name="application-name" content="DECORUM">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="apple-touch-icon" href="logo.svg">
+  <link rel="manifest" href="manifest.json">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Schibsted+Grotesk:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js" defer></script>
+
+  <!-- DOMPurify (Protection XSS) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js" defer></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
 
-  <!-- BARRE DE NAVIGATION -->
-  <nav class="navbar">
-    <div class="container nav-container">
-      <a href="index.html" class="logo">DECORUM<span>.</span></a>
-      <a href="index.html" class="btn-back">← RETOUR À L'ACCUEIL</a>
-    </div>
-  </nav>
+  <!-- BARRE DE PROGRESSION LECTURE -->
+  <div id="read-progress" class="read-progress-bar"></div>
 
-  <!-- CONTENU ARTICLE -->
-  <main class="article-page container">
+  <!-- HEADER -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo" title="Accueil (5 clics pour accès rédaction)">
+        <svg class="logo-d-icon" width="36" height="36" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="250" height="500" fill="#2A38F5" />
+          <path d="M250 0 C388.071 0 500 111.929 500 250 C500 388.071 388.071 500 250 500 V0Z" fill="#FF5A3C" />
+        </svg>
+        <span class="brand-name">DECORUM</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html#journal">Journal</a>
+        <a href="index.html#carte">Carte</a>
+        <a href="index.html#manifesto">Manifesto</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+      <button class="menu-btn" type="button">MENU</button>
+    </div>
+  </header>
+
+  <!-- CONTENU DE L'ARTICLE -->
+  <article class="article-page container">
     <header class="article-header">
-      <div class="article-tags-wrapper">
+      <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap;">
         <span class="tag-type" id="art-type">FORMAT</span>
-        <span class="tag" id="art-category">CATÉGORIE</span>
-        <span class="read-time-badge" id="art-read-time">lecture: ~3 min</span>
+        <span class="tag" id="art-category" style="position:static;">CATÉGORIE</span>
+        <span class="read-time-badge" id="art-read-time">calcul en cours...</span>
       </div>
-      <h1 class="article-main-title" id="art-title">Chargement du titre…</h1>
+      <h1 class="article-main-title" id="art-title">Titre de l'article</h1>
       <div class="article-meta-bar">
-        <span><span id="art-author">Par Auteur</span> — <time id="art-date">DATE</time></span>
-        
-        <!-- BOUTON VERSION PDF / REVUE -->
-        <button onclick="window.print()" class="btn-pdf-export" title="Télécharger la version papier / PDF">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          VERSION À EMPORTER (PDF)
-        </button>
+        <span id="art-author">Par Auteur</span> — <time id="art-date">DATE</time>
       </div>
     </header>
 
-    <!-- FICHE TECHNIQUE STANDARDISÉE DECORUM -->
-    <div id="art-spec-sheet" class="spec-sheet" style="display: none;">
-      <div class="spec-sheet-header">FICHE TECHNIQUE</div>
-      <div class="spec-sheet-grid">
-        <div class="spec-item"><span class="spec-label">ARCHITECTE</span><span id="spec-architect" class="spec-value">-</span></div>
-        <div class="spec-item"><span class="spec-label">ANNÉE</span><span id="spec-year" class="spec-value">-</span></div>
-        <div class="spec-item"><span class="spec-label">LOCALISATION</span><span id="spec-location" class="spec-value">-</span></div>
-        <div class="spec-item"><span class="spec-label">MATÉRIAUX</span><span id="spec-materials" class="spec-value">-</span></div>
-        <div class="spec-item"><span class="spec-label">HAUTEUR / SPÉCIF.</span><span id="spec-height" class="spec-value">-</span></div>
-      </div>
-    </div>
-
-    <!-- IMAGE EN-TÊTE -->
     <div id="art-image-wrapper" class="article-hero-image"></div>
 
-    <!-- CHAPEAU & CORPS DE L'ARTICLE -->
     <p class="article-lead" id="art-excerpt"></p>
+
     <div class="article-body" id="art-content"></div>
 
-    <!-- INFOS PRATIQUES DE VISITE (SI BÂTIMENT VISITABLE) -->
-    <div id="art-practical-info" class="practical-info-box" style="display: none;">
-      <h3>INFORMATIONS PRATIQUES DE VISITE</h3>
-      <div class="practical-grid">
-        <p><strong>Adresse :</strong> <span id="visit-address">-</span></p>
-        <p><strong>Horaires :</strong> <span id="visit-hours">-</span></p>
-        <p><strong>Accès & Tarifs :</strong> <span id="visit-access">-</span></p>
-      </div>
-      <a href="index.html#carte" class="btn-link" style="margin-top: 12px; display: inline-block;">VOIR SUR LA CARTE INTERACTIVE →</a>
-    </div>
-
-    <!-- BOUTON LIKES -->
+    <!-- BOUTON LIKE MINIMALISTE -->
     <div class="like-container">
-      <button id="like-btn" class="btn-like">
-        ♥ Rendre hommage (<span id="like-count">0</span>)
-      </button>
-    </div>
-  </main>
+  <button id="like-btn" class="like-button" onclick="toggleLikeArticle()" aria-label="J'aime cet article">
+    <svg class="heart-icon" viewBox="0 0 24 24" width="20" height="20">
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+    </svg>
+    <span id="like-count">0</span>
+  </button>
+</div>
 
-  <footer class="footer">
-    <div class="container footer-container">
-      <p>&copy; DECORUM — Revue d'architecture & design.</p>
+    <!-- ACTIONS ADMIN (SUPPRESSION DIRECTE) -->
+    <div class="article-actions" id="admin-actions" style="display: none; margin-top: 30px; text-align: center;">
+  <button onclick="deleteCurrentArticle()" class="btn-delete" style="background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: 600;">Supprimer cet article</button>
+</div>
     </div>
-  </footer>
+  </article>
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSingleArticle();
+
+      if (typeof firebase !== 'undefined' && firebase.auth) {
+        firebase.auth().onAuthStateChanged((user) => {
+          const actions = document.getElementById('admin-actions');
+          if (actions) {
+            actions.style.display = user ? 'block' : 'none';
+          }
+        });
+      }
+    });
+
+    async function deleteCurrentArticle() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      if (!id) return;
+
+      if (confirm("Voulez-vous vraiment supprimer cet article définitivement ?")) {
+        try {
+          await db.collection('articles').doc(id).delete();
+          sessionStorage.setItem('decorum_toast', 'Article supprimé avec succès.');
+          window.location.href = 'index.html';
+        } catch (error) {
+          console.error("Erreur de suppression :", error);
+          if (typeof showNotification === 'function') showNotification("Erreur lors de la suppression.");
+        }
+      }
+    }
+  </script>
 </body>
 </html>
