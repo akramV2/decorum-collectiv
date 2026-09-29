@@ -3,239 +3,133 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Espace Rédaction — Decorum Collectiv</title>
-
-  <meta name="theme-color" content="#2A38F5">
-  <meta name="apple-mobile-web-app-title" content="DECORUM">
-  <meta name="application-name" content="DECORUM">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-
-  <link rel="icon" type="image/svg+xml" href="logo.svg">
-  <link rel="apple-touch-icon" href="logo.svg">
-  <link rel="manifest" href="manifest.json">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&family=Plus+Jakarta+Sans:wght@500;600;700&family=Schibsted+Grotesk:ital,wght@0,400..700;1,400..700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <title>Administration — Decorum</title>
   <link rel="stylesheet" href="style.css">
-
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" defer></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js" defer></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js" defer></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js" defer></script>
-  <script src="script.js" defer></script>
 </head>
 <body>
 
-  <header class="navbar">
-    <div class="nav-container">
-      <a href="index.html" class="brand-logo">
-        <svg class="logo-d-icon" width="36" height="36" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="0" y="0" width="250" height="500" fill="#2A38F5" />
-          <path d="M250 0 C388.071 0 500 111.929 500 250 C500 388.071 388.071 500 250 500 V0Z" fill="#FF5A3C" />
-        </svg>
-        <span class="brand-name">DECORUM (RÉDACTION)</span>
-      </a>
-      <nav class="nav-links">
-        <a href="index.html">← Retour au site</a>
-      </nav>
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">DECORUM<span>.</span> <small style="font-size: 0.6em; opacity:0.7;">[ADMIN]</small></a>
+      <a href="index.html" class="btn-back">← RETOUR AU SITE</a>
     </div>
-  </header>
+  </nav>
 
-  <div id="admin-lock" class="container admin-container">
-    <h1 class="admin-title">Accès Sécurisé Rédaction</h1>
-    <p style="color: var(--encre-subtile, #444); margin-bottom: 24px;">Connectez-vous avec vos identifiants administrateur Firebase.</p>
-    <form id="login-form" class="admin-form">
-      <div class="form-group">
-        <label for="admin-email">Adresse e-mail admin</label>
-        <input type="email" id="admin-email" placeholder="admin@decorum.fr" required autofocus>
-      </div>
-      <div class="form-group">
-        <label for="admin-password">Mot de passe</label>
-        <input type="password" id="admin-password" placeholder="••••••••" required>
-      </div>
-      <button type="submit" class="btn-submit">SE CONNECTER</button>
-    </form>
-  </div>
-
-  <main id="admin-content" class="container admin-container" style="display: none;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-      <h1 class="admin-title" style="margin-bottom:0;">Nouvelle Publication</h1>
-      <button onclick="logoutAdmin()" style="background:none; border:none; color:var(--coral); cursor:pointer; font-weight:700;">Se déconnecter</button>
-    </div>
-
-    <form id="add-article-form" class="admin-form">
-      <div class="form-row">
+  <main id="admin-content" class="container" style="padding: 40px 20px;">
+    
+    <!-- GESTION COMPTE À REBOURS / TEASER -->
+    <section class="admin-card">
+      <h2 class="admin-section-title">1. Compte à Rebours / Teaser de l'Accueil</h2>
+      <form id="teaser-admin-form" class="teaser-admin-grid">
         <div class="form-group">
-          <label for="pub-type">Type de publication *</label>
-          <select id="pub-type" class="admin-select" required>
-            <option value="ARTICLE DE JOURNAL">Article de journal</option>
-            <option value="INTERVIEW">Interview / Rencontre</option>
-            <option value="PHOTOGRAPHIE & ŒUVRE">Photographie / Œuvre</option>
-            <option value="ESSAI SPATIAL">Essai Spatial</option>
-            <option value="DOSSIER ARCHITECTURE">Dossier Architecture</option>
-          </select>
+          <label for="teaser-date">Date ou jour de parution (ex : "ce jeudi à 18h")</label>
+          <input type="text" id="teaser-date" placeholder="ex: ce jeudi à 18h" required>
+        </div>
+        <div class="form-group">
+          <label for="teaser-topic">Sujet teasé (1 ou 2 mots max)</label>
+          <input type="text" id="teaser-topic" placeholder="ex: BRUTALISME" required>
+        </div>
+        <button type="submit" class="btn-submit" style="margin-top:0;">METTRE À JOUR LE TEASER</button>
+      </form>
+    </section>
+
+    <!-- PUBLICATION D'UN NOUVEL ARTICLE -->
+    <section class="admin-card">
+      <h2 class="admin-section-title">2. Rédiger & Publier un article</h2>
+      <form id="add-article-form">
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="title">Titre de l'article *</label>
+            <input type="text" id="title" required placeholder="Ex: La Villa Cavrois">
+          </div>
+          <div class="form-group">
+            <label for="pub-type">Format *</label>
+            <select id="pub-type" required>
+              <option value="Focus">Focus</option>
+              <option value="Analyse">Analyse</option>
+              <option value="Portrait">Portrait</option>
+              <option value="Visite">Visite de lieu</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="category">Catégorie *</label>
+            <input type="text" id="category" required placeholder="Ex: Brutalisme, Modernisme, Design...">
+          </div>
+          <div class="form-group">
+            <label for="author">Auteur / Autrice *</label>
+            <input type="text" id="author" required placeholder="Ex: Éléonore Vance">
+          </div>
         </div>
 
         <div class="form-group">
-          <label for="category">Thématique / Mots-clés *</label>
-          <input type="text" id="category" placeholder="ex: BRUTALISME, VILLA CAVROIS, BÉTON" required>
+          <label for="image-url">URL de l'image de couverture *</label>
+          <input type="url" id="image-url" required placeholder="https://images.unsplash.com/...">
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="title">Titre de la publication *</label>
-        <input type="text" id="title" placeholder="ex: La Villa Cavrois : Rigueur et Poétique de Mallet-Stevens" required>
-      </div>
-
-      <div class="form-group">
-        <label for="author">Auteur / Photographe *</label>
-        <input type="text" id="author" value="Raphaël" placeholder="ex: Raphaël" required>
-      </div>
-
-      <div class="form-group">
-        <label for="image-url">Photo Principale (Lien ou Import Direct)</label>
-        <div class="upload-box">
-          <input type="url" id="image-url" placeholder="https://images.unsplash.com/photo-..." style="flex:1;">
-          <label class="btn-file">
-             Choisir un fichier
-            <input type="file" id="file-input" accept="image/*" style="display:none;" onchange="uploadImageDirect(this)">
-          </label>
+        <div class="form-group">
+          <label for="excerpt">Résumé / Chapeau *</label>
+          <textarea id="excerpt" rows="2" required placeholder="Une courte introduction de deux phrases..."></textarea>
         </div>
-        <span id="upload-status" style="font-size: 0.8rem; color: var(--coral); font-weight: 700;"></span>
-      </div>
 
-      <div class="form-group">
-        <label for="excerpt">Accroche / Résumé (Chapeau) *</label>
-        <textarea id="excerpt" rows="2" placeholder="Une courte description d'accroche..." required></textarea>
-      </div>
+        <div class="form-group">
+          <label for="content">Contenu de l'article (Markdown ou HTML simple) *</label>
+          <textarea id="content" rows="8" required placeholder="Le corps complet de l'article..."></textarea>
+        </div>
 
-      <div class="form-group">
-        <label for="content">Contenu principal *</label>
-        <textarea id="content" rows="12" placeholder="Rédige ton texte complet ici. Tu peux sauter des lignes pour créer des paragraphes..." required></textarea>
-      </div>
+        <!-- FICHE TECHNIQUE STANDARDISÉE (OPTIONNEL) -->
+        <fieldset class="admin-fieldset">
+          <legend>FICHE TECHNIQUE STANDARDISÉE DECORUM</legend>
+          <div class="form-row">
+            <input type="text" id="arch-architect" placeholder="Architecte (ex: Robert Mallet-Stevens)">
+            <input type="text" id="arch-year" placeholder="Année (ex: 1932)">
+          </div>
+          <div class="form-row" style="margin-top: 10px;">
+            <input type="text" id="arch-location" placeholder="Lieu (ex: Croix, France)">
+            <input type="text" id="arch-materials" placeholder="Matériaux (ex: Béton armé, Brique)">
+          </div>
+          <div class="form-group" style="margin-top: 10px;">
+            <input type="text" id="arch-height" placeholder="Hauteur / Dimensions / Surface">
+          </div>
+        </fieldset>
 
-      <div class="admin-actions-bar">
-        <button type="button" class="btn-preview" onclick="openPreviewModal()"> APERÇU DE L'ARTICLE</button>
-        <button type="submit" class="btn-submit" style="margin-top:0;">PUBLIER EN LIGNE</button>
-      </div>
-    </form>
+        <!-- INFOS PRATIQUES DE VISITE (OPTIONNEL) -->
+        <fieldset class="admin-fieldset">
+          <legend>INFORMATIONS PRATIQUES DE VISITE (SI ACCESSIBLE AU PUBLIC)</legend>
+          <div class="form-group">
+            <input type="text" id="visit-address-input" placeholder="Adresse complète">
+          </div>
+          <div class="form-row" style="margin-top: 10px;">
+            <input type="text" id="visit-hours-input" placeholder="Horaires (ex: Mar-Dim 10h-18h)">
+            <input type="text" id="visit-access-input" placeholder="Accès / Tarifs (ex: Métro L1, 9.50€)">
+          </div>
+        </fieldset>
 
-    <section class="admin-manage-section" style="margin-top: 60px; padding-top: 40px; border-top: 2px solid var(--encre);">
-      <h2 style="font-family: var(--font-title); font-size: 1.6rem; margin-bottom: 20px;">Gérer & supprimer des articles</h2>
-      <div id="admin-articles-list">
-        <p style="color: var(--encre);">Chargement des publications...</p>
+        <button type="submit" class="btn-submit">PUBLIER L'ARTICLE SUR DECORUM</button>
+      </form>
+    </section>
+
+    <!-- VISUALISATION DES SUGGESTIONS TRANSMISES PAR LA COMMUNAUTÉ -->
+    <section class="admin-card">
+      <h2 class="admin-section-title">3. Suggestions de lieux envoyées par les lecteurs</h2>
+      <div id="suggestions-list-container">
+        <p style="color: var(--encre-subtile);">Chargement des suggestions…</p>
       </div>
     </section>
+
+    <!-- LISTE DES ARTICLES EXISTANTS -->
+    <section class="admin-card">
+      <h2 class="admin-section-title">4. Gestion des articles publiés</h2>
+      <div id="admin-articles-list">Chargement de la liste…</div>
+    </section>
+
   </main>
 
-  <div id="preview-modal" class="modal">
-    <div class="modal-content">
-      <button class="modal-close" onclick="closePreviewModal()">&times;</button>
-      <header class="article-header">
-        <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;">
-          <span class="tag-type" id="prev-type">TYPE</span>
-          <span class="tag" id="prev-category" style="position:static;">CATÉGORIE</span>
-        </div>
-        <h1 class="article-main-title" id="prev-title">Titre de l'article</h1>
-        <div class="article-meta-bar">
-          <span id="prev-author">Par Raphaël</span> — <time>Aujourd'hui</time>
-        </div>
-      </header>
-      <div id="prev-image" class="article-hero-image"></div>
-      <p class="article-lead" id="prev-excerpt"></p>
-      <div class="article-body" id="prev-content"></div>
-      <button type="button" class="btn-submit" style="width: 100%; margin-top: 30px;" onclick="submitFormFromPreview()">CONFIRMER & PUBLIER EN LIGNE</button>
-    </div>
-  </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      if (typeof firebase !== 'undefined' && firebase.auth) {
-        firebase.auth().onAuthStateChanged((user) => {
-          const lockElem = document.getElementById('admin-lock');
-          const contentElem = document.getElementById('admin-content');
-
-          if (user) {
-            if (lockElem) lockElem.style.display = 'none';
-            if (contentElem) contentElem.style.display = 'block';
-            if (typeof renderAdminArticlesList === 'function') {
-              renderAdminArticlesList();
-            }
-          } else {
-            if (lockElem) lockElem.style.display = 'block';
-            if (contentElem) contentElem.style.display = 'none';
-          }
-        });
-      }
-
-      const loginForm = document.getElementById('login-form');
-      if (loginForm) {
-        loginForm.addEventListener('submit', async function(e) {
-          e.preventDefault();
-          const email = document.getElementById('admin-email').value;
-          const pwd = document.getElementById('admin-password').value;
-
-          try {
-            await firebase.auth().signInWithEmailAndPassword(email, pwd);
-            if (typeof showNotification === 'function') {
-              showNotification('Connexion réussie.');
-            }
-          } catch (error) {
-            console.error("Erreur Firebase Auth :", error);
-            if (typeof showNotification === 'function') {
-              showNotification('Identifiants incorrects.');
-            } else {
-              alert('Identifiants incorrects.');
-            }
-          }
-        });
-      }
-
-      const addForm = document.getElementById('add-article-form');
-      if (addForm) {
-        addForm.addEventListener('submit', async function(e) {
-          e.preventDefault();
-          await executePublishing();
-        });
-      }
-    });
-
-    async function logoutAdmin() {
-      try {
-        await firebase.auth().signOut();
-        if (typeof showNotification === 'function') showNotification('Déconnexion réussie.');
-      } catch (error) {
-        console.error("Erreur déconnexion :", error);
-      }
-    }
-
-    async function executePublishing() {
-      const newArticle = {
-        title: document.getElementById('title').value,
-        type: document.getElementById('pub-type').value,
-        category: document.getElementById('category').value.toUpperCase(),
-        author: document.getElementById('author').value,
-        image: document.getElementById('image-url').value,
-        excerpt: document.getElementById('excerpt').value,
-        content: document.getElementById('content').value,
-        likes: 0,
-        date: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase(),
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
-
-      if (typeof saveNewArticle === 'function') {
-        await saveNewArticle(newArticle);
-      }
-      sessionStorage.setItem('decorum_toast', 'Publication mise en ligne avec succès !');
-      window.location.href = 'index.html';
-    }
-
-    function submitFormFromPreview() {
-      if (typeof closePreviewModal === 'function') closePreviewModal();
-      executePublishing();
-    }
-  </script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
