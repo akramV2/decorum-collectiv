@@ -16,27 +16,20 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Schibsted+Grotesk:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&family=Plus+Jakarta+Sans:wght@500;600;700&family=Schibsted+Grotesk:ital,wght@0,400..700;1,400..700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" defer></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js" defer></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js" defer></script>
 
-  <!-- DOMPurify (Protection XSS) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body>
 
-  <!-- BARRE DE PROGRESSION LECTURE -->
   <div id="read-progress" class="read-progress-bar"></div>
 
-  <!-- HEADER -->
   <header class="navbar">
     <div class="nav-container">
       <a href="index.html" class="brand-logo" title="Accueil (5 clics pour accès rédaction)">
@@ -56,7 +49,6 @@
     </div>
   </header>
 
-  <!-- CONTENU DE L'ARTICLE -->
   <article class="article-page container">
     <header class="article-header">
       <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap;">
@@ -76,20 +68,17 @@
 
     <div class="article-body" id="art-content"></div>
 
-    <!-- BOUTON LIKE MINIMALISTE -->
     <div class="like-container">
-  <button id="like-btn" class="like-button" onclick="toggleLikeArticle()" aria-label="J'aime cet article">
-    <svg class="heart-icon" viewBox="0 0 24 24" width="20" height="20">
-      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-    </svg>
-    <span id="like-count">0</span>
-  </button>
-</div>
+      <button id="like-btn" class="like-button" onclick="toggleLikeArticle()" aria-label="J'aime cet article">
+        <svg class="heart-icon" viewBox="0 0 24 24" width="20" height="20">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+        <span id="like-count">0</span>
+      </button>
+    </div>
 
-    <!-- ACTIONS ADMIN (SUPPRESSION DIRECTE) -->
     <div class="article-actions" id="admin-actions" style="display: none; margin-top: 30px; text-align: center;">
-  <button onclick="deleteCurrentArticle()" class="btn-delete" style="background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: 600;">Supprimer cet article</button>
-</div>
+      <button onclick="deleteCurrentArticle()" class="btn-delete" style="background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: 600;">Supprimer cet article</button>
     </div>
   </article>
 
@@ -110,7 +99,7 @@
     async function deleteCurrentArticle() {
       const params = new URLSearchParams(window.location.search);
       const id = params.get('id');
-      if (!id) return;
+      if (!id || !db) return;
 
       if (confirm("Voulez-vous vraiment supprimer cet article définitivement ?")) {
         try {
