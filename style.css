@@ -1,3 +1,6 @@
+@font-face{font-family:'Bricolage Grotesque';src:url('assets/fonts/Bricolage-800.woff2') format('woff2');font-weight:800;font-display:swap;}
+@font-face{font-family:'Schibsted Grotesk';src:url('assets/fonts/Schibsted-400.woff2') format('woff2');font-weight:400 500;font-display:swap;}
+@font-face{font-family:'Schibsted Grotesk';src:url('assets/fonts/Schibsted-700.woff2') format('woff2');font-weight:600 800;font-display:swap;}
 /* ==========================================================================
    CHARTE GRAPHIQUE DECORUM COLLECTIV
    ========================================================================== */
@@ -306,7 +309,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 
 .articles-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 40px;
 }
 
@@ -603,7 +606,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 
 .principles-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 32px;
 }
 
@@ -654,7 +657,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 
 .contact-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 24px;
 }
 
@@ -681,6 +684,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 }
 
 .contact-value {
+  overflow-wrap: anywhere;
   font-family: var(--font-title);
   font-size: 1.3rem;
   color: var(--encre);
@@ -936,6 +940,11 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 }
 
 @media (max-width: 768px) {
+  .upload-box { flex-wrap: wrap; }
+  .admin-title { overflow-wrap: anywhere; }
+  .article-card-link { display: block; }
+  .contact-card { padding: 24px 20px; }
+  .article-main-title, .admin-title { font-size: clamp(1.8rem, 7vw, 2.8rem); }
   #custom-cursor { display: none; }
   .hero { cursor: auto; }
 
@@ -970,6 +979,24 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   .form-row, .about-grid, .admin-actions-bar {
     grid-template-columns: 1fr;
   }
+}
+
+:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 4px;
+}
+
+button:disabled { opacity: 0.6; cursor: wait; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  body { opacity: 1; }
+  .hero { cursor: auto; }
+  #custom-cursor { display: none; }
 }
 
 /* ==========================================================================

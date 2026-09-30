@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Espace Rédaction — Decorum Collectiv</title>
+  <meta name="robots" content="noindex, nofollow">
 
   <meta name="theme-color" content="#2A38F5">
   <meta name="apple-mobile-web-app-title" content="DECORUM">
@@ -16,8 +17,11 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Schibsted+Grotesk:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="editorial.css">
+  <script src="editorial.js" defer></script>
+  <script src="admin.js" defer></script>
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" defer></script>
@@ -25,7 +29,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js" defer></script>
 
   <!-- DOMPurify -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js" defer></script>
+  <script src="assets/vendor/purify-3.4.16.min.js" defer></script>
 </head>
 <body>
 
@@ -105,7 +109,7 @@
           <input type="url" id="image-url" placeholder="https://images.unsplash.com/photo-..." style="flex:1;">
           <label class="btn-file">
              Choisir un fichier
-            <input type="file" id="file-input" accept="image/*" style="display:none;" onchange="uploadImageDirect(this)">
+            <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp,image/avif" style="display:none;" onchange="uploadImageDirect(this)">
           </label>
         </div>
         <span id="upload-status" style="font-size: 0.8rem; color: var(--coral); font-weight: 700;"></span>
@@ -219,7 +223,14 @@
       }
     }
 
+    let publishing = false;
     async function executePublishing() {
+      const form = document.getElementById('add-article-form');
+      if (publishing || !form.reportValidity()) return;
+      publishing = true;
+      const buttons = document.querySelectorAll('.btn-submit');
+      buttons.forEach(button => { button.disabled = true; });
+      try {
       const newArticle = {
         title: document.getElementById('title').value,
         type: document.getElementById('pub-type').value,
@@ -238,11 +249,17 @@
       }
       sessionStorage.setItem('decorum_toast', 'Publication mise en ligne avec succès !');
       window.location.href = 'index.html';
+      } catch (error) {
+        showNotification(error.message || 'Publication impossible. Votre texte est conservé.');
+      } finally {
+        publishing = false;
+        buttons.forEach(button => { button.disabled = false; });
+      }
     }
 
     function submitFormFromPreview() {
       if (typeof closePreviewModal === 'function') closePreviewModal();
-      executePublishing();
+      document.getElementById('add-article-form').requestSubmit();
     }
   </script>
 </body>

@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /admin.html
+Disallow: /api/
+Allow: /
+Sitemap: https://decorum-collectiv.vercel.app/sitemap.xml
