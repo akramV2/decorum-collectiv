@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "test": "node --test tests/*.test.cjs",
-    "dev": "node tools/dev.cjs"
+    "dev": "node tools/dev.cjs",
+    "postinstall": "node tools/patch-jwks.cjs"
   },
   "engines": {
     "node": "24.x"
@@ -18,6 +19,9 @@
   "overrides": {
     "gaxios": {
       "uuid": "11.1.1"
+    },
+    "sanitize-html": {
+      "htmlparser2": "10.0.0"
     }
   }
 }

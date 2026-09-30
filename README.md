@@ -28,3 +28,7 @@ Images importées : 500 Ko maximum, Base64 conservé provisoirement. Le stockage
 Polices de marque auto-hébergées sous OFL et DOMPurify 3.4.16 embarqué avec licence. Des bibliothèques et polices historiques restent sur CDN. Les Core Web Vitals doivent être mesurés sur le trafic réel.
 
 Propositions : piège antispam et limitation par IP pseudonymisée ; CAPTCHA à envisager en cas d’abus. Journal paginé par 20, administration par 50. Carte : au maximum 500 lieux enregistrés en complément des lieux historiques.
+
+## Compatibilité Vercel
+
+Le script postinstall applique un import asynchrone de jose dans jwks-rsa 4.1 (problème amont #507). Il conserve la version récente de jose et échoue si le code amont change. htmlparser2 est fixé à 10, qui propose une entrée CommonJS compatible avec sanitize-html. Le test compatibility reproduit un serveur sans require(esm) et vérifie la récupération d’une clé publique. Réexaminer ces adaptations lors des mises à jour.
