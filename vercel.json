@@ -4,7 +4,7 @@
   "functions": {
     "api/editorial.js": {
       "maxDuration": 30,
-      "includeFiles": "{article.html,assets/**}"
+      "includeFiles": "{article.html,assets/**,node_modules/pdfkit/js/data/**}"
     }
   },
   "rewrites": [
