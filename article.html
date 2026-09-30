@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Decorum Collectiv — Article</title>
-  
+
   <meta name="theme-color" content="#2A38F5">
   <meta name="apple-mobile-web-app-title" content="DECORUM">
   <meta name="application-name" content="DECORUM">
@@ -16,8 +16,10 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Schibsted+Grotesk:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="editorial.css">
+  <script src="editorial.js" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
@@ -28,7 +30,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js" defer></script>
 
   <!-- DOMPurify (Protection XSS) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js" defer></script>
+  <script src="assets/vendor/purify-3.4.16.min.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -75,6 +77,7 @@
     <p class="article-lead" id="art-excerpt"></p>
 
     <div class="article-body" id="art-content"></div>
+    <div id="reader-actions" class="reader-actions" hidden><a href="#">Télécharger l’article — PDF à emporter ↓</a></div>
 
     <!-- BOUTON LIKE MINIMALISTE -->
     <div class="like-container">
@@ -90,18 +93,15 @@
     <div class="article-actions" id="admin-actions" style="display: none; margin-top: 30px; text-align: center;">
   <button onclick="deleteCurrentArticle()" class="btn-delete" style="background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: 600;">Supprimer cet article</button>
 </div>
-    </div>
   </article>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      renderSingleArticle();
-
       if (typeof firebase !== 'undefined' && firebase.auth) {
         firebase.auth().onAuthStateChanged((user) => {
           const actions = document.getElementById('admin-actions');
           if (actions) {
-            actions.style.display = user ? 'block' : 'none';
+            actions.style.display = 'none'; // Editing and withdrawal are managed in the protected newsroom.
           }
         });
       }

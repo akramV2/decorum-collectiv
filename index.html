@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Decorum Collectiv — A Chronicle of Architectural Thought</title>
-  
+
   <!-- SEO & Mobile Web App PWA -->
   <meta name="description" content="Decorum Collectiv documente la culture architecturale et la pensée spatiale.">
   <meta name="theme-color" content="#2A38F5">
@@ -16,15 +16,17 @@
   <link rel="icon" type="image/svg+xml" href="logo.svg">
   <link rel="apple-touch-icon" href="logo.svg">
   <link rel="manifest" href="manifest.json">
-  
+
   <!-- Polices Google -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Schibsted+Grotesk:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
-  
+
+
   <!-- Feuille de style principale & Lenis Smooth Scroll -->
   <link rel="stylesheet" href="https://unpkg.com/lenis@1.1.18/dist/lenis.css">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="editorial.css">
+  <script src="editorial.js" defer></script>
 
   <!-- Script Smooth Scroll Lenis -->
   <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js" defer></script>
@@ -36,8 +38,14 @@
   <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js" defer></script>
-<script src="script.js" defer></script>
+  <link rel="canonical" href="https://decorum-collectiv.vercel.app/">
+  <meta property="og:title" content="DECORUM Collectiv — Regarder l’architecture autrement">
+  <meta property="og:description" content="Un média indépendant consacré à l’architecture, aux lieux et à celles et ceux qui les imaginent.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://decorum-collectiv.vercel.app/">
+  <meta name="twitter:card" content="summary">
 </head>
+<body>
 
   <!-- CURSEUR SUIVEUR SCROLL DOWN -->
   <div id="custom-cursor">SCROLL DOWN ↴</div>
@@ -84,6 +92,7 @@
     </div>
   </section>
 
+  <section id="next-publication" class="editorial-next" hidden aria-label="Prochaine publication"><div class="container"><div><h2>Prochain article</h2><p></p><time></time></div><div class="countdown-digits" data-countdown role="timer" aria-live="off"></div></div></section>
   <!-- SECTION JOURNAL -->
   <section id="journal" class="journal">
     <div class="container">
@@ -118,6 +127,8 @@
       </div>
 
       <div id="architecture-map"></div>
+      <p style="margin-top:24px"><a class="tag-outline" href="proposer.html">PROPOSER UN LIEU →</a></p>
+      <div id="places-list" class="places-list" aria-label="Lieux du journal"></div>
     </div>
   </section>
 
@@ -172,7 +183,7 @@
 
         <!-- BLOC DEUX ILLUSTRATIONS GÉOMÉTRIQUES VECTORISÉES -->
         <div class="illustrations-container" style="display: flex; flex-direction: column; gap: 20px;">
-          
+
           <!-- ILLUSTRATION 1 : BÂTIMENT À PORTE BLEUE -->
           <div class="illustration-card" style="border: 2px solid var(--encre);">
             <svg viewBox="0 0 300 200" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" style="display: block;">
@@ -286,6 +297,8 @@
           <a href="#carte">Carte</a>
           <a href="#manifesto">Manifesto</a>
           <a href="#contact">Contact</a>
+          <a href="proposer.html">Proposer un lieu</a>
+          <a href="admin.html">Rédaction</a>
         </div>
       </div>
     </div>

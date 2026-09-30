@@ -14,6 +14,60 @@ if (typeof firebase !== 'undefined' && !firebase.apps.length) {
 }
 const db = typeof firebase !== 'undefined' ? firebase.firestore() : null;
 
+// Plain metadata must never be interpreted as HTML, including in attributes.
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[char]);
+}
+
+function safeImageUrl(value) {
+  const source = String(value || '').trim();
+  if (/^data:image\/(?:png|jpeg|webp|avif);base64,[a-z0-9+/=]+$/i.test(source)) return source;
+  try {
+    const url = new URL(source);
+    return ['https:', 'http:'].includes(url.protocol) ? url.href : '';
+  } catch { return ''; }
+}
+
+function renderEditorialContent(container, value) {
+  const content = String(value || '');
+  if (!content.trim()) {
+    container.textContent = 'Aucun contenu rédigé.';
+    return;
+  }
+  if (/<[a-z][\s\S]*>/i.test(content)) {
+    if (typeof DOMPurify !== 'undefined') {
+      container.innerHTML = DOMPurify.sanitize(content, { USE_PROFILES: { html: true } });
+    } else {
+      // CDN failure must not turn untrusted HTML into executable content.
+      container.textContent = content;
+    }
+    return;
+  }
+  container.replaceChildren();
+  content.split(/\n\s*\n/).forEach(block => {
+    const text = block.trim();
+    if (!text) return;
+    const isHeading = text.length < 80 && !/[.?!]$/.test(text);
+    const element = document.createElement(isHeading ? 'h2' : 'p');
+    element.textContent = text;
+    container.appendChild(element);
+  });
+}
+
+function renderCover(container, source, title) {
+  if (!container) return;
+  container.replaceChildren();
+  const url = safeImageUrl(source);
+  if (!url) return;
+  const image = document.createElement('img');
+  image.src = url;
+  image.alt = String(title || '');
+  image.decoding = 'async';
+  container.appendChild(image);
+}
+
 /* ==========================================================================
    FORMATAGE DE DATE UNIFIÉ (EX: JUN 8, 2024)
    ========================================================================== */
@@ -24,6 +78,8 @@ function formatDate(dateInput) {
 
   if (dateInput && typeof dateInput.toDate === 'function') {
     d = dateInput.toDate();
+  } else if (dateInput && typeof dateInput._seconds === 'number') {
+    d = new Date(dateInput._seconds * 1000);
   } else {
     d = new Date(dateInput);
   }
@@ -54,7 +110,7 @@ function formatDate(dateInput) {
 let lenisInstance = null;
 
 function initSmoothScroll() {
-  if (typeof Lenis === 'undefined') return;
+  if (typeof Lenis === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   lenisInstance = new Lenis({
     duration: 1.2,
@@ -73,7 +129,7 @@ function initSmoothScroll() {
     anchor.addEventListener('click', function (e) {
       const targetId = this.getAttribute('href');
       if (targetId === '#') return;
-      
+
       const targetElement = document.querySelector(targetId);
       if (targetElement) {
         e.preventDefault();
@@ -179,7 +235,7 @@ function initLogoSecret() {
 /* ==========================================================================
    CARTE INTERACTIVE LEAFLET
    ========================================================================== */
-function initArchitectureMap() {
+async function initArchitectureMap() {
   const mapContainer = document.getElementById('architecture-map');
   if (!mapContainer || typeof L === 'undefined') return;
 
@@ -220,6 +276,7 @@ function initArchitectureMap() {
     { name: "Poly Grand Theater", city: "Shanghai (Chine)", coords: [31.3562, 121.2728], desc: "Tadao Andō — Cylindres en bois perçant un cube en béton (2014)" }
   ];
 
+  if (window.Decorum && await Decorum.places(map, customPinIcon)) return;
   locations.forEach(loc => {
     L.marker(loc.coords, { icon: customPinIcon }).addTo(map)
       .bindPopup(`
@@ -302,45 +359,80 @@ function showNotification(message, duration = 3000) {
 /* ==========================================================================
    GESTION CLOUD FIREBASE
    ========================================================================== */
-async function getArticlesFromCloud() {
-  if (!db) return [];
+let legacyArticleCursor = null;
+async function getArticlesFromCloud(more = false) {
+  if (window.Decorum && (await Decorum.ready()).ready) {
+    const result = await Decorum.api('articles', {params: more && window.decorumArticleCursor ? {cursor:window.decorumArticleCursor} : {}});
+    window.decorumArticleCursor = result.nextCursor;
+    return result.items;
+  }
+  if (!db) throw new Error('Connexion au journal indisponible.');
   try {
-    const snapshot = await db.collection('articles').orderBy('createdAt', 'desc').limit(20).get();
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    let query = db.collection('articles').orderBy('createdAt', 'desc').limit(21);
+    if (more && legacyArticleCursor) query = query.startAfter(legacyArticleCursor);
+    const snapshot = await query.get();
+    legacyArticleCursor = snapshot.docs.length > 20 ? snapshot.docs[19] : null;
+    window.decorumArticleCursor = legacyArticleCursor?.id || null;
+    return snapshot.docs.slice(0, 20).map(doc => ({ ...doc.data(), id: doc.id }));
   } catch (error) {
     console.error("Erreur Cloud :", error);
-    return [];
+    throw error;
   }
 }
 
-async function renderArticlesGrid() {
+async function renderArticlesGrid(more = false) {
   const container = document.getElementById('articles-grid');
   if (!container) return;
 
-  container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--encre); padding: 40px 0;">Chargement des publications...</p>';
+  if (!more) container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--encre); padding: 40px 0;">Chargement des publications...</p>';
 
-  const articles = await getArticlesFromCloud();
-  
-  if (articles.length === 0) {
+  let articles;
+  try {
+    articles = await getArticlesFromCloud(more);
+  } catch {
+    if (more) {
+      const button = document.getElementById('journal-more');
+      if (button) button.textContent = 'Réessayer de charger la suite';
+    } else container.textContent = 'Le journal est momentanément indisponible. Veuillez réessayer.';
+    return;
+  }
+
+  if (articles.length === 0 && !more) {
     container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--encre); padding: 40px 0;">Aucune publication pour le moment.</p>';
     return;
   }
 
-  container.innerHTML = articles.map(art => `
-    <article class="article-card reveal" onclick="window.location.href='article.html?id=${art.id}'">
+  const cards = articles.map(art => `
+    <article class="article-card reveal">
+      <a class="article-card-link" href="article.html?id=${escapeHtml(encodeURIComponent(art.id))}">
       <div class="card-image ${!art.image ? 'placeholder-box' : ''}">
-        ${art.image ? `<img src="${art.image}" alt="${art.title}" loading="lazy">` : `<span>${(art.title || '').toUpperCase()}</span>`}
-        <span class="tag">${art.category || 'ARCHITECTURE'}</span>
+        ${safeImageUrl(art.image) ? `<img src="${escapeHtml(safeImageUrl(art.image))}" alt="${escapeHtml(art.title)}" loading="lazy" decoding="async">` : `<span>${escapeHtml((art.title || '').toUpperCase())}</span>`}
+        <span class="tag">${escapeHtml(art.category || 'ARCHITECTURE')}</span>
       </div>
       <div class="card-meta">
-        <span style="color: var(--coral); font-weight: 600; text-transform: uppercase; margin-right: 8px;">${art.type || 'ARTICLE'}</span>
-        <time>${formatDate(art.date || art.createdAt)}</time>
+        <span style="color: var(--coral); font-weight: 600; text-transform: uppercase; margin-right: 8px;">${escapeHtml(art.type || 'ARTICLE')}</span>
+        <time>${escapeHtml(formatDate(art.date || art.createdAt))}</time>
       </div>
-      <h3 class="card-title">${art.title || 'Sans titre'}</h3>
-      <p style="font-size: 0.85rem; color: var(--encre); margin-top: 8px; line-height: 1.5;">${art.excerpt || ''}</p>
+      <h3 class="card-title">${escapeHtml(art.title || 'Sans titre')}</h3>
+      <p style="font-size: 0.85rem; color: var(--encre); margin-top: 8px; line-height: 1.5;">${escapeHtml(art.excerpt || '')}</p>
+      </a>
     </article>
   `).join('');
 
+  if (more) container.insertAdjacentHTML('beforeend', cards);
+  else container.innerHTML = cards;
+  let button = document.getElementById('journal-more');
+  if (!button) {
+    button = document.createElement('button');
+    button.id = 'journal-more'; button.className = 'btn-link';
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      try { await renderArticlesGrid(true); } finally { button.disabled = false; }
+    });
+    container.after(button);
+  }
+  button.textContent = 'Lire la suite du journal →';
+  button.hidden = !window.decorumArticleCursor;
   initScrollReveal();
 }
 
@@ -348,16 +440,22 @@ async function renderArticlesGrid() {
    PAGE ARTICLE INDIVIDUELLE
    ========================================================================== */
 async function renderSingleArticle() {
+  if (!document.getElementById('art-content')) return;
   const urlParams = new URLSearchParams(window.location.search);
   const articleId = urlParams.get('id');
 
-  if (!articleId || !db) return;
+  if (!articleId || articleId.includes('/') || !db) {
+    document.getElementById('art-title').textContent = 'Article indisponible';
+    return;
+  }
 
   try {
-    const docRef = db.collection('articles').doc(articleId);
-    const doc = await docRef.get();
+    const useApi = window.Decorum && (await Decorum.ready()).ready;
+    const result = useApi ? await Decorum.api('article', {params:{id:articleId}}) : null;
+    const doc = useApi ? {exists:true,data:()=>result} : await db.collection('articles').doc(articleId).get();
 
     if (!doc.exists) {
+      document.getElementById('art-title').textContent = 'Article introuvable';
       console.error("Aucun article trouvé avec cet ID.");
       return;
     }
@@ -365,7 +463,7 @@ async function renderSingleArticle() {
     const data = doc.data();
 
     document.title = `${data.title || 'Article'} — Decorum Collectiv`;
-    
+
     const titleEl = document.getElementById('art-title');
     if (titleEl) titleEl.textContent = data.title || 'Sans titre';
 
@@ -382,36 +480,14 @@ async function renderSingleArticle() {
     if (dateEl) dateEl.textContent = formatDate(data.date || data.createdAt);
 
     const imgWrapper = document.getElementById('art-image-wrapper');
-    if (imgWrapper) {
-      if (data.image) {
-        imgWrapper.innerHTML = `<img src="${data.image}" alt="${data.title || ''}">`;
-      } else {
-        imgWrapper.innerHTML = '';
-      }
-    }
+    renderCover(imgWrapper, data.image, data.title);
 
     const excerptEl = document.getElementById('art-excerpt');
     if (excerptEl) excerptEl.textContent = data.excerpt || '';
 
     const contentEl = document.getElementById('art-content');
     if (contentEl) {
-      let rawContent = data.content || '';
-
-      if (!/<[a-z][\s\S]*>/i.test(rawContent)) {
-        const blocks = rawContent.split(/\n\s*\n/);
-        rawContent = blocks.map(block => {
-          const trimmed = block.trim();
-          if (!trimmed) return '';
-          
-          if (trimmed.length < 80 && !trimmed.endsWith('.') && !trimmed.endsWith('?') && !trimmed.endsWith('!')) {
-            return `<h2>${trimmed}</h2>`;
-          }
-          return `<p>${trimmed}</p>`;
-        }).join('');
-      }
-
-      const cleanHtml = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawContent) : rawContent;
-      contentEl.innerHTML = cleanHtml || '<p>Aucun contenu rédigé.</p>';
+      renderEditorialContent(contentEl, data.content);
     }
 
     const likeCountEl = document.getElementById('like-count');
@@ -424,8 +500,10 @@ async function renderSingleArticle() {
     }
 
     initReadingProgress();
+    if (window.Decorum) Decorum.enrichArticle(data, articleId);
 
   } catch (error) {
+    document.getElementById('art-title').textContent = 'Article momentanément indisponible';
     console.error("Erreur de récupération de l'article :", error);
   }
 }
@@ -434,6 +512,23 @@ async function renderSingleArticle() {
    GESTION DES LIKES
    ========================================================================== */
 async function toggleLikeArticle() {
+  if (window.Decorum && (await Decorum.ready()).ready) {
+    const id = new URLSearchParams(location.search).get('id');
+    const btn = document.getElementById('like-btn');
+    if (!id || btn.disabled) return;
+    btn.disabled = true;
+    try {
+      let device = localStorage.getItem('decorum_device');
+      if (!device) { device = crypto.randomUUID(); localStorage.setItem('decorum_device', device); }
+      const result = await Decorum.api('like', {body:{id,device}});
+      document.getElementById('like-count').textContent = result.likes;
+      localStorage.setItem('liked_' + id, 'true');
+      btn.classList.add('liked');
+      showNotification('Merci pour votre soutien !');
+    } catch (error) { showNotification(error.message); }
+    finally { btn.disabled = false; }
+    return;
+  }
   const urlParams = new URLSearchParams(window.location.search);
   const articleId = urlParams.get('id');
   if (!articleId || !db) return;
@@ -479,8 +574,14 @@ function uploadImageDirect(input) {
   const status = document.getElementById('upload-status');
   if (input.files && input.files[0]) {
     const file = input.files[0];
-    if (file.size > 2 * 1024 * 1024) {
-      if (status) status.innerText = 'Fichier trop lourd (max 2 Mo)';
+    if (!['image/jpeg', 'image/png', 'image/webp', 'image/avif'].includes(file.type)) {
+      if (status) status.innerText = 'Choisissez une image JPEG, PNG, WebP ou AVIF.';
+      input.value = '';
+      return;
+    }
+    if (file.size > 500 * 1024) {
+      if (status) status.innerText = 'Import limité à 500 Ko. Pour une grande image, utilisez son URL.';
+      input.value = '';
       return;
     }
     const reader = new FileReader();
@@ -501,17 +602,13 @@ function openPreviewModal() {
   document.getElementById('prev-title').innerText = document.getElementById('title').value || 'Titre de l\'article';
   document.getElementById('prev-author').innerText = `Par ${document.getElementById('author').value}`;
   document.getElementById('prev-excerpt').innerText = document.getElementById('excerpt').value;
-  
+
   const rawContent = document.getElementById('content').value;
-  document.getElementById('prev-content').innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawContent) : rawContent;
+  renderEditorialContent(document.getElementById('prev-content'), rawContent);
 
   const imgUrl = document.getElementById('image-url').value;
   const imgBox = document.getElementById('prev-image');
-  if (imgUrl && imgBox) {
-    imgBox.innerHTML = `<img src="${imgUrl}" alt="Aperçu" style="width:100%; border:2px solid var(--encre); margin-bottom:20px;">`;
-  } else if (imgBox) {
-    imgBox.innerHTML = '';
-  }
+  renderCover(imgBox, imgUrl, 'Aperçu');
 
   modal.style.display = 'block';
 }
@@ -522,7 +619,11 @@ function closePreviewModal() {
 }
 
 async function saveNewArticle(articleData) {
-  if (!db) return;
+  if (!db) throw new Error('Connexion indisponible. Votre texte est conservé.');
+  // Temporary safety margin until images move to object storage.
+  if (new TextEncoder().encode(JSON.stringify(articleData)).length > 900000) {
+    throw new Error('Article trop volumineux. Utilisez un lien pour la photo principale.');
+  }
   try {
     await db.collection('articles').add(articleData);
   } catch (error) {
@@ -534,8 +635,15 @@ async function saveNewArticle(articleData) {
 async function renderAdminArticlesList() {
   const listContainer = document.getElementById('admin-articles-list');
   if (!listContainer || !db) return;
+  if (window.Decorum && (await Decorum.ready()).ready) return;
 
-  const articles = await getArticlesFromCloud();
+  let articles;
+  try {
+    articles = await getArticlesFromCloud();
+  } catch {
+    listContainer.textContent = 'Impossible de charger les publications. Veuillez réessayer.';
+    return;
+  }
   if (articles.length === 0) {
     listContainer.innerHTML = '<p style="color: var(--encre);">Aucun article publié pour le moment.</p>';
     return;
@@ -544,12 +652,15 @@ async function renderAdminArticlesList() {
   listContainer.innerHTML = articles.map(art => `
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border: 2px solid var(--encre); background: var(--white); margin-bottom: 12px;">
       <div>
-        <strong>${art.title}</strong>
-        <span style="font-size: 0.8rem; color: var(--coral); margin-left: 8px;">[${art.type || 'ARTICLE'}]</span>
+        <strong>${escapeHtml(art.title)}</strong>
+        <span style="font-size: 0.8rem; color: var(--coral); margin-left: 8px;">[${escapeHtml(art.type || 'ARTICLE')}]</span>
       </div>
-      <button onclick="deleteArticleFromAdmin('${art.id}')" class="btn-delete" style="padding: 6px 12px; font-size: 0.8rem;">Supprimer</button>
+      <button data-delete-id="${escapeHtml(art.id)}" class="btn-delete" style="padding: 6px 12px; font-size: 0.8rem;">Supprimer</button>
     </div>
   `).join('');
+  listContainer.querySelectorAll('[data-delete-id]').forEach(button => {
+    button.addEventListener('click', () => deleteArticleFromAdmin(button.dataset.deleteId));
+  });
 }
 
 async function deleteArticleFromAdmin(id) {
@@ -595,9 +706,22 @@ function initMobileMenu() {
   const navLinks = document.querySelector('.nav-links');
 
   if (menuBtn && navLinks) {
-    menuBtn.addEventListener('click', () => navLinks.classList.toggle('active'));
+    navLinks.id = 'primary-navigation';
+    menuBtn.setAttribute('aria-controls', navLinks.id);
+    menuBtn.setAttribute('aria-expanded', 'false');
+    const setOpen = open => {
+      navLinks.classList.toggle('active', open);
+      menuBtn.setAttribute('aria-expanded', String(open));
+    };
+    menuBtn.addEventListener('click', () => setOpen(!navLinks.classList.contains('active')));
     navLinks.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => navLinks.classList.remove('active'));
+      link.addEventListener('click', () => setOpen(false));
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && navLinks.classList.contains('active')) {
+        setOpen(false);
+        menuBtn.focus();
+      }
     });
   }
 }

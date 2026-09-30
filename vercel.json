@@ -1,0 +1,30 @@
+{
+  "buildCommand": "node tools/build.cjs",
+  "outputDirectory": "public",
+  "functions": {
+    "api/editorial.js": {
+      "maxDuration": 30,
+      "includeFiles": "{article.html,assets/**}"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/article.html",
+      "destination": "/api/editorial?action=article-page"
+    },
+    { "source": "/sitemap.xml", "destination": "/api/editorial?action=sitemap" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        { "key": "X-Frame-Options", "value": "DENY" }
+      ]
+    }
+  ]
+}
