@@ -1245,3 +1245,77 @@ button:disabled { opacity: 0.6; cursor: wait; }
 @media print {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* DECORUM — animated architectural details, without moving reading text. */
+@keyframes decorum-orbit {
+  from { transform: rotate(-12deg) scale(.88); opacity: 0; }
+  to { transform: rotate(12deg) scale(1); opacity: .16; }
+}
+@keyframes decorum-draw {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes decorum-rise {
+  0% { transform: translateY(0) rotate(0); }
+  45% { transform: translateY(-9px) rotate(-5deg); }
+  100% { transform: translateY(0) rotate(0); }
+}
+@keyframes decorum-stamp {
+  0% { transform: scale(.8) rotate(-9deg); opacity: 0; }
+  70% { transform: scale(1.05) rotate(2deg); }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+@keyframes decorum-menu {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero { overflow: hidden; isolation: isolate; }
+  .hero-content { position: relative; z-index: 1; }
+  .hero::before, .hero::after {
+    content: ''; position: absolute; pointer-events: none; z-index: -1;
+    width: clamp(150px, 28vw, 400px); aspect-ratio: 1;
+    border: 1px solid var(--citron); opacity: .16;
+    animation: decorum-orbit 4s cubic-bezier(.16,1,.3,1) both;
+  }
+  .hero::before { left: -8%; top: 12%; border-radius: 50% 50% 0 0; }
+  .hero::after { right: -9%; bottom: -12%; animation-direction: reverse; animation-fill-mode: none; }
+  .hero-title { animation-duration: 1.2s; }
+  .hero-subtitle::after {
+    content: ''; display: block; height: 2px; width: 72px; margin: 24px auto 0;
+    background: var(--citron); transform-origin: left;
+    animation: decorum-draw 900ms 450ms cubic-bezier(.16,1,.3,1) both;
+  }
+  .brand-logo .logo-d-icon { transition: transform 500ms cubic-bezier(.34,1.56,.64,1); }
+  .brand-logo:hover .logo-d-icon, .brand-logo:focus-visible .logo-d-icon { transform: rotate(-12deg) scale(1.12); }
+  .brand-icon { animation: decorum-rise 1800ms ease-in-out 2; }
+  .manifesto-hero-content > div > svg { animation: decorum-rise 2s ease-in-out 2; }
+  .manifesto-hero-content > div > svg:nth-child(2) { animation-delay: 200ms; }
+  .tag-outline { animation: decorum-stamp 600ms cubic-bezier(.16,1,.3,1) both; }
+  .card-title { transition: color 250ms ease; }
+  .principle-number { display: inline-block; transition: transform 450ms cubic-bezier(.34,1.56,.64,1), color 250ms ease; }
+  .illustration-card svg { transition: transform 700ms cubic-bezier(.16,1,.3,1); }
+  .contact-value { display: inline-block; transition: transform 350ms ease; }
+  .footer-links a { display: inline-block; transition: transform 250ms ease, color 250ms ease; }
+  .footer-links a:hover, .footer-links a:focus-visible { transform: translateX(6px); }
+  .btn-submit:focus-visible, a.tag-outline:focus-visible { outline: 3px solid var(--blue); outline-offset: 5px; }
+  .form-group input, .form-group textarea, .form-group select { transition: box-shadow 200ms ease, border-color 200ms ease; }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus { box-shadow: 4px 4px 0 var(--citron); }
+  .btn-like-minimal { transition: transform 200ms ease, background-color 250ms ease; }
+  .btn-like-minimal:active { transform: scale(.92); }
+  .read-progress-bar { transition: width 100ms linear; }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .article-card:hover, .article-card:focus-within { transform: translate(-6px,-6px); box-shadow: 7px 7px 0 var(--encre); }
+  .article-card:hover .card-title { color: var(--blue); }
+  .principle-card:hover .principle-number { transform: translateX(8px) rotate(-8deg) scale(1.12); color: var(--blue); }
+  .illustration-card:hover svg { transform: scale(1.04); }
+  .contact-card:hover .contact-value { transform: translateX(5px); }
+  a.tag-outline:hover, .btn-submit:hover { transform: translateY(-3px); box-shadow: 3px 3px 0 var(--encre); }
+  .section-header:hover .brand-icon, .map-header:hover .brand-icon { animation: decorum-rise 700ms ease; }
+}
+@media (max-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .nav-links.active { animation: decorum-menu 300ms ease both; }
+  .hero::before, .hero::after { width: 180px; }
+}
+@media print { .hero::before, .hero::after { display: none; } }
