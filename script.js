@@ -113,17 +113,26 @@ function initSmoothScroll() {
   if (typeof Lenis === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   lenisInstance = new Lenis({
-    duration: 1.2,
+    duration: 1.35,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smoothWheel: true,
-    touchMultiplier: 1.5
+    syncTouch: false
   });
 
+  let scrollFrame;
   function raf(time) {
+    if (!lenisInstance) return;
     lenisInstance.raf(time);
-    requestAnimationFrame(raf);
+    scrollFrame = requestAnimationFrame(raf);
   }
-  requestAnimationFrame(raf);
+  scrollFrame = requestAnimationFrame(raf);
+  window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', event => {
+    if (event.matches && lenisInstance) {
+      cancelAnimationFrame(scrollFrame);
+      lenisInstance.destroy();
+      lenisInstance = null;
+    }
+  });
 
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -133,7 +142,8 @@ function initSmoothScroll() {
       const targetElement = document.querySelector(targetId);
       if (targetElement) {
         e.preventDefault();
-        lenisInstance.scrollTo(targetElement, { offset: -60 });
+        if (lenisInstance) lenisInstance.scrollTo(targetElement, { offset: -76, duration: 1.4 });
+        else targetElement.scrollIntoView({ behavior: 'auto' });
       }
     });
   });
@@ -693,10 +703,10 @@ function initScrollReveal() {
         revealObserver.unobserve(entry.target);
         if (motionPreference.matches) return;
         const animation = entry.target.animate([
-          { opacity: 0, transform: 'translateY(24px)' },
+          { opacity: 0, transform: 'translateY(14px)' },
           { opacity: 1, transform: 'translateY(0)' }
-        ], { duration: 700, delay: Math.min(order++ * 70, 210),
-          easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
+        ], { duration: 900, delay: Math.min(order++ * 60, 180),
+          easing: 'cubic-bezier(.22,.68,0,1.01)', fill: 'backwards' });
         runningReveals.add(animation);
         animation.finished.catch(() => {}).finally(() => runningReveals.delete(animation));
       });
