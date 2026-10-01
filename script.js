@@ -678,17 +678,38 @@ async function deleteArticleFromAdmin(id) {
 /* ==========================================================================
    ANIMATIONS & MOBILE
    ========================================================================== */
+let motionPreference;
+const revealedElements = new WeakSet();
+const runningReveals = new Set();
+let revealObserver;
 function initScrollReveal() {
-  const reveals = document.querySelectorAll('.reveal, .principle-card, .highlight-box, .intro-text, .contact-card');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('active');
+  if (!('IntersectionObserver' in window) || !Element.prototype.animate) return;
+  motionPreference ||= window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (!revealObserver) {
+    revealObserver = new IntersectionObserver(entries => {
+      let order = 0;
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        revealObserver.unobserve(entry.target);
+        if (motionPreference.matches) return;
+        const animation = entry.target.animate([
+          { opacity: 0, transform: 'translateY(24px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ], { duration: 700, delay: Math.min(order++ * 70, 210),
+          easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
+        runningReveals.add(animation);
+        animation.finished.catch(() => {}).finally(() => runningReveals.delete(animation));
+      });
+    }, { threshold: 0.08 });
+    motionPreference.addEventListener('change', event => {
+      if (event.matches) runningReveals.forEach(animation => animation.cancel());
     });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-  reveals.forEach(el => {
-    el.classList.add('reveal');
-    observer.observe(el);
+  }
+  // Reused when asynchronous article cards arrive; content is never hidden by CSS.
+  document.querySelectorAll('.reveal, .principle-card, .highlight-box, .intro-text, .contact-card, .section-header, .map-header, .manifesto-hero-title, .about-text, .illustration-card, .contact-header').forEach(element => {
+    if (revealedElements.has(element)) return;
+    revealedElements.add(element);
+    revealObserver.observe(element);
   });
 }
 

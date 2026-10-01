@@ -1215,3 +1215,33 @@ button:disabled { opacity: 0.6; cursor: wait; }
     margin-top: 2.5rem;
   }
 }
+
+/* Editorial motion: all content remains visible without JavaScript. */
+@keyframes decorum-enter {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-title { animation: decorum-enter 950ms cubic-bezier(.16,1,.3,1) both; }
+  .hero-subtitle { animation: decorum-enter 800ms 160ms cubic-bezier(.16,1,.3,1) both; }
+  .card-image img { transition: transform 700ms cubic-bezier(.16,1,.3,1); }
+  .article-card, .principle-card, .contact-card, .illustration-card {
+    transition: transform 350ms cubic-bezier(.16,1,.3,1), background-color 250ms ease, box-shadow 350ms ease;
+  }
+  .btn-link, .contact-action { display: inline-block; transition: transform 250ms ease; }
+  .btn-submit, .tag-outline { transition: background-color 250ms ease, color 250ms ease, transform 200ms ease; }
+  .btn-submit:active { transform: translateY(2px); }
+  .nav-links a { text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 6px; transition: color 200ms ease, text-decoration-color 250ms ease; }
+  .nav-links a:hover, .nav-links a:focus-visible { text-decoration-color: currentColor; }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .article-card:hover .card-image img, .article-card:focus-within .card-image img { transform: scale(1.045); }
+  .article-card:hover, .contact-card:hover { box-shadow: 5px 5px 0 var(--encre); }
+  .btn-link:hover, .btn-link:focus-visible, .contact-card:hover .contact-action { transform: translateX(5px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+@media print {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
