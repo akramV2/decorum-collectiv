@@ -1313,10 +1313,20 @@ button:disabled { opacity: 0.6; cursor: wait; }
 @media print { .hero::before, .hero::after { display: none; } }
 
 /* Continuous native scrolling, without wheel/touch interception. */
-@media (prefers-reduced-motion: no-preference) {
-  html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
+
+/* Accessibilité pour les utilisateurs sensibles aux mouvements */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 section[id] { scroll-margin-top: 76px; }
 
 html, body { scroll-snap-type: none; }
 section[id] { scroll-snap-align: none; scroll-snap-stop: normal; }
+
+/* Lenis owns wheel interpolation; avoid competing CSS smoothing. */
+html.lenis { scroll-behavior: auto !important; }

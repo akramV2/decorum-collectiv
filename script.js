@@ -107,7 +107,30 @@ function formatDate(dateInput) {
 /* ==========================================================================
    SMOOTH SCROLLING FLUIDE (LENIS)
    ========================================================================== */
-// Wheel, trackpad and touch scrolling remain native.
+let lenisInstance = null;
+function initSmoothScroll() {
+  if (typeof Lenis === 'undefined') return;
+  const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const update = () => {
+    if (preference.matches) {
+      lenisInstance?.destroy();
+      lenisInstance = null;
+    } else if (!lenisInstance) {
+      lenisInstance = new Lenis({
+        autoRaf: true,
+        lerp: 0.12,
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        syncTouch: false,
+        allowNestedScroll: true,
+        anchors: { offset: -76 },
+        prevent: node => node.closest?.('#architecture-map, .modal, textarea, select')
+      });
+    }
+  };
+  update();
+  preference.addEventListener('change', update);
+}
 
 function initScrollSpy() {
   const sections = document.querySelectorAll('section[id]');
@@ -162,7 +185,8 @@ function initCustomCursor() {
 
   hero.addEventListener('click', () => {
     const nextSection = document.getElementById('intro');
-    if (nextSection) nextSection.scrollIntoView({ block: 'start' });
+    if (nextSection && lenisInstance) lenisInstance.scrollTo(nextSection, { offset: -76 });
+    else if (nextSection) nextSection.scrollIntoView({ block: 'start' });
   });
 }
 
@@ -716,6 +740,7 @@ function initMobileMenu() {
    INITIALISATION
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
+  initSmoothScroll();
   initCustomCursor();
   initScrollSpy();
   renderArticlesGrid();
