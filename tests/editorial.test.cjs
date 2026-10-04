@@ -348,3 +348,19 @@ test("metadata escapes HTML and closes no JSON-LD script", () => {
   assert.doesNotMatch(s, /<img onerror/);
   assert.match(s, /\\u003c/);
 });
+
+test('places can be removed and restored, including inherited seed places, without deleting articles', async () => {
+  db.store.clear();
+  db.store.set('articles/linked', { title: 'Conservé', status: 'published' });
+  db.store.set('places/custom', { name: 'Lieu', lat: 48, lng: 2, articleId: 'linked' });
+  for (const id of ['custom', 'heritage-01']) {
+    assert.equal((await request('admin-place-delete', {body:{id}})).status, 403);
+    assert.equal((await request('admin-place-delete', {admin:true,body:{id}})).status, 200);
+    assert.equal((await request('places')).body.items.some(p=>p.id===id), false);
+    assert.equal((await request('admin-list', {admin:true,params:{collection:'places'}})).body.items.find(p=>p.id===id).deleted, true);
+    assert.equal((await request('admin-place-restore', {admin:true,body:{id}})).status, 200);
+    assert.equal((await request('places')).body.items.some(p=>p.id===id), true);
+  }
+  assert.equal(db.store.get('articles/linked').title, 'Conservé');
+  assert.equal((await request('admin-place-delete', {admin:true,body:{id:'unknown'}})).status, 404);
+});

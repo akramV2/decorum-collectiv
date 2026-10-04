@@ -302,11 +302,22 @@ document.addEventListener("DOMContentLoaded", () => {
         const row = document.createElement("div");
         row.className = "admin-row";
         const label = document.createElement("strong");
-        label.textContent = p.name;
+        label.textContent = p.name + (p.deleted ? " — Retiré de la carte" : "");
         row.append(
           label,
-          button("Modifier", () => placeEditor(p)),
+          button(p.deleted ? "Restaurer" : "Modifier", async () => {
+            if (!p.deleted) return placeEditor(p);
+            await call("admin-place-restore", { body: { id: p.id } });
+            notify("Lieu restauré sur la carte.");
+            await placeList();
+          }),
         );
+        if (!p.deleted) row.append(button("Supprimer", async () => {
+          if (!confirm(`Retirer « ${p.name} » de la carte ? Le lieu pourra être restauré et son article sera conservé.`)) return;
+          await call("admin-place-delete", { body: { id: p.id } });
+          notify("Lieu retiré de la carte. Vous pouvez le restaurer.");
+          await placeList();
+        }));
         panel.append(row);
       }
     }

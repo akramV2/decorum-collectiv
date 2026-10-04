@@ -27,7 +27,7 @@ const publicData = (doc) => {
   delete value.updatedBy;
   return value;
 };
-async function allPlaces(db) {
+async function allPlaces(db, includeDeleted = false) {
   const overrides = (await db.collection("places").limit(500).get()).docs.map(
     data,
   );
@@ -35,7 +35,7 @@ async function allPlaces(db) {
     require("../lib/places-seed.json").map((p) => [p.id, p]),
   );
   for (const p of overrides) merged.set(p.id, p);
-  return [...merged.values()];
+  return [...merged.values()].filter(p => includeDeleted || !p.deleted);
 }
 const visible = (a) =>
   (!a.status || a.status === "published") &&
@@ -417,7 +417,7 @@ module.exports = async (req, res) => {
         ? query.collection
         : "articles";
       if (collection === "places")
-        return json(res, 200, { items: await allPlaces(db), nextCursor: null });
+        return json(res, 200, { items: await allPlaces(db, true), nextCursor: null });
       let q = db.collection(collection).orderBy("__name__").limit(51);
       if (query.cursor) q = q.startAfter(C.id(query.cursor));
       const docs = (await q.get()).docs;
@@ -515,6 +515,19 @@ module.exports = async (req, res) => {
         .collection("settings")
         .doc("nextPublication")
         .set(C.countdown(body));
+      return json(res, 200, { ok: true });
+    }
+    if (action === "admin-place-delete" || action === "admin-place-restore") {
+      if (req.method !== "POST") throw C.error("Méthode non autorisée.", 405);
+      const id = C.id(body.id);
+      const ref = db.collection("places").doc(id);
+      await db.runTransaction(async tx => {
+        const doc = await tx.get(ref);
+        const seed = require("../lib/places-seed.json").find(p => p.id === id);
+        if (!doc.exists && !seed) throw C.error("Lieu introuvable.", 404);
+        tx.set(ref, { ...(doc.exists ? doc.data() : seed),
+          deleted: action === "admin-place-delete", updatedAt: now() });
+      });
       return json(res, 200, { ok: true });
     }
     if (action === "admin-place") {
