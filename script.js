@@ -107,51 +107,8 @@ function formatDate(dateInput) {
 /* ==========================================================================
    SMOOTH SCROLLING FLUIDE (LENIS)
    ========================================================================== */
-let lenisInstance = null;
+// Wheel, trackpad and touch scrolling remain native.
 
-function initSmoothScroll() {
-  if (typeof Lenis === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  lenisInstance = new Lenis({
-    duration: 1.35,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    smoothWheel: true,
-    syncTouch: false
-  });
-
-  let scrollFrame;
-  function raf(time) {
-    if (!lenisInstance) return;
-    lenisInstance.raf(time);
-    scrollFrame = requestAnimationFrame(raf);
-  }
-  scrollFrame = requestAnimationFrame(raf);
-  window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', event => {
-    if (event.matches && lenisInstance) {
-      cancelAnimationFrame(scrollFrame);
-      lenisInstance.destroy();
-      lenisInstance = null;
-    }
-  });
-
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      const targetId = this.getAttribute('href');
-      if (targetId === '#') return;
-
-      const targetElement = document.querySelector(targetId);
-      if (targetElement) {
-        e.preventDefault();
-        if (lenisInstance) lenisInstance.scrollTo(targetElement, { offset: -76, duration: 1.4 });
-        else targetElement.scrollIntoView({ behavior: 'auto' });
-      }
-    });
-  });
-}
-
-/* ==========================================================================
-   SCROLLSPY : DÉTECTION AUTOMATIQUE DE LA SECTION ACTIVE DANS LE MENU
-   ========================================================================== */
 function initScrollSpy() {
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
@@ -205,9 +162,7 @@ function initCustomCursor() {
 
   hero.addEventListener('click', () => {
     const nextSection = document.getElementById('intro');
-    if (nextSection && lenisInstance) {
-      lenisInstance.scrollTo(nextSection, { offset: -60 });
-    }
+    if (nextSection) nextSection.scrollIntoView({ block: 'start' });
   });
 }
 
@@ -761,7 +716,6 @@ function initMobileMenu() {
    INITIALISATION
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
-  initSmoothScroll();
   initCustomCursor();
   initScrollSpy();
   renderArticlesGrid();
