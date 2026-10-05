@@ -206,6 +206,19 @@ test("API denies unauthenticated private lists", async () => {
   });
   assert.equal(r.status, 403);
 });
+test("admin summary lists omit heavy article fields while full editing and export retain them", async () => {
+  db.store.clear();
+  db.store.set('articles/summary-test', {title:'Article', content:'Texte complet', image:'data:image/png;base64,AAAA', edition:'Édition #001', status:'published'});
+  const params = {collection:'articles', summary:'1'};
+  assert.equal((await request('admin-list', {params})).status, 403);
+  const summary = (await request('admin-list', {admin:true, params})).body.items[0];
+  assert.equal(summary.title, 'Article');
+  assert.equal(summary.image, undefined);
+  assert.equal(summary.content, undefined);
+  const full = (await request('admin-get', {admin:true, params:{collection:'articles',id:'summary-test'}})).body;
+  assert.equal(full.content, 'Texte complet');
+  assert.equal((await request('admin-list', {admin:true, params:{collection:'articles'}})).body.items[0].image, 'data:image/png;base64,AAAA');
+});
 test("draft is private; stale revision cannot overwrite it; publishing reuses its identifier", async () => {
   db.store.clear();
   const draft = {

@@ -213,6 +213,48 @@
 .workspace header h1 {
   font-size: 2.4rem;
 }
+.admin-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 12px;
+  margin-block: 28px;
+}
+.admin-metrics > div { border: 1px solid var(--encre); padding: 20px; display: grid; gap: 12px; }
+.admin-metrics strong { font-size: 2.6rem; line-height: 1; color: var(--blue); }
+.admin-metrics span { font-size: .8rem; }
+.admin-filters { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; margin-block: 24px 12px; }
+.admin-row-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; flex: 0 1 48%; }
+.admin-row > div:first-child { flex: 1; }
+.workspace .small-button { font-size: .8rem; text-decoration: none; color: var(--encre); }
+.workspace button:disabled { opacity: .5; cursor: wait; }
+.workspace :is(button, a, input, select, textarea, summary):focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+.workspace .admin-toolbar { align-items: center; }
+.workspace #article-editor > .admin-toolbar { position: sticky; bottom: 0; background: var(--papier); border-top: 2px solid var(--encre); padding: 14px 0; z-index: 5; }
+.editor-formatting { gap: 6px; }
+.editor-indicators { font-size: .8rem; padding: 12px 0; line-height: 1.6; }
+.admin-seo-preview { background: #fff; border-left: 3px solid var(--blue); padding: 18px; margin-top: 16px; overflow-wrap: anywhere; }
+.admin-seo-preview strong { color: var(--blue); }
+.admin-seo-preview p { margin-block: 8px; }
+.admin-details { border-top: 1px solid #c9c7c2; padding-block: 15px; }
+.admin-details summary { cursor: pointer; font-weight: 700; padding-block: 8px; }
+.admin-details fieldset { border: 0; margin: 0; padding: 18px 0; }
+.admin-preview-image { display: block; width: 100%; max-height: 540px; object-fit: contain; margin-block: 24px; }
+#editor-preview-output { padding: clamp(18px, 4vw, 45px); background: white; border: 1px solid var(--encre); margin-block: 24px; }
+.workspace [hidden] { display: none !important; }
+.admin-leave-dialog { margin: auto; padding: 28px; max-width: min(520px, 90vw); border: 2px solid var(--encre); background: var(--papier); }
+.admin-leave-dialog::backdrop { background: rgb(0 0 0 / .5); }
+.admin-leave-dialog p { margin-block: 18px; }
+.admin-leave-dialog form { display: flex; flex-wrap: wrap; gap: 12px; }
+.admin-leave-dialog button { padding: 12px; border: 1px solid var(--encre); background: white; font: inherit; cursor: pointer; }
+.admin-leave-dialog button[value="stay"] { background: var(--blue); color: white; }
+@media (max-width: 768px) {
+  .admin-filters { grid-template-columns: 1fr; }
+  .admin-row-actions { justify-content: flex-start; }
+  .workspace header h1 { font-size: 1.8rem; }
+  .workspace-nav { gap: 6px; }
+  .workspace-nav button { font-size: .8rem; padding: 10px; }
+  .workspace #article-editor > .admin-toolbar button { flex: 1; padding-inline: 10px; }
+}
 @media (max-width: 768px) {
   .editorial-next .container,
   .editorial-facts dl,

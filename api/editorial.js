@@ -439,7 +439,14 @@ module.exports = async (req, res) => {
       if (query.cursor) q = q.startAfter(C.id(query.cursor));
       const docs = (await q.get()).docs;
       return json(res, 200, {
-        items: docs.slice(0, 50).map(data),
+        items: docs.slice(0, 50).map(doc => {
+          const item = data(doc);
+          if (query.summary === "1" && ["articles", "editorialArticles"].includes(collection)) {
+            delete item.content;
+            delete item.image;
+          }
+          return item;
+        }),
         nextCursor: docs.length > 50 ? docs[49].id : null,
       });
     }
