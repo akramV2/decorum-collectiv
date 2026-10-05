@@ -349,6 +349,37 @@ test("metadata escapes HTML and closes no JSON-LD script", () => {
   assert.match(s, /\\u003c/);
 });
 
+test('map resolves legacy edition labels to readable articles without exposing ambiguous or private links', async () => {
+  db.store.clear();
+  db.store.set('articles/mexico', {title:'Modernisme mexicain', edition:'Édition #002', status:'published', content:'Architecture'});
+  db.store.set('places/casa', {name:'Casa', articleId:'Edition #002'});
+  db.store.set('places/missing', {name:'Absent', articleId:'unknown'});
+  let places = (await request('places')).body.items;
+  assert.equal(places.find(p => p.id === 'casa').articleId, 'mexico');
+  assert.equal(places.find(p => p.id === 'missing').articleId, '');
+  const page = await request('article-page', {params:{id:places.find(p => p.id === 'casa').articleId}});
+  assert.equal(page.status, 200);
+  assert.match(page.body, /Modernisme mexicain/);
+  db.store.set('articles/duplicate', {edition:'Édition #002', status:'published'});
+  assert.equal((await request('places')).body.items.find(p => p.id === 'casa').articleId, '');
+  db.store.delete('articles/duplicate');
+  db.store.get('articles/mexico').status = 'draft';
+  assert.equal((await request('places')).body.items.find(p => p.id === 'casa').articleId, '');
+});
+
+test('saving a place rejects edition labels and nonexistent articles and stores selected IDs', async () => {
+  db.store.clear();
+  db.store.set('articles/paris', {title:'Philharmonie', status:'published'});
+  const place = {name:'Philharmonie', lat:48, lng:2};
+  for (const articleId of ['Édition #001', 'unknown']) {
+    assert.equal((await request('admin-place', {admin:true, body:{...place, articleId}})).status, 400);
+    assert.equal([...db.store.keys()].some(k => k.startsWith('places/')), false);
+  }
+  const saved = await request('admin-place', {admin:true, body:{...place, articleId:'paris'}});
+  assert.equal(saved.status, 200);
+  assert.equal(db.store.get(`places/${saved.body.id}`).articleId, 'paris');
+});
+
 test('places can be removed and restored, including inherited seed places, without deleting articles', async () => {
   db.store.clear();
   db.store.set('articles/linked', { title: 'Conservé', status: 'published' });

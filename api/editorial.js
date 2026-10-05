@@ -35,7 +35,24 @@ async function allPlaces(db, includeDeleted = false) {
     require("../lib/places-seed.json").map((p) => [p.id, p]),
   );
   for (const p of overrides) merged.set(p.id, p);
-  return [...merged.values()].filter(p => includeDeleted || !p.deleted);
+  const places = [...merged.values()].filter(p => includeDeleted || !p.deleted);
+  // Older entries used the edition label instead of the article document ID.
+  // Resolve only a unique edition; ambiguous references must never open another article.
+  const editionKey = value => String(value || "").normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+  let editions;
+  return Promise.all(places.map(async p => {
+    if (!p.articleId) return p;
+    let articleId = p.articleId;
+    if (!/^[a-zA-Z0-9_-]{1,128}$/.test(articleId)) {
+      editions ||= db.collection("articles").select("edition", "status", "publishAt").limit(500).get();
+      const matches = (await editions).docs.filter(d =>
+        editionKey(d.data().edition) === editionKey(articleId));
+      articleId = matches.length === 1 ? matches[0].id : "";
+    }
+    const article = articleId ? await db.collection("articles").doc(articleId).get() : null;
+    return { ...p, articleId: article?.exists && (includeDeleted || visible(article.data())) ? articleId : "" };
+  }));
 }
 const visible = (a) =>
   (!a.status || a.status === "published") &&
@@ -532,6 +549,8 @@ module.exports = async (req, res) => {
     }
     if (action === "admin-place") {
       const value = C.place(body);
+      if (value.articleId && !(await db.collection("articles").doc(value.articleId).get()).exists)
+        throw C.error("Choisissez un article existant dans la liste.");
       const id = body.id ? C.id(body.id) : db.collection("places").doc().id;
       await db
         .collection("places")

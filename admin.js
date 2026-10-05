@@ -285,7 +285,9 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
     async function placeEditor(p = {}) {
-      panel.innerHTML = `<h2>${p.id ? "Modifier le lieu" : "Ajouter un lieu"}</h2><form><fieldset><legend>Bâtiment</legend><div class="fields-grid">${field("name", "Nom *", p.name, "text", true)}${field("architect", "Architecte", p.architect)}${field("city", "Ville", p.city)}${field("country", "Pays", p.country)}${field("lat", "Latitude", p.lat ?? "")}${field("lng", "Longitude", p.lng ?? "")}${field("articleId", "Identifiant de l’article associé", p.articleId)}${field("image", "Photographie — URL", p.image, "url")}</div>${field("description", "Description", p.description, "textarea")}</fieldset><fieldset><legend>Visite</legend>${group("visit", p.visit, Decorum.VISIT)}</fieldset><button type="submit" class="btn-submit">ENREGISTRER LE LIEU</button></form>`;
+      const articles = await all("articles");
+      const articleSelect = `<div class="field"><label for="f-articleId">Article associé</label><select id="f-articleId" name="articleId"><option value="">Aucun article</option>${articles.map(a => `<option value="${e(a.id)}" ${a.id === p.articleId ? "selected" : ""}>${e(a.title)}${a.edition ? ` — ${e(a.edition)}` : ""}</option>`).join("")}</select></div>`;
+      panel.innerHTML = `<h2>${p.id ? "Modifier le lieu" : "Ajouter un lieu"}</h2><form><fieldset><legend>Bâtiment</legend><div class="fields-grid">${field("name", "Nom *", p.name, "text", true)}${field("architect", "Architecte", p.architect)}${field("city", "Ville", p.city)}${field("country", "Pays", p.country)}${field("lat", "Latitude", p.lat ?? "")}${field("lng", "Longitude", p.lng ?? "")}${articleSelect}${field("image", "Photographie — URL", p.image, "url")}</div>${field("description", "Description", p.description, "textarea")}</fieldset><fieldset><legend>Visite</legend>${group("visit", p.visit, Decorum.VISIT)}</fieldset><button type="submit" class="btn-submit">ENREGISTRER LE LIEU</button></form>`;
       bind(panel.querySelector("form"), async (v) => {
         await call("admin-place", {
           body: { ...v, ...(p.id ? { id: p.id } : {}) },
