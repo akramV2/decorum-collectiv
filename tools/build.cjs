@@ -5,6 +5,7 @@ for (const name of [
   "index.html",
   "admin.html",
   "proposer.html",
+  "mentions-legales.html",
   "script.js",
   "editorial.js",
   "admin.js",

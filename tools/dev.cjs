@@ -8,6 +8,7 @@ const allowed = new Set([
   "article.html",
   "admin.html",
   "proposer.html",
+  "mentions-legales.html",
   "script.js",
   "editorial.js",
   "admin.js",
