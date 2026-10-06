@@ -194,29 +194,25 @@ function initCustomCursor() {
    EASTER EGG : ACCÈS SECRET À L'ADMINISTRATION
    ========================================================================== */
 function initLogoSecret() {
-  const logos = document.querySelectorAll('.brand-logo');
-  logos.forEach(logo => {
+  document.querySelectorAll('.brand-logo').forEach(logo => {
     let clickCount = 0;
     let clickTimer = null;
-
-    logo.addEventListener('click', (e) => {
+    logo.addEventListener('click', event => {
+      // Keep keyboard activation and opening another tab native.
+      if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.detail === 0) return;
+      // Defer the ordinary link from the first click, not only the fifth.
+      event.preventDefault();
+      clearTimeout(clickTimer);
       clickCount++;
-
-      if (clickTimer) clearTimeout(clickTimer);
-
-      if (clickCount >= 5) {
-        e.preventDefault();
+      if (clickCount === 5) {
         clickCount = 0;
-        showNotification('Accès rédaction déverrouillé...');
-        setTimeout(() => {
-          window.location.href = 'admin.html';
-        }, 500);
+        window.location.assign('admin.html');
         return;
       }
-
       clickTimer = setTimeout(() => {
         clickCount = 0;
-      }, 400);
+        window.location.assign(logo.href);
+      }, 650);
     });
   });
 }
