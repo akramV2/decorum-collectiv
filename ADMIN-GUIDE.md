@@ -25,3 +25,8 @@ Choisir les articles et lieux associés dans les listes par leur nom. Le compte 
 ## Vérification locale
 
 `node tools/admin-preview.cjs` démarre un panneau avec des données fictives sur `http://127.0.0.1:4175`. Il ne se connecte pas à Firebase. Les modifications simulées disparaissent au rechargement. Cette page de test n'est pas copiée par le build public.
+
+
+## Choisir une publication
+
+Dans Articles → Nouvel article (ou Tableau de bord → Écrire un article), choisissez la **Rubrique du site** : Architecture, Fashion, Design ou Visual Culture. Ce choix détermine la page de rubrique où la publication apparaît. Choisissez ensuite le **Type de publication** : Article, Analyse, Interview, Reportage, Portrait, Portfolio ou Chronique. « Autre format / format existant » permet de conserver ou saisir un format personnalisé. Les anciennes catégories et les anciens formats ne sont pas modifiés automatiquement. Le statut contrôle indépendamment le brouillon, la programmation et la publication. Une rubrique est demandée avant publication ; un brouillon peut rester sans rubrique.

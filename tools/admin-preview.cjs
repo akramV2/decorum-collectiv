@@ -24,8 +24,8 @@ const Decorum={TECH:${JSON.stringify(C.TECH)},VISIT:${JSON.stringify(C.VISIT)},r
 }};
 function showNotification(message){console.log(message)}
 `;
-const html = `<!doctype html><html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DECORUM — test local</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="editorial.css"><div id="admin-content"></div><script src="assets/vendor/purify-3.4.16.min.js"></script><script>// Plain metadata${helpers}\n${fixture}</script><script src="admin.js"></script></html>`;
-const allowed = new Set(['style.css','editorial.css','admin.js','assets/vendor/purify-3.4.16.min.js']);
+const html = `<!doctype html><html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DECORUM — test local</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="editorial.css"><div id="admin-content"></div><script src="assets/vendor/purify-3.4.16.min.js"></script><script>// Plain metadata${helpers}\n${fixture}</script><script src="universes.js"></script><script src="admin.js"></script></html>`;
+const allowed = new Set(['style.css','editorial.css','admin.js','universes.js','assets/fonts/Bricolage-800.woff2','assets/fonts/Schibsted-400.woff2','assets/fonts/Schibsted-700.woff2','assets/vendor/purify-3.4.16.min.js']);
 http.createServer((req,res)=>{
  const name=new URL(req.url,'http://localhost').pathname.slice(1);
  res.setHeader('Cache-Control','no-store');
