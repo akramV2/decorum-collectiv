@@ -399,7 +399,7 @@ async function renderArticlesGrid(more = false) {
         <span class="tag">${escapeHtml(art.category || 'ARCHITECTURE')}</span>
       </div>
       <div class="card-meta">
-        <span style="color: var(--coral); font-weight: 600; text-transform: uppercase; margin-right: 8px;">${escapeHtml(art.type || 'ARTICLE')}</span>
+        <span style="color: var(--color-editorial); font-weight: 600; text-transform: uppercase; margin-right: 8px;">${escapeHtml(art.type || 'ARTICLE')}</span>
         <time>${escapeHtml(formatDate(art.date || art.createdAt))}</time>
       </div>
       <h3 class="card-title">${escapeHtml(art.title || 'Sans titre')}</h3>
@@ -642,7 +642,7 @@ async function renderAdminArticlesList() {
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border: 2px solid var(--encre); background: var(--white); margin-bottom: 12px;">
       <div>
         <strong>${escapeHtml(art.title)}</strong>
-        <span style="font-size: 0.8rem; color: var(--coral); margin-left: 8px;">[${escapeHtml(art.type || 'ARTICLE')}]</span>
+        <span style="font-size: 0.8rem; color: var(--color-editorial); margin-left: 8px;">[${escapeHtml(art.type || 'ARTICLE')}]</span>
       </div>
       <button data-delete-id="${escapeHtml(art.id)}" class="btn-delete" style="padding: 6px 12px; font-size: 0.8rem;">Supprimer</button>
     </div>

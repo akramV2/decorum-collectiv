@@ -5,15 +5,31 @@
    CHARTE GRAPHIQUE DECORUM COLLECTIV
    ========================================================================== */
 :root {
-  /* Palette officielle */
-  --blue: #2A38F5;
-  --coral: #FF5A3C;
-  --citron: #FFE14D;
-  --encre: #111114;
-  --encre-subtile: #444444;
-  --papier: #F5F3EE;
-  --white: #FFFFFF;
-  --bg-summary: #f8f8f6;
+  /* Official palette. Historical names remain aliases for existing templates. */
+  --color-black: #000000;
+  --color-white: #FFFAFA;
+  --color-brown-red: #2D2D2D;
+  --color-orange: #BF00FF;
+  --color-acid-green: #2CFF05;
+  --color-text: var(--color-black);
+  --color-bg: var(--color-white);
+  --color-muted: var(--color-brown-red);
+  --color-border: #767272;
+  --color-editorial: var(--color-brown-red);
+  --color-accent-primary: var(--color-orange);
+  --color-accent-secondary: var(--color-acid-green);
+  --color-surface: #F2EEEE;
+  --color-overlay: rgb(0 0 0 / .85);
+  --color-overlay-soft: rgb(0 0 0 / .5);
+  --color-hover-wash: rgb(0 0 0 / .04);
+  --blue: var(--color-editorial);
+  --coral: var(--color-accent-primary);
+  --citron: var(--color-bg);
+  --encre: var(--color-text);
+  --encre-subtile: var(--color-muted);
+  --papier: var(--color-bg);
+  --white: var(--color-bg);
+  --bg-summary: var(--color-surface);
 
   /* Typographies */
   --font-title: 'Bricolage Grotesque', sans-serif;
@@ -126,8 +142,9 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   width: 100%;
   z-index: 1000;
   padding: 16px 0;
-  background-color: var(--papier);
-  border-bottom: 2px solid var(--encre);
+  background-color: var(--color-black);
+  color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
   transition: padding 0.3s ease;
 }
 
@@ -167,7 +184,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   top: 50%;
   transform: translateY(-50%);
   font-size: 1.4rem;
-  color: var(--blue);
+  color: var(--color-bg);
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
@@ -187,18 +204,18 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 .nav-links {
   display: flex;
   align-items: center;
-  background-color: var(--papier);
-  border: 2px solid var(--encre);
+  background-color: var(--color-black);
+  border: 2px solid var(--color-border);
   padding: 0;
 }
 
 .nav-links a {
-  color: var(--encre);
+  color: var(--color-bg);
   font-size: 0.8rem;
   text-transform: uppercase;
   font-weight: 700;
   padding: 8px 18px;
-  border-right: 2px solid var(--encre);
+  border-right: 1px solid var(--color-border);
   display: inline-block;
   white-space: nowrap;
   transition: background-color var(--transition-fast), color var(--transition-fast);
@@ -210,8 +227,8 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 
 .nav-links a:hover,
 .nav-links a.active {
-  background-color: var(--blue);
-  color: var(--white);
+  background-color: var(--color-bg);
+  color: var(--color-black);
 }
 
 .menu-btn {
@@ -232,7 +249,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   position: relative;
   height: 80vh;
   min-height: 500px;
-  background-color: var(--blue);
+  background-color: var(--color-black);
   color: var(--white);
   display: flex;
   align-items: center;
@@ -280,7 +297,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   display: inline-block;
   font-weight: 700;
   font-size: 0.9rem;
-  color: var(--coral);
+  color: var(--color-editorial);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -315,7 +332,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 
 .article-card:hover {
   transform: translate(-4px, -4px);
-  background-color: var(--citron);
+  background-color: var(--color-surface);
 }
 
 .card-image {
@@ -339,7 +356,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   justify-content: center;
   font-weight: 700;
   color: var(--encre);
-  background-color: var(--citron);
+  background-color: var(--color-surface);
 }
 
 .tag {
@@ -357,7 +374,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 
 .tag-type {
   background-color: var(--coral);
-  color: var(--white);
+  color: var(--color-black);
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 1px;
@@ -419,7 +436,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 }
 
 .custom-map-pin:hover .pin-inner {
-  background-color: var(--citron);
+  background-color: var(--color-accent-secondary);
   transform: scale(1.4);
 }
 
@@ -458,13 +475,13 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
    PAGE MANIFESTO
    ========================================================================== */
 .active-link {
-  color: var(--coral) !important;
+  color: var(--color-editorial) !important;
 }
 
 .manifesto-hero {
   padding-top: 160px;
   padding-bottom: 80px;
-  background-color: var(--blue);
+  background-color: var(--color-editorial);
   color: var(--white);
   text-align: center;
   border-bottom: 2px solid var(--encre);
@@ -501,7 +518,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 }
 
 .manifesto-quote-banner {
-  background-color: var(--citron);
+  background-color: var(--color-surface);
   color: var(--encre);
   padding: 60px 0;
   text-align: center;
@@ -576,7 +593,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 
 .highlight-box:hover {
   transform: translateX(6px);
-  background-color: var(--citron);
+  background-color: var(--color-surface);
 }
 
 .highlight-box h4 {
@@ -612,7 +629,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 
 .principle-card:hover {
   transform: translate(-4px, -4px);
-  background-color: var(--citron);
+  background-color: var(--color-surface);
 }
 
 .principle-number {
@@ -667,13 +684,13 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 
 .contact-card:hover {
   transform: translate(-4px, -4px);
-  background-color: var(--citron);
+  background-color: var(--color-surface);
 }
 
 .contact-label {
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--coral);
+  color: var(--color-editorial);
 }
 
 .contact-value {
@@ -722,7 +739,10 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 }
 
 .link-group a:hover {
-  color: var(--coral);
+  color: var(--color-bg);
+
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent-primary);
 }
 
 /* ==========================================================================
@@ -785,7 +805,8 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 .admin-form input:focus, 
 .admin-form textarea:focus,
 .admin-select:focus {
-  outline: none !important;
+  outline: 2px solid var(--color-editorial) !important;
+  outline-offset: 3px;
   background-color: var(--citron) !important;
 }
 
@@ -808,7 +829,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 
 .btn-file:hover {
   background-color: var(--coral);
-  color: var(--white);
+  color: var(--color-black);
 }
 
 .admin-actions-bar {
@@ -846,6 +867,8 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 
 .btn-submit:hover {
   background-color: var(--coral);
+
+  color: var(--color-black);
 }
 
 .btn-delete {
@@ -867,7 +890,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(17, 17, 20, 0.85);
+  background-color: var(--color-overlay);
   backdrop-filter: blur(4px);
   z-index: 3000;
   overflow-y: auto;
@@ -927,7 +950,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
   top: 0;
   left: 0;
   height: 4px;
-  background-color: var(--coral);
+  background-color: var(--color-accent-secondary);
   width: 0%;
   z-index: 2000;
 }
@@ -948,8 +971,8 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
     top: 100%;
     left: 0;
     width: 100%;
-    background-color: var(--papier);
-    border-bottom: 2px solid var(--encre);
+    background-color: var(--color-black);
+    border-bottom: 1px solid var(--color-border);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s ease;
@@ -957,7 +980,7 @@ h1, h2, h3, h4, .hero-title, .brand-name, .admin-title, .article-main-title {
 
   .nav-links a {
     border-right: none;
-    border-bottom: 1px solid var(--encre);
+    border-bottom: 1px solid var(--color-border);
     width: 100%;
     text-align: center;
   }
@@ -1058,7 +1081,7 @@ button:disabled { opacity: 0.6; cursor: wait; }
 }
 
 .like-button:hover {
-  background: rgba(0, 0, 0, 0.04);
+  background: var(--color-hover-wash);
 }
 
 .like-button:hover .heart-icon {
@@ -1066,13 +1089,13 @@ button:disabled { opacity: 0.6; cursor: wait; }
 }
 
 .like-button.liked {
-  border-color: #e63946;
-  color: #e63946;
+  border-color: var(--color-editorial);
+  color: var(--color-editorial);
 }
 
 .like-button.liked .heart-icon {
-  fill: #e63946;
-  stroke: #e63946;
+  fill: var(--color-editorial);
+  stroke: var(--color-editorial);
 }
 
 /* ==========================================================================
@@ -1330,3 +1353,15 @@ section[id] { scroll-snap-align: none; scroll-snap-stop: normal; }
 
 /* Lenis owns wheel interpolation; avoid competing CSS smoothing. */
 html.lenis { scroll-behavior: auto !important; }
+
+/* Accent signals remain small; text keeps an AA-compatible foreground. */
+.hero-subtitle::after { background: var(--color-accent-primary); }
+.tag-outline { background: transparent; }
+a.tag-outline:hover { background: var(--color-bg); color: var(--color-black); }
+.map-section .tag-outline, .manifesto-hero .tag-outline { border-color: currentColor; color: var(--color-bg); }
+.editorial-next h2::before { content: ''; display: inline-block; width: 8px; height: 8px; margin-right: 12px; background: var(--color-accent-secondary); border: 1px solid var(--color-black); vertical-align: middle; }
+.navbar .logo-d-icon rect, .footer .logo-d-icon rect { fill: var(--color-bg); }
+.navbar .logo-d-icon path, .footer .logo-d-icon path { fill: var(--color-accent-primary); }
+.btn-link { text-decoration: underline; text-decoration-color: var(--color-accent-primary); text-underline-offset: 6px; }
+.principle-number { color: var(--color-editorial); }
+::selection { color: var(--color-black); background: var(--color-accent-primary); }

@@ -4,7 +4,7 @@
 .editorial-next {
   padding: 48px 0;
   border-block: 2px solid var(--encre);
-  background: var(--citron);
+  background: var(--color-surface);
 }
 .editorial-next .container {
   display: grid;
@@ -43,7 +43,7 @@
   gap: 16px 28px;
 }
 .editorial-facts dl > div {
-  border-bottom: 1px solid #c9c7c2;
+  border-bottom: 1px solid var(--color-border);
   padding-bottom: 10px;
   min-width: 0;
 }
@@ -137,7 +137,7 @@
 }
 .workspace-nav button[aria-selected="true"] {
   background: var(--blue);
-  color: white;
+  color: var(--color-bg);
 }
 .workspace {
   max-width: 1100px;
@@ -145,7 +145,7 @@
 }
 .workspace fieldset {
   padding: 20px;
-  border: 1px solid #c9c7c2;
+  border: 1px solid var(--color-border);
   margin-block: 18px;
   min-width: 0;
 }
@@ -163,7 +163,7 @@
   width: 100%;
   padding: 10px;
   border: 1px solid var(--encre);
-  background: white;
+  background: var(--color-bg);
   font: inherit;
 }
 .workspace textarea {
@@ -182,7 +182,7 @@
 }
 .admin-row {
   padding: 20px 0;
-  border-bottom: 1px solid #aaa;
+  border-bottom: 1px solid var(--color-border);
   display: flex;
   gap: 16px;
   justify-content: space-between;
@@ -217,7 +217,7 @@
 .legal-page h1 { font-size: clamp(2.4rem, 6vw, 5rem); line-height: 1.1; margin: 28px 0 72px; text-transform: uppercase; }
 .legal-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; }
 .legal-grid section { min-width: 0; overflow-wrap: anywhere; }
-.legal-symbol { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--blue); color: white; font-size: .8rem; margin-bottom: 32px; }
+.legal-symbol { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--blue); color: var(--color-bg); font-size: .8rem; margin-bottom: 32px; }
 .legal-page h2 { font-size: .9rem; text-transform: uppercase; line-height: 1.5; margin-bottom: 22px; }
 .legal-grid p, .legal-grid a { font-size: .88rem; line-height: 1.9; }
 .legal-page a { text-underline-offset: 4px; }
@@ -244,21 +244,21 @@
 .workspace #article-editor > .admin-toolbar { position: sticky; bottom: 0; background: var(--papier); border-top: 2px solid var(--encre); padding: 14px 0; z-index: 5; }
 .editor-formatting { gap: 6px; }
 .editor-indicators { font-size: .8rem; padding: 12px 0; line-height: 1.6; }
-.admin-seo-preview { background: #fff; border-left: 3px solid var(--blue); padding: 18px; margin-top: 16px; overflow-wrap: anywhere; }
+.admin-seo-preview { background: var(--color-bg); border-left: 3px solid var(--blue); padding: 18px; margin-top: 16px; overflow-wrap: anywhere; }
 .admin-seo-preview strong { color: var(--blue); }
 .admin-seo-preview p { margin-block: 8px; }
-.admin-details { border-top: 1px solid #c9c7c2; padding-block: 15px; }
+.admin-details { border-top: 1px solid var(--color-border); padding-block: 15px; }
 .admin-details summary { cursor: pointer; font-weight: 700; padding-block: 8px; }
 .admin-details fieldset { border: 0; margin: 0; padding: 18px 0; }
 .admin-preview-image { display: block; width: 100%; max-height: 540px; object-fit: contain; margin-block: 24px; }
-#editor-preview-output { padding: clamp(18px, 4vw, 45px); background: white; border: 1px solid var(--encre); margin-block: 24px; }
+#editor-preview-output { padding: clamp(18px, 4vw, 45px); background: var(--color-bg); border: 1px solid var(--encre); margin-block: 24px; }
 .workspace [hidden] { display: none !important; }
 .admin-leave-dialog { margin: auto; padding: 28px; max-width: min(520px, 90vw); border: 2px solid var(--encre); background: var(--papier); }
-.admin-leave-dialog::backdrop { background: rgb(0 0 0 / .5); }
+.admin-leave-dialog::backdrop { background: var(--color-overlay-soft); }
 .admin-leave-dialog p { margin-block: 18px; }
 .admin-leave-dialog form { display: flex; flex-wrap: wrap; gap: 12px; }
-.admin-leave-dialog button { padding: 12px; border: 1px solid var(--encre); background: white; font: inherit; cursor: pointer; }
-.admin-leave-dialog button[value="stay"] { background: var(--blue); color: white; }
+.admin-leave-dialog button { padding: 12px; border: 1px solid var(--encre); background: var(--color-bg); font: inherit; cursor: pointer; }
+.admin-leave-dialog button[value="stay"] { background: var(--blue); color: var(--color-bg); }
 @media (max-width: 768px) {
   .admin-filters { grid-template-columns: 1fr; }
   .admin-row-actions { justify-content: flex-start; }
