@@ -1,0 +1,10 @@
+document.addEventListener('DOMContentLoaded',()=>{
+  const page=document.querySelector('[data-universe]'); if(!page)return;
+  const grid=document.getElementById('archive-grid'),status=document.getElementById('archive-status'),retry=document.getElementById('archive-retry'),form=document.querySelector('.archive-search'),input=document.getElementById('search-query');
+  const universe=page.dataset.universe; let articles=[],complete=false,loading=false,failed=false;
+  if(input)input.value=(new URLSearchParams(location.search).get('q')||'').slice(0,200);
+  function render(){const result=articles.filter(a=>universe==='recherche'?DecorumUniverses.matches(a,input.value):DecorumUniverses.belongs(a,universe)); grid.innerHTML=result.map(articleCardMarkup).join(''); grid.querySelectorAll('.reveal').forEach(el=>el.classList.add('active')); status.textContent=failed?'Le chargement est incomplet. Vous pouvez réessayer.':!complete?'Chargement des publications…':result.length?result.length+' publication'+(result.length>1?'s':''):universe==='recherche'?'Aucune publication ne correspond à votre recherche.':'Les premières publications de cette rubrique arrivent bientôt.';}
+  async function load(){if(loading)return;loading=true;complete=false;failed=false;articles=[];retry.hidden=true;grid.setAttribute('aria-busy','true');render();try{let cursor;const seen=new Set();do{const response=await Decorum.api('articles',{params:cursor?{cursor}:{}});for(const article of response.items||[])if(!articles.some(a=>a.id===article.id))articles.push(article);cursor=response.nextCursor;if(cursor && seen.has(cursor))throw new Error('Pagination répétée');if(cursor)seen.add(cursor);render();}while(cursor);complete=true;}catch{failed=true;retry.hidden=false;}finally{loading=false;grid.setAttribute('aria-busy','false');render();}}
+  form?.addEventListener('submit',event=>{event.preventDefault();const url=new URL(location.href);const q=input.value.trim();if(q)url.searchParams.set('q',q);else url.searchParams.delete('q');history.replaceState(null,'',url);render();});
+  retry.addEventListener('click',load);load();
+});

@@ -1,7 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
-  <!-- Carré bleu électrique -->
-  <rect x="0" y="0" width="250" height="500" fill="#FFFAFA" />
-  
-  <!-- Demi-cercle corail -->
-  <path d="M250 0 C388.071 0 500 111.929 500 250 C500 388.071 388.071 500 250 500 V0Z" fill="#BF00FF" />
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="translate(0 0) scale(1)"><rect x="8" y="10" width="38" height="80" fill="#030122"/><path d="M53 10A40 40 0 0 1 53 90Z" fill="#030122"/></g></svg>

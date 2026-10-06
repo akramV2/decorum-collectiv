@@ -309,7 +309,7 @@ module.exports = async (req, res) => {
         const items = await legacyList();
         res.setHeader("Content-Type", "application/xml; charset=utf-8");
         return res.end(
-          `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${SITE()}/</loc></url><url><loc>${SITE()}/proposer.html</loc></url><url><loc>${SITE()}/mentions-legales.html</loc></url>${items.map((a) => `<url><loc>${C.escape(`${SITE()}/article.html?id=${a.id}`)}</loc></url>`).join("")}</urlset>`,
+          `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${SITE()}/</loc></url><url><loc>${SITE()}/proposer.html</loc></url><url><loc>${SITE()}/mentions-legales.html</loc></url><url><loc>${SITE()}/architecture.html</loc></url><url><loc>${SITE()}/fashion.html</loc></url><url><loc>${SITE()}/design.html</loc></url><url><loc>${SITE()}/visual-culture.html</loc></url>${items.map((a) => `<url><loc>${C.escape(`${SITE()}/article.html?id=${a.id}`)}</loc></url>`).join("")}</urlset>`,
         );
       }
       throw C.error("Le service éditorial est en cours d’activation.", 503);
@@ -359,6 +359,10 @@ module.exports = async (req, res) => {
         `${SITE()}/`,
         `${SITE()}/proposer.html`,
         `${SITE()}/mentions-legales.html`,
+        `${SITE()}/architecture.html`,
+        `${SITE()}/fashion.html`,
+        `${SITE()}/design.html`,
+        `${SITE()}/visual-culture.html`,
         ...docs.docs
           .filter((d) => visible(d.data()))
           .map((d) => `${SITE()}/article.html?id=${d.id}`),

@@ -334,7 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }));
       for (const [name, items] of [
         ["author", authors],
-        ["category", categories],
+        ["category", [...new Set(["Architecture", "Fashion", "Design", "Visual Culture", ...categories.map(c => c.name)])].map(name => ({name}))],
       ]) {
         const dl = document.createElement("datalist");
         dl.id = `editor-${name}-options`;

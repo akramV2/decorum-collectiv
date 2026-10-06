@@ -9,14 +9,5 @@ function luminance(hex) {
   return channels[0]*.2126+channels[1]*.7152+channels[2]*.0722;
 }
 function contrast(a,b) { const x=luminance(a), y=luminance(b); return (Math.max(x,y)+.05)/(Math.min(x,y)+.05); }
-test('official palette uses readable small text pairs; bright accents are not white text backgrounds',()=>{
-  for(const [a,b] of [['black','white'],['brown-red','white'],['black','orange'],['black','acid-green']]) assert.ok(contrast(color(a),color(b))>=4.5, `${a}/${b}`);
-  assert.ok(contrast(color('orange'),color('white'))<4.5);
-  assert.ok(contrast(color('acid-green'),color('white'))<3);
-  assert.match(css,/\.tag-type\s*\{[^}]*color:\s*var\(--color-black\)/);
-  assert.match(css,/\.btn-submit:hover\s*\{[^}]*color:\s*var\(--color-black\)/);
-});
-test('mobile navigation keeps a dark surface for its light labels',()=>{
-  const mobile=css.slice(css.indexOf('@media (max-width: 768px)'));
-  assert.match(mobile,/\.nav-links\s*\{[^}]*background-color:\s*var\(--color-black\)/);
-});
+test('midnight palette supports all editorial text pairs at AA',()=>{for(const [a,b] of [['primary','background'],['text','background'],['secondary','background'],['on-primary','primary']])assert.ok(contrast(color(a),color(b))>=4.5,a+'/'+b);assert.doesNotMatch(css,/#(?:BF00FF|2CFF05|FF7900|8A2B0E|89F336)/i);});
+test('mobile navigation keeps the signature surface for light labels',()=>{const mobile=css.slice(css.indexOf('@media (max-width: 768px)'));assert.match(mobile,/\.nav-links\s*\{[^}]*background-color:\s*var\(--color-primary\)/);});

@@ -1,11 +1,11 @@
 {
   "name": "DECORUM COLLECTIV",
   "short_name": "DECORUM",
-  "description": "A Chronicle of Architectural Thought",
+  "description": "Architecture / Fashion / Design / Visual Culture",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#FFFAFA",
-  "theme_color": "#000000",
+  "theme_color": "#030122",
   "icons": [
     {
       "src": "logo.svg",

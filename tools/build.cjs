@@ -3,6 +3,13 @@ const path = require("node:path");
 fs.mkdirSync("public", { recursive: true });
 for (const name of [
   "index.html",
+  "architecture.html",
+  "fashion.html",
+  "design.html",
+  "visual-culture.html",
+  "recherche.html",
+  "universes.js",
+  "archive.js",
   "admin.html",
   "proposer.html",
   "mentions-legales.html",

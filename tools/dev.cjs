@@ -5,6 +5,13 @@ const root = path.join(__dirname, "..");
 const handler = require("../api/editorial.js");
 const allowed = new Set([
   "index.html",
+  "architecture.html",
+  "fashion.html",
+  "design.html",
+  "visual-culture.html",
+  "recherche.html",
+  "universes.js",
+  "archive.js",
   "article.html",
   "admin.html",
   "proposer.html",

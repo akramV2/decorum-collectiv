@@ -369,6 +369,23 @@ async function getArticlesFromCloud(more = false) {
   }
 }
 
+function articleCardMarkup(art) { return `
+    <article class="article-card reveal">
+      <a class="article-card-link" href="article.html?id=${escapeHtml(encodeURIComponent(art.id))}">
+      <div class="card-image ${!art.image ? 'placeholder-box' : ''}">
+        ${safeImageUrl(art.image) ? `<img src="${escapeHtml(safeImageUrl(art.image))}" alt="${escapeHtml(art.title)}" loading="lazy" decoding="async">` : `<span>${escapeHtml((art.title || '').toUpperCase())}</span>`}
+        <span class="tag">${escapeHtml(art.category || 'ARCHITECTURE')}</span>
+      </div>
+      <div class="card-meta">
+        <span style="color: var(--color-editorial); font-weight: 600; text-transform: uppercase; margin-right: 8px;">${escapeHtml(art.type || 'ARTICLE')}</span>
+        <time>${escapeHtml(formatDate(art.date || art.createdAt))}</time>
+      </div>
+      <h3 class="card-title">${escapeHtml(art.title || 'Sans titre')}</h3>
+      <p style="font-size: 0.85rem; color: var(--encre); margin-top: 8px; line-height: 1.5;">${escapeHtml(art.excerpt || '')}</p>
+      </a>
+    </article>
+  `; }
+
 async function renderArticlesGrid(more = false) {
   const container = document.getElementById('articles-grid');
   if (!container) return;
@@ -391,22 +408,7 @@ async function renderArticlesGrid(more = false) {
     return;
   }
 
-  const cards = articles.map(art => `
-    <article class="article-card reveal">
-      <a class="article-card-link" href="article.html?id=${escapeHtml(encodeURIComponent(art.id))}">
-      <div class="card-image ${!art.image ? 'placeholder-box' : ''}">
-        ${safeImageUrl(art.image) ? `<img src="${escapeHtml(safeImageUrl(art.image))}" alt="${escapeHtml(art.title)}" loading="lazy" decoding="async">` : `<span>${escapeHtml((art.title || '').toUpperCase())}</span>`}
-        <span class="tag">${escapeHtml(art.category || 'ARCHITECTURE')}</span>
-      </div>
-      <div class="card-meta">
-        <span style="color: var(--color-editorial); font-weight: 600; text-transform: uppercase; margin-right: 8px;">${escapeHtml(art.type || 'ARTICLE')}</span>
-        <time>${escapeHtml(formatDate(art.date || art.createdAt))}</time>
-      </div>
-      <h3 class="card-title">${escapeHtml(art.title || 'Sans titre')}</h3>
-      <p style="font-size: 0.85rem; color: var(--encre); margin-top: 8px; line-height: 1.5;">${escapeHtml(art.excerpt || '')}</p>
-      </a>
-    </article>
-  `).join('');
+  const cards = articles.map(articleCardMarkup).join('');
 
   if (more) container.insertAdjacentHTML('beforeend', cards);
   else container.innerHTML = cards;
