@@ -199,7 +199,7 @@ function metadata(a, id) {
     mainEntityOfPage: canonical,
     publisher: {
       "@type": "Organization",
-      name: "DECORUM Collectiv",
+      name: "LATENCE",
       logo: { "@type": "ImageObject", url: `${SITE()}/logo.svg` },
     },
   };
@@ -212,7 +212,9 @@ function metadata(a, id) {
         : null);
   if (date) schema.datePublished = date;
   if (a.updatedAt) schema.dateModified = a.updatedAt;
-  const cover = /^https?:\/\//.test(a.image || "") ? a.image : null;
+  const cover = /^https?:\/\//.test(a.image || "")
+    ? a.image
+    : `${SITE()}/assets/brand/latence-cover.webp`;
   if (cover) schema.image = [cover];
   if (a.technical?.project)
     schema.about = {
@@ -229,7 +231,7 @@ function metadata(a, id) {
           }
         : {}),
     };
-  return `<title>${C.escape(title)} — DECORUM</title><meta name="description" content="${C.escape(description)}"><link rel="canonical" href="${C.escape(canonical)}"><meta property="og:type" content="article"><meta property="og:site_name" content="DECORUM"><meta property="og:title" content="${C.escape(title)}"><meta property="og:description" content="${C.escape(description)}"><meta property="og:url" content="${C.escape(canonical)}"><meta name="twitter:card" content="${cover ? "summary_large_image" : "summary"}">${cover ? `<meta property="og:image" content="${C.escape(cover)}"><meta name="twitter:image" content="${C.escape(cover)}">` : ""}<script type="application/ld+json">${JSON.stringify(schema).replace(/</g, "\\u003c")}</script>`;
+  return `<title>${C.escape(title)} — LATENCE</title><meta name="description" content="${C.escape(description)}"><link rel="canonical" href="${C.escape(canonical)}"><meta property="og:type" content="article"><meta property="og:site_name" content="LATENCE"><meta property="og:title" content="${C.escape(title)} — LATENCE"><meta property="og:description" content="${C.escape(description)}"><meta property="og:url" content="${C.escape(canonical)}"><meta property="og:image" content="${C.escape(cover)}"><meta property="og:image:alt" content="${C.escape(a.imageAlt || a.title || "Publication LATENCE")}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${C.escape(title)} — LATENCE"><meta name="twitter:description" content="${C.escape(description)}"><meta name="twitter:image" content="${C.escape(cover)}"><script type="application/ld+json">${JSON.stringify(schema).replace(/</g, "\\u003c")}</script>`;
 }
 module.exports = async (req, res) => {
   res.setHeader("Cache-Control", "no-store");
@@ -273,7 +275,7 @@ module.exports = async (req, res) => {
         template = template.replace(new RegExp(`(<[^>]+id="${id}"[^>]*>)[\\s\\S]*?(</[^>]+>)`), (_, open, close) => open + C.escape(text) + close);
       };
       fill("art-author", `Par ${article.author || "La rédaction"}`);
-      fill("art-category", article.category || "ARCHITECTURE");
+      fill("art-category", article.category || "LATENCE");
       fill("art-type", article.type || "ARTICLE");
       fill("art-date", article.date || new Date(article.publishedAt || article.createdAt || Date.now()).toLocaleDateString("fr-FR"));
       fill("art-excerpt", article.excerpt || "");
@@ -301,7 +303,7 @@ module.exports = async (req, res) => {
         res.setHeader("Content-Type", "application/pdf");
         res.setHeader(
           "Content-Disposition",
-          `attachment; filename="decorum-${query.id}.pdf"`,
+          `attachment; filename="latence-${query.id}.pdf"`,
         );
         return res.end(pdf);
       }
@@ -309,7 +311,7 @@ module.exports = async (req, res) => {
         const items = await legacyList();
         res.setHeader("Content-Type", "application/xml; charset=utf-8");
         return res.end(
-          `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${SITE()}/</loc></url><url><loc>${SITE()}/proposer.html</loc></url><url><loc>${SITE()}/mentions-legales.html</loc></url><url><loc>${SITE()}/architecture.html</loc></url><url><loc>${SITE()}/fashion.html</loc></url><url><loc>${SITE()}/design.html</loc></url><url><loc>${SITE()}/visual-culture.html</loc></url>${items.map((a) => `<url><loc>${C.escape(`${SITE()}/article.html?id=${a.id}`)}</loc></url>`).join("")}</urlset>`,
+          `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${SITE()}/</loc></url><url><loc>${SITE()}/usage.html</loc></url><url><loc>${SITE()}/regard.html</loc></url><url><loc>${SITE()}/selection.html</loc></url><url><loc>${SITE()}/essentiel.html</loc></url><url><loc>${SITE()}/recherche.html</loc></url><url><loc>${SITE()}/mentions-legales.html</loc></url>${items.filter(a => ["À l'usage", "Le regard", "Sélection", "L'essentiel"].includes(a.category)).map((a) => `<url><loc>${C.escape(`${SITE()}/article.html?id=${a.id}`)}</loc></url>`).join("")}</urlset>`,
         );
       }
       throw C.error("Le service éditorial est en cours d’activation.", 503);
@@ -346,26 +348,28 @@ module.exports = async (req, res) => {
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
         "Content-Disposition",
-        `attachment; filename="decorum-${query.id}.pdf"`,
+        `attachment; filename="latence-${query.id}.pdf"`,
       );
       return res.end(pdf);
     }
     if (action === "sitemap" && req.method === "GET") {
       const docs = await db
         .collection("articles")
-        .select("status", "publishAt", "updatedAt")
+        .select("status", "publishAt", "updatedAt", "category")
         .get();
       const urls = [
         `${SITE()}/`,
-        `${SITE()}/proposer.html`,
+        `${SITE()}/archives.html`,
+        `${SITE()}/usage.html`,
+        `${SITE()}/regard.html`,
+        `${SITE()}/selection.html`,
+        `${SITE()}/essentiel.html`,
+        `${SITE()}/recherche.html`,
         `${SITE()}/mentions-legales.html`,
-        `${SITE()}/architecture.html`,
-        `${SITE()}/fashion.html`,
-        `${SITE()}/design.html`,
-        `${SITE()}/visual-culture.html`,
         ...docs.docs
           .filter((d) => visible(d.data()))
-          .map((d) => `${SITE()}/article.html?id=${d.id}`),
+        .filter((d) => ["À l'usage", "Le regard", "Sélection", "L'essentiel"].includes(d.data()?.category))
+        .map((d) => `${SITE()}/article.html?id=${d.id}`),
       ];
       res.setHeader("Content-Type", "application/xml; charset=utf-8");
       return res.end(

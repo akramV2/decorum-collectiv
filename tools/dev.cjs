@@ -5,11 +5,19 @@ const root = path.join(__dirname, "..");
 const handler = require("../api/editorial.js");
 const allowed = new Set([
   "index.html",
+  "usage.html",
+  "regard.html",
+  "selection.html",
+  "essentiel.html",
+  "archives.html",
+  "archives.js",
   "architecture.html",
   "fashion.html",
   "design.html",
   "visual-culture.html",
   "recherche.html",
+  "latence.js",
+  "latence.css",
   "universes.js",
   "archive.js",
   "article.html",
@@ -84,5 +92,5 @@ http
     }
   })
   .listen(4174, "127.0.0.1", () =>
-    console.log("DECORUM http://127.0.0.1:4174"),
+    console.log("LATENCE http://127.0.0.1:4174"),
   );

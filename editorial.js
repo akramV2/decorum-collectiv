@@ -34,15 +34,25 @@ window.Decorum = (() => {
     return data;
   }
   const TECH = {
+    product: "Produit",
+    brand: "Marque",
+    model: "Modèle",
+    designer: "Conception",
+    launchYear: "Année de sortie",
+    platform: "Plateforme",
+    compatibility: "Compatibilité",
+    price: "Prix indicatif",
+    dimensions: "Dimensions",
+    testedPeriod: "Période de test",
+    materials: "Matériaux",
+    program: "Usage",
     architect: "Architecte",
     project: "Projet",
     year: "Année",
     city: "Lieu",
     country: "Pays",
-    materials: "Matériaux",
     height: "Hauteur",
     area: "Surface",
-    program: "Programme",
   };
   const VISIT = {
     address: "Adresse",
@@ -102,8 +112,10 @@ window.Decorum = (() => {
     if (a.visit?.lat != null && a.visit?.lng != null) {
       const link = document.createElement("a");
       link.className = "btn-link";
-      link.textContent = "Voir sur la Carte DECORUM →";
-      link.href = `index.html?lat=${encodeURIComponent(a.visit.lat)}&lng=${encodeURIComponent(a.visit.lng)}#carte`;
+      link.textContent = "Ouvrir l’emplacement sur la carte →";
+      link.href = `https://www.openstreetmap.org/?mlat=${encodeURIComponent(a.visit.lat)}&mlon=${encodeURIComponent(a.visit.lng)}#map=15/${encodeURIComponent(a.visit.lat)}/${encodeURIComponent(a.visit.lng)}`;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
       (visit || document.getElementById("art-content")).append(link);
     }
     const wrapper = document.getElementById("art-image-wrapper");

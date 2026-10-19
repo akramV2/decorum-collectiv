@@ -100,8 +100,7 @@ function formatDate(dateInput) {
     return String(dateInput).toUpperCase();
   }
 
-  const monthsEn = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-  return `${monthsEn[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  return new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
 }
 
 /* ==========================================================================
@@ -365,22 +364,13 @@ async function getArticlesFromCloud(more = false) {
   }
 }
 
-function articleCardMarkup(art) { return `
-    <article class="article-card reveal">
-      <a class="article-card-link" href="article.html?id=${escapeHtml(encodeURIComponent(art.id))}">
-      <div class="card-image ${!art.image ? 'placeholder-box' : ''}">
-        ${safeImageUrl(art.image) ? `<img src="${escapeHtml(safeImageUrl(art.image))}" alt="${escapeHtml(art.title)}" loading="lazy" decoding="async">` : `<span>${escapeHtml((art.title || '').toUpperCase())}</span>`}
-        <span class="tag">${escapeHtml(art.category || 'ARCHITECTURE')}</span>
-      </div>
-      <div class="card-meta">
-        <span style="color: var(--color-editorial); font-weight: 600; text-transform: uppercase; margin-right: 8px;">${escapeHtml(art.type || 'ARTICLE')}</span>
-        <time>${escapeHtml(formatDate(art.date || art.createdAt))}</time>
-      </div>
-      <h3 class="card-title">${escapeHtml(art.title || 'Sans titre')}</h3>
-      <p style="font-size: 0.85rem; color: var(--encre); margin-top: 8px; line-height: 1.5;">${escapeHtml(art.excerpt || '')}</p>
-      </a>
-    </article>
-  `; }
+function articleCardMarkup(art) {
+  const category = String(art.category || 'LATENCE');
+  const image = safeImageUrl(art.image);
+  const words = String(art.content || '').replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+  const minutes = Number(art.readingTime) || Math.max(1, Math.ceil(words / 200));
+  return `<article class="latence-card"><a class="latence-card-link" href="article.html?id=${escapeHtml(encodeURIComponent(art.id))}"><div class="latence-card-image">${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(art.imageAlt || art.title || '')}" loading="lazy" decoding="async">` : '<span class="latence-card-placeholder" aria-hidden="true">LATENCE</span>'}</div><div class="latence-card-meta"><span class="latence-card-category">${escapeHtml(category)}</span><time>${escapeHtml(formatDate(art.date || art.createdAt))}</time></div><h3>${escapeHtml(art.title || 'Sans titre')}</h3>${art.excerpt ? `<p class="latence-card-excerpt">${escapeHtml(art.excerpt)}</p>` : ''}<span class="latence-card-read">${minutes} min de lecture</span></a></article>`;
+}
 
 async function renderArticlesGrid(more = false) {
   const container = document.getElementById('articles-grid');
@@ -449,7 +439,7 @@ async function renderSingleArticle() {
 
     const data = doc.data();
 
-    document.title = `${data.title || 'Article'} — Decorum Collectiv`;
+    document.title = `${data.title || 'Article'} — LATENCE`;
 
     const titleEl = document.getElementById('art-title');
     if (titleEl) titleEl.textContent = data.title || 'Sans titre';
@@ -461,10 +451,16 @@ async function renderSingleArticle() {
     if (categoryEl) categoryEl.textContent = data.category || 'ARCHITECTURE';
 
     const authorEl = document.getElementById('art-author');
-    if (authorEl) authorEl.textContent = `Par ${data.author || 'Decorum'}`;
+    if (authorEl) authorEl.textContent = `Par ${data.author || 'la rédaction'}`;
 
     const dateEl = document.getElementById('art-date');
     if (dateEl) dateEl.textContent = formatDate(data.date || data.createdAt);
+
+    const readTimeEl = document.getElementById('art-read-time');
+    if (readTimeEl) {
+      const words = String(data.content || '').replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+      readTimeEl.textContent = `${Number(data.readingTime) || Math.max(1, Math.ceil(words / 200))} min de lecture`;
+    }
 
     const imgWrapper = document.getElementById('art-image-wrapper');
     renderCover(imgWrapper, data.image, data.title);
