@@ -4,7 +4,7 @@ const crypto = require("node:crypto");
 const { services, authorize, configured } = require("../lib/firebase.cjs");
 const C = require("../lib/content.cjs");
 const SITE = () =>
-  (process.env.SITE_URL || "https://decorum-collectiv.vercel.app").replace(
+  (process.env.SITE_URL || "https://latence-journal.vercel.app").replace(
     /\/$/,
     "",
   );
