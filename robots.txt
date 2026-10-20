@@ -2,4 +2,4 @@ User-agent: *
 Disallow: /admin.html
 Disallow: /api/
 Allow: /
-Sitemap: https://decorum-collectiv.vercel.app/sitemap.xml
+Sitemap: https://latence-journal.vercel.app/sitemap.xml

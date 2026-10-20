@@ -124,11 +124,92 @@
   function initYear() {
     document.querySelectorAll('[data-current-year]').forEach((el) => { el.textContent = new Date().getFullYear(); });
   }
+  function initSearch() {
+    const triggers = document.querySelectorAll('.latence-search-link');
+    if (!triggers.length || !window.HTMLDialogElement) return;
+    const dialog = document.createElement('dialog');
+    dialog.className = 'latence-search-dialog';
+    dialog.setAttribute('aria-labelledby', 'quick-search-title');
+    dialog.innerHTML = `<div class="quick-search-heading"><div><span class="latence-overline">Le journal, à portée de main</span><h2 id="quick-search-title">Que cherchez-vous ?</h2></div><button type="button" data-close aria-label="Fermer la recherche">Fermer <kbd>Échap</kbd></button></div><label for="quick-search-input">Un sujet, un produit, une idée</label><input id="quick-search-input" type="search" maxlength="200" placeholder="Rechercher dans LATENCE…" autocomplete="off"><div class="quick-search-options"><label><input type="checkbox" data-archives> Inclure les archives</label><button type="button" data-retry hidden>Réessayer</button></div><p role="status" aria-live="polite" data-search-status></p><div class="quick-search-results"></div>`;
+    document.body.append(dialog);
+    const input = dialog.querySelector('#quick-search-input'), results = dialog.querySelector('.quick-search-results'), status = dialog.querySelector('[data-search-status]'), archives = dialog.querySelector('[data-archives]'), retry = dialog.querySelector('[data-retry]');
+    let articles = null, loading = false, opener, timer;
+    function render() {
+      if (!articles) return;
+      const matches = articles.filter(a => (archives.checked || categorySlug(a)) && DecorumUniverses.matches(a, input.value));
+      status.textContent = matches.length ? `${matches.length} résultat${matches.length > 1 ? 's' : ''}${matches.length > 20 ? ' · 20 affichés, précisez votre recherche' : ''}` : 'Aucun résultat. Essayez un autre mot ou incluez les archives.';
+      results.innerHTML = matches.slice(0, 20).map(a => `<a href="article.html?id=${encodeURIComponent(a.id)}"><span>${escapeHtml(a.category || 'Archives')}</span><strong>${escapeHtml(a.title)}</strong><small>${escapeHtml(a.excerpt || '').slice(0, 180)}</small><i aria-hidden="true">↗</i></a>`).join('');
+    }
+    async function load() {
+      if (loading) return;
+      loading = true; retry.hidden = true; results.setAttribute('aria-busy', 'true'); status.textContent = 'Chargement du journal…';
+      try { articles = await Decorum.listArticles(); render(); }
+      catch { status.textContent = 'La recherche est momentanément indisponible.'; retry.hidden = false; }
+      finally { loading = false; results.removeAttribute('aria-busy'); }
+    }
+    function open(trigger) {
+      if (dialog.open) return;
+      opener = trigger || document.activeElement;
+      dialog.showModal(); document.documentElement.classList.add('search-is-open'); input.focus();
+      if (articles) render(); else load();
+    }
+    triggers.forEach(link => {
+      link.setAttribute('aria-haspopup', 'dialog');
+      link.addEventListener('click', event => {
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;
+        event.preventDefault(); open(link);
+      });
+    });
+    dialog.querySelector('[data-close]').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', event => { if (event.target === dialog) { const r = dialog.getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) dialog.close(); } });
+    dialog.addEventListener('close', () => { document.documentElement.classList.remove('search-is-open'); opener?.focus(); });
+    input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(render, 120); });
+    archives.addEventListener('change', render); retry.addEventListener('click', load);
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && dialog.open) { event.preventDefault(); dialog.close(); return; }
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); open(); }
+    });
+  }
+  function initReaderTools() {
+    const content = document.getElementById('art-content');
+    if (!content) return;
+    const tools = document.createElement('div');
+    tools.className = 'latence-reader-tools';
+    tools.innerHTML = '<button type="button" data-copy>Copier le lien</button><span role="status" aria-live="polite"></span>';
+    content.before(tools);
+    tools.querySelector('[data-copy]').addEventListener('click', async () => {
+      const status = tools.querySelector('[role=status]');
+      try { await navigator.clipboard.writeText(location.href); status.textContent = 'Lien copié.'; }
+      catch { status.textContent = 'Vous pouvez copier l’adresse dans la barre du navigateur.'; }
+    });
+    let toc;
+    function updateContents() {
+      const headings = [...content.querySelectorAll('h2, h3')];
+      if (headings.length < 2) { toc?.remove(); return; }
+      if (!toc) { toc = document.createElement('details'); toc.className = 'latence-contents'; tools.after(toc); }
+      headings.forEach((heading, index) => { if (!heading.id) heading.id = `lecture-section-${index + 1}`; });
+      toc.innerHTML = `<summary>Dans cet article <span>${headings.length} repères</span></summary><nav aria-label="Sommaire de l’article">${headings.map(h => `<a href="#${encodeURIComponent(h.id)}">${escapeHtml(h.textContent)}</a>`).join('')}</nav>`;
+    }
+    updateContents();
+    new MutationObserver(updateContents).observe(content, {childList:true,subtree:true});
+  }
+  function initBackToTop() {
+    const button = document.createElement('button');
+    button.className = 'latence-back-top'; button.type = 'button'; button.textContent = '↑';
+    button.setAttribute('aria-label', 'Revenir en haut de la page'); button.hidden = true;
+    document.body.append(button);
+    let frame = 0;
+    window.addEventListener('scroll', () => { if (frame) return; frame = requestAnimationFrame(() => { button.hidden = scrollY < innerHeight; frame = 0; }); }, {passive:true});
+    button.addEventListener('click', () => { window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'}); });
+  }
   document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
     initReveals();
     initHeroDepth();
     initYear();
+    initSearch();
+    initReaderTools();
+    initBackToTop();
     loadHome();
     loadRelated();
   });

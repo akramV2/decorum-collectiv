@@ -193,7 +193,7 @@ function initCustomCursor() {
    EASTER EGG : ACCÈS SECRET À L'ADMINISTRATION
    ========================================================================== */
 function initLogoSecret() {
-  document.querySelectorAll('.brand-logo').forEach(logo => {
+  document.querySelectorAll('.brand-logo, .latence-header .latence-wordmark').forEach(logo => {
     let clickCount = 0;
     let clickTimer = null;
     logo.addEventListener('click', event => {
