@@ -1,11 +1,9 @@
-# DECORUM — Bleu nuit
+# LATENCE — identité monochrome
 
-Signature : #030122. Fond et texte inversé : #FFFAFA. Texte courant : #000000. Informations secondaires : #2D2D2D.
+Noir #0A0A0A, papier #FAFAF8, gris #989898, surface #EFEFEC. Les variables sont centralisées dans latence.css. Le PDF utilise les mêmes tons.
 
-Les cinq variables sémantiques sont centralisées dans style.css. Header, hero, footer et couverture PDF portent le bleu nuit ; la lecture reste claire. Aucun accent de couleur supplémentaire. Les photographies ne sont pas recolorisées.
+Le gris #989898 reste décoratif : les petits textes secondaires utilisent #636360 pour rester lisibles. Les états interactifs utilisent contours, soulignements et inversion. Les images gardent leurs couleurs naturelles.
 
-Les SVG assets/brand/wordmark*.svg et logo.svg sont des dérivés recolorés des tracés vectoriels originaux : proportions et zone de protection conservées. Les métadonnées de signature du fichier source ont été retirées des dérivés.
+Schibsted Grotesk est auto-hébergée. Le mot-symbole latence. et son symbole sont vectoriels. Le grand visuel argenté est optimisé en WebP.
 
-Architecture, Fashion, Design et Visual Culture partagent la navigation et le système visuel. Les pages filtrent toutes les publications paginées, en conservant les catégories historiques. La recherche porte sur titre, extrait, auteur et rubrique. Les nouvelles rubriques vides sont annoncées comme telles. Les quatre intitulés sont proposés dans l’administration.
-
-Aucun service de newsletter n’est configuré dans le projet ; aucun formulaire de collecte fictif n’a été ajouté.
+À l’usage, Le regard, Sélection et L’essentiel partagent un même système. Les anciennes publications restent dans Archives. Le domaine et les identifiants Firebase sont conservés.

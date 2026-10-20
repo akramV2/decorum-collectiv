@@ -33,6 +33,22 @@ window.Decorum = (() => {
     if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
     return data;
   }
+  let articleList;
+  async function listArticles() {
+    if (!articleList) articleList = (async () => {
+      const items = new Map(), cursors = new Set();
+      let cursor;
+      do {
+        const page = await api('articles', { params: cursor ? {cursor} : {} });
+        for (const article of page.items || []) items.set(article.id, article);
+        cursor = page.nextCursor;
+        if (cursor && cursors.has(cursor)) throw new Error('Pagination répétée. Réessayez.');
+        if (cursor) cursors.add(cursor);
+      } while (cursor);
+      return [...items.values()];
+    })().catch(error => { articleList = null; throw error; });
+    return articleList;
+  }
   const TECH = {
     product: "Produit",
     brand: "Marque",
@@ -121,12 +137,6 @@ window.Decorum = (() => {
     const wrapper = document.getElementById("art-image-wrapper");
     if (wrapper?.querySelector("img")) {
       wrapper.querySelector("img").alt = a.imageAlt || a.title;
-    }
-    if (a.imageCredit && wrapper) {
-      const credit = document.createElement("p");
-      credit.className = "image-credit";
-      credit.textContent = a.imageCredit;
-      wrapper.append(credit);
     }
     if ((await ready()).pdf) {
       const actions = document.getElementById("reader-actions");
@@ -308,5 +318,5 @@ window.Decorum = (() => {
     countdown();
     proposal();
   });
-  return { api, ready, TECH, VISIT, enrichArticle, places };
+  return { api, ready, listArticles, TECH, VISIT, enrichArticle, places };
 })();

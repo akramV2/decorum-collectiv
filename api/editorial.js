@@ -263,36 +263,7 @@ module.exports = async (req, res) => {
         path.join(__dirname, "../article.html"),
         "utf8",
       );
-      template = template.replace(
-        /<title>[\s\S]*?<\/title>/,
-        metadata(article, query.id),
-      );
-      template = template.replace(
-        "Titre de l'article",
-        C.escape(article.title),
-      );
-      const fill = (id, text) => {
-        template = template.replace(new RegExp(`(<[^>]+id="${id}"[^>]*>)[\\s\\S]*?(</[^>]+>)`), (_, open, close) => open + C.escape(text) + close);
-      };
-      fill("art-author", `Par ${article.author || "La rédaction"}`);
-      fill("art-category", article.category || "LATENCE");
-      fill("art-type", article.type || "ARTICLE");
-      fill("art-date", article.date || new Date(article.publishedAt || article.createdAt || Date.now()).toLocaleDateString("fr-FR"));
-      fill("art-excerpt", article.excerpt || "");
-      fill("art-read-time", `${Math.max(1, Math.ceil(C.plain(article.content).split(/\s+/).length / 220))} min de lecture`);
-      if (/^https?:\/\//.test(article.image || "") || /^data:image\/(png|jpeg|webp|avif);base64,[a-z0-9+/=]+$/i.test(article.image || "")) {
-        template = template.replace('<div id="art-image-wrapper" class="article-hero-image"></div>', `<div id="art-image-wrapper" class="article-hero-image"><img src="${C.escape(article.image)}" alt="${C.escape(article.imageAlt || article.title)}" fetchpriority="high" decoding="async"></div>`);
-      }
-      const content = /<[a-z]/i.test(article.content || "")
-        ? C.html(article.content)
-        : String(article.content || "")
-            .split(/\n\s*\n/)
-            .map((p) => `<p>${C.escape(p)}</p>`)
-            .join("");
-      template = template.replace(
-        '<div class="article-body" id="art-content"></div>',
-        `<div class="article-body" id="art-content">${content}</div>`,
-      );
+      template = require("../lib/article-page.cjs")(template, article, metadata(article, query.id));
       res.setHeader("Content-Type", "text/html; charset=utf-8");
       return res.end(template);
     }

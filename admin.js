@@ -209,7 +209,49 @@ document.addEventListener("DOMContentLoaded", () => {
       return items;
     }
     async function editArticle(a = {}) {
-      dirty = !a.id && !!a.tit…1330 tokens truncated…    const custom = formatSelect.value === "custom";
+      dirty = !a.id && !!a.title;
+      panel.innerHTML = `<h2>${a.id ? "Modifier la publication" : "Nouvelle publication"}</h2><form id="article-editor"><fieldset><legend>Publication</legend>${field("title", "Titre *", a.title, "text", true)}<div class="fields-grid">${field("author", "Auteur", a.author || "Raphaël")}${field("category", "Rubrique", a.category)}${field("type", "Format", a.type || "ARTICLE")}${field("edition", "Numéro / édition LATENCE", a.edition)}</div><label for="article-status">Statut</label><select id="article-status" name="status"><option value="draft">Brouillon privé</option><option value="scheduled">Publication programmée</option><option value="published">Publier maintenant</option></select>${field("publishAt", `Date et heure (${Intl.DateTimeFormat().resolvedOptions().timeZone})`, localDate(a.publishAt), "datetime-local")}<p class="form-note">Un brouillon d’une publication déjà en ligne conserve sa version actuelle. Pour la retirer, utilisez « Retirer du site » dans la liste.</p></fieldset><fieldset><legend>Texte et photographie</legend>${field("image", "Image principale — URL", a.image, "url")}<div class="field"><label for="editor-photo">Ou importer une image (500 Ko maximum)</label><input id="editor-photo" type="file" accept="image/jpeg,image/png,image/webp,image/avif"></div>${field("imageAlt", "Description de l’image", a.imageAlt)}${field("imageCredit", "Crédit de l’image", a.imageCredit)}${field("excerpt", "Chapeau", a.excerpt, "textarea")}${field("content", "Contenu — texte ou HTML éditorial", a.content, "textarea")}</fieldset><fieldset><legend>Repères éditoriaux — champs facultatifs</legend><div class="fields-grid">${group("technical", a.technical, Decorum.TECH)}</div></fieldset><details class="admin-legacy-fields"><summary>Informations de visite (archives DECORUM)</summary><div class="fields-grid">${group("visit", a.visit, Decorum.VISIT)}${field("visit.lat", "Latitude", a.visit?.lat ?? "")}${field("visit.lng", "Longitude", a.visit?.lng ?? "")}${field("placeId", "Identifiant de lieu conservé", a.placeId)}</div></details><fieldset><legend>Partage et référencement</legend>${field("seoTitle", "Titre SEO", a.seoTitle)}${field("seoDescription", "Description SEO", a.seoDescription, "textarea")}</fieldset><div class="admin-toolbar"><button type="button" class="btn-preview" id="editor-preview">APERÇU</button><button type="submit" class="btn-submit">ENREGISTRER</button></div></form><section id="editor-preview-output" hidden></section>`;
+      const form = panel.querySelector("form");
+      form.elements.status.value = a.status || "draft";
+      const categoryInput = form.elements.category;
+      const historicalFields = document.createElement("details");
+      historicalFields.className = "admin-legacy-fields";
+      historicalFields.innerHTML = '<summary>Repères architecturaux des archives</summary><div class="fields-grid"></div>';
+      for (const key of ["architect", "project", "year", "city", "country", "height", "area"]) {
+        const input = form.elements["technical." + key];
+        if (input) historicalFields.lastElementChild.append(input.closest(".field"));
+      }
+      form.querySelector('.admin-legacy-fields').before(historicalFields);
+      const categorySelect = document.createElement("select");
+      categorySelect.name = "category"; categorySelect.id = categoryInput.id;
+      categorySelect.add(new Option("Choisir une rubrique", ""));
+      const sections = DecorumUniverses.definitions.map(section => section.label);
+      for (const label of sections) categorySelect.add(new Option(label, label));
+      if (a.category && !sections.includes(a.category)) categorySelect.add(new Option("Conserver : " + a.category, a.category));
+      categorySelect.value = a.category || "";
+      categoryInput.replaceWith(categorySelect);
+      form.querySelector('label[for="f-category"]').textContent = "Rubrique du site";
+      const categoryHelp = document.createElement("p"); categoryHelp.className = "form-note";
+      categoryHelp.textContent = "Choisissez l’univers dans lequel la publication apparaîtra. Les anciennes catégories restent conservées tant que vous ne les changez pas.";
+      categorySelect.after(categoryHelp);
+      const formatInput = form.elements.type;
+      formatInput.maxLength = 100;
+      const formatField = formatInput.closest(".field");
+      const formatBox = document.createElement("div"); formatBox.className = "field";
+      const formatLabel = document.createElement("label"); formatLabel.htmlFor = "publication-format"; formatLabel.textContent = "Type de publication";
+      const formatSelect = document.createElement("select"); formatSelect.id = "publication-format";
+      const formats = [["ARTICLE","Article"],["ANALYSE","Analyse"],["INTERVIEW","Interview"],["REPORTAGE","Reportage"],["PORTRAIT","Portrait"],["PORTFOLIO","Portfolio"],["CHRONIQUE","Chronique"]];
+      for (const [value,label] of formats) formatSelect.add(new Option(label,value));
+      formatSelect.add(new Option("Autre format / format existant", "custom"));
+      const originalFormat = a.type || "ARTICLE";
+      // An existing label keeps its exact spelling until explicitly changed.
+      formatSelect.value = formats.some(([value]) => value === originalFormat) ? originalFormat : "custom";
+      let customFormat = formatSelect.value === "custom" ? originalFormat : "";
+      formatInput.value = originalFormat;
+      formatBox.append(formatLabel,formatSelect); formatField.before(formatBox);
+      form.querySelector('label[for="f-type"]').textContent = "Nom du format personnalisé";
+      function formatMode() {
+        const custom = formatSelect.value === "custom";
         formatField.hidden = !custom;
         formatInput.required = custom;
         formatInput.value = custom ? customFormat : formatSelect.value;
@@ -240,6 +282,26 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       for (const [label, before, after] of [["Intertitre", "\n<h2>", "</h2>\n"],["Paragraphe", "\n<p>", "</p>\n"],["Gras", "<strong>", "</strong>"],["Italique", "<em>", "</em>"],["Citation", "\n<blockquote>", "</blockquote>\n"],["Liste", "\n<ul><li>", "</li></ul>\n"]]) tools.append(button(label, () => insert(before,after)));
       contentInput.before(tools);
+      tools.append(button('Source / référence', () => {
+        const raw = prompt('Adresse HTTP ou HTTPS de la source');
+        if (!raw) return;
+        let url;
+        try { url = new URL(raw); if (!['http:', 'https:'].includes(url.protocol)) throw new Error(); }
+        catch { showNotification('Utilisez une adresse HTTP ou HTTPS valide.'); return; }
+        const label = prompt('Nom de la source', url.hostname);
+        if (!label) return;
+        insert(`\n<h2>Sources et références</h2>\n<ul><li><a href="${escapeHtml(url.href)}">${escapeHtml(label)}</a></li></ul>\n`, '', '');
+      }));
+      tools.append(button('Image légendée', () => {
+        const raw = prompt('Adresse HTTP ou HTTPS de l’image');
+        if (!raw) return;
+        let url;
+        try { url = new URL(raw); if (!['http:', 'https:'].includes(url.protocol)) throw new Error(); }
+        catch { showNotification('Utilisez une adresse HTTP ou HTTPS valide.'); return; }
+        const caption = prompt('Légende et crédit de l’image');
+        if (caption === null) return;
+        insert(`\n<figure><img src="${escapeHtml(url.href)}" alt="${escapeHtml(caption)}"><figcaption>${escapeHtml(caption)}</figcaption></figure>\n`, '', '');
+      }));
       const indicators = document.createElement("div"); indicators.className = "editor-indicators"; indicators.setAttribute("aria-live", "polite");
       contentInput.after(indicators);
       const seoPreview = document.createElement("div"); seoPreview.className = "admin-seo-preview";

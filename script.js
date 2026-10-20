@@ -421,15 +421,15 @@ async function renderSingleArticle() {
   const urlParams = new URLSearchParams(window.location.search);
   const articleId = urlParams.get('id');
 
-  if (!articleId || articleId.includes('/') || !db) {
+  if (!articleId || articleId.includes('/')) {
     document.getElementById('art-title').textContent = 'Article indisponible';
     return;
   }
 
   try {
-    const useApi = window.Decorum && (await Decorum.ready()).ready;
-    const result = useApi ? await Decorum.api('article', {params:{id:articleId}}) : null;
-    const doc = useApi ? {exists:true,data:()=>result} : await db.collection('articles').doc(articleId).get();
+    const embedded = document.getElementById('article-data');
+    const result = embedded ? JSON.parse(embedded.textContent) : await Decorum.api('article', {params:{id:articleId}});
+    const doc = {exists:!!result,data:()=>result};
 
     if (!doc.exists) {
       document.getElementById('art-title').textContent = 'Article introuvable';
@@ -448,7 +448,7 @@ async function renderSingleArticle() {
     if (formatEl) formatEl.textContent = data.type || 'ESSAI';
 
     const categoryEl = document.getElementById('art-category');
-    if (categoryEl) categoryEl.textContent = data.category || 'ARCHITECTURE';
+    if (categoryEl) categoryEl.textContent = data.category || 'LATENCE';
 
     const authorEl = document.getElementById('art-author');
     if (authorEl) authorEl.textContent = `Par ${data.author || 'la rédaction'}`;
@@ -463,7 +463,15 @@ async function renderSingleArticle() {
     }
 
     const imgWrapper = document.getElementById('art-image-wrapper');
-    renderCover(imgWrapper, data.image, data.title);
+    renderCover(imgWrapper, data.image, data.imageAlt || data.title);
+    if (imgWrapper) {
+      imgWrapper.querySelectorAll('figcaption').forEach(el => el.remove());
+      if (data.imageCredit) {
+        const credit = document.createElement('figcaption');
+        credit.textContent = data.imageCredit;
+        imgWrapper.append(credit);
+      }
+    }
 
     const excerptEl = document.getElementById('art-excerpt');
     if (excerptEl) excerptEl.textContent = data.excerpt || '';
@@ -697,7 +705,7 @@ function initScrollReveal() {
 }
 
 function initNavbarScroll() {
-  const navbar = document.querySelector('.navbar');
+  const navbar = document.querySelector('.navbar, .latence-header');
   if (!navbar) return;
   window.addEventListener('scroll', () => {
     if (window.scrollY > 40) navbar.classList.add('scrolled');
