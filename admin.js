@@ -47,8 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
       articles: "Articles",
       drafts: "Brouillons & programmation",
       countdown: "Prochain article",
-      places: "Lieux & carte",
-      submissions: "Propositions",
       authors: "Auteurs",
       categories: "Catégories",
     };
@@ -115,9 +113,9 @@ document.addEventListener("DOMContentLoaded", () => {
       paint();
     }
     async function dashboard() {
-      const [articles, drafts, places, proposals] = await Promise.all([all("articles", true), all("editorialArticles", true), all("places"), all("submissions")]);
-      panel.innerHTML = `<h2>Votre rédaction en un regard</h2><div class="admin-metrics">${[[articles.length,"Articles publiés"],[drafts.filter(a=>a.status !== "scheduled").length,"Brouillons"],[drafts.filter(a=>a.status === "scheduled").length,"Programmations"],[places.filter(p=>!p.deleted).length,"Lieux sur la carte"],[proposals.filter(p=>p.status === "pending").length,"Propositions à examiner"]].map(([n,label])=>`<div><strong>${n}</strong><span>${label}</span></div>`).join("")}</div><div class="admin-toolbar" data-actions></div><h3>Publications programmées</h3><div data-schedule></div><p class="form-note">Les horaires sont affichés dans votre fuseau : ${e(Intl.DateTimeFormat().resolvedOptions().timeZone)}. La publication est déclenchée lors de la première consultation du site après l’heure prévue.</p>`;
-      panel.querySelector("[data-actions]").append(button("Écrire un article", () => editArticle()), button("Ajouter un lieu", () => placeEditor()), button("Examiner les propositions", () => submissions()));
+      const [articles, drafts] = await Promise.all([all("articles", true), all("editorialArticles", true)]);
+      panel.innerHTML = `<h2>Le journal en un regard</h2><div class="admin-metrics">${[[articles.length,"Articles publiés"],[drafts.filter(a=>a.status !== "scheduled").length,"Brouillons"],[drafts.filter(a=>a.status === "scheduled").length,"Programmations"]].map(([n,label])=>`<div><strong>${n}</strong><span>${label}</span></div>`).join("")}</div><div class="admin-toolbar" data-actions></div><h3>Publications programmées</h3><div data-schedule></div><p class="form-note">Les horaires sont affichés dans votre fuseau : ${e(Intl.DateTimeFormat().resolvedOptions().timeZone)}. La publication est déclenchée lors de la première consultation du site après l’heure prévue.</p>`;
+      panel.querySelector("[data-actions]").append(button("Écrire une publication", () => editArticle()), button("Voir les brouillons", () => articleList("editorialArticles")), button("Gérer les articles publiés", () => articleList("articles")));
       const schedule = panel.querySelector("[data-schedule]");
       const upcoming = drafts.filter(a => a.status === "scheduled").sort((a,b)=>Date.parse(a.publishAt)-Date.parse(b.publishAt));
       if (!upcoming.length) schedule.textContent = "Aucune publication programmée.";
@@ -212,10 +210,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     async function editArticle(a = {}) {
       dirty = !a.id && !!a.title;
-      panel.innerHTML = `<h2>${a.id ? "Modifier l’article" : "Nouvel article"}</h2><form id="article-editor"><fieldset><legend>Publication</legend>${field("title", "Titre *", a.title, "text", true)}<div class="fields-grid">${field("author", "Auteur", a.author || "Raphaël")}${field("category", "Catégorie", a.category)}${field("type", "Format", a.type || "ARTICLE")}${field("edition", "Numéro / édition DECORUM", a.edition)}</div><label for="article-status">Statut</label><select id="article-status" name="status"><option value="draft">Brouillon privé</option><option value="scheduled">Publication programmée</option><option value="published">Publier maintenant</option></select>${field("publishAt", `Date et heure (${Intl.DateTimeFormat().resolvedOptions().timeZone})`, localDate(a.publishAt), "datetime-local")}<p class="form-note">Un brouillon d’un article déjà publié conserve la version actuellement en ligne. Pour la retirer, utilisez « Retirer du site » dans la liste des articles.</p></fieldset><fieldset><legend>Texte et photographie</legend>${field("image", "Photo principale — URL", a.image, "url")}<div class="field"><label for="editor-photo">Ou importer une image (500 Ko maximum)</label><input id="editor-photo" type="file" accept="image/jpeg,image/png,image/webp,image/avif"></div>${field("imageAlt", "Description de l’image", a.imageAlt)}${field("imageCredit", "Crédit photographique", a.imageCredit)}${field("excerpt", "Chapeau", a.excerpt, "textarea")}${field("content", "Contenu — texte ou HTML éditorial", a.content, "textarea")}</fieldset><fieldset><legend>Fiche technique — champs facultatifs</legend><div class="fields-grid">${group("technical", a.technical, Decorum.TECH)}</div></fieldset><fieldset><legend>Préparer la visite</legend><div class="fields-grid">${group("visit", a.visit, Decorum.VISIT)}${field("visit.lat", "Latitude", a.visit?.lat ?? "")}${field("visit.lng", "Longitude", a.visit?.lng ?? "")}${field("placeId", "Identifiant du lieu sur la carte", a.placeId)}</div></fieldset><fieldset><legend>Partage et référencement</legend>${field("seoTitle", "Titre SEO", a.seoTitle)}${field("seoDescription", "Description SEO", a.seoDescription, "textarea")}</fieldset><div class="admin-toolbar"><button type="button" class="btn-preview" id="editor-preview">APERÇU</button><button type="submit" class="btn-submit">ENREGISTRER</button></div></form><section id="editor-preview-output" hidden></section>`;
+      panel.innerHTML = `<h2>${a.id ? "Modifier la publication" : "Nouvelle publication"}</h2><form id="article-editor"><fieldset><legend>Publication</legend>${field("title", "Titre *", a.title, "text", true)}<div class="fields-grid">${field("author", "Auteur", a.author || "Raphaël")}${field("category", "Rubrique", a.category)}${field("type", "Format", a.type || "ARTICLE")}${field("edition", "Numéro / édition LATENCE", a.edition)}</div><label for="article-status">Statut</label><select id="article-status" name="status"><option value="draft">Brouillon privé</option><option value="scheduled">Publication programmée</option><option value="published">Publier maintenant</option></select>${field("publishAt", `Date et heure (${Intl.DateTimeFormat().resolvedOptions().timeZone})`, localDate(a.publishAt), "datetime-local")}<p class="form-note">Un brouillon d’une publication déjà en ligne conserve sa version actuelle. Pour la retirer, utilisez « Retirer du site » dans la liste.</p></fieldset><fieldset><legend>Texte et photographie</legend>${field("image", "Image principale — URL", a.image, "url")}<div class="field"><label for="editor-photo">Ou importer une image (500 Ko maximum)</label><input id="editor-photo" type="file" accept="image/jpeg,image/png,image/webp,image/avif"></div>${field("imageAlt", "Description de l’image", a.imageAlt)}${field("imageCredit", "Crédit de l’image", a.imageCredit)}${field("excerpt", "Chapeau", a.excerpt, "textarea")}${field("content", "Contenu — texte ou HTML éditorial", a.content, "textarea")}</fieldset><fieldset><legend>Repères éditoriaux — champs facultatifs</legend><div class="fields-grid">${group("technical", a.technical, Decorum.TECH)}</div></fieldset><details class="admin-legacy-fields"><summary>Informations de visite (archives DECORUM)</summary><div class="fields-grid">${group("visit", a.visit, Decorum.VISIT)}${field("visit.lat", "Latitude", a.visit?.lat ?? "")}${field("visit.lng", "Longitude", a.visit?.lng ?? "")}${field("placeId", "Identifiant de lieu conservé", a.placeId)}</div></details><fieldset><legend>Partage et référencement</legend>${field("seoTitle", "Titre SEO", a.seoTitle)}${field("seoDescription", "Description SEO", a.seoDescription, "textarea")}</fieldset><div class="admin-toolbar"><button type="button" class="btn-preview" id="editor-preview">APERÇU</button><button type="submit" class="btn-submit">ENREGISTRER</button></div></form><section id="editor-preview-output" hidden></section>`;
       const form = panel.querySelector("form");
       form.elements.status.value = a.status || "draft";
       const categoryInput = form.elements.category;
+      const historicalFields = document.createElement("details");
+      historicalFields.className = "admin-legacy-fields";
+      historicalFields.innerHTML = '<summary>Repères architecturaux des archives</summary><div class="fields-grid"></div>';
+      for (const key of ["architect", "project", "year", "city", "country", "height", "area"]) {
+        const input = form.elements["technical." + key];
+        if (input) historicalFields.lastElementChild.append(input.closest(".field"));
+      }
+      form.querySelector('.admin-legacy-fields').before(historicalFields);
       const categorySelect = document.createElement("select");
       categorySelect.name = "category"; categorySelect.id = categoryInput.id;
       categorySelect.add(new Option("Choisir une rubrique", ""));
@@ -276,6 +282,26 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       for (const [label, before, after] of [["Intertitre", "\n<h2>", "</h2>\n"],["Paragraphe", "\n<p>", "</p>\n"],["Gras", "<strong>", "</strong>"],["Italique", "<em>", "</em>"],["Citation", "\n<blockquote>", "</blockquote>\n"],["Liste", "\n<ul><li>", "</li></ul>\n"]]) tools.append(button(label, () => insert(before,after)));
       contentInput.before(tools);
+      tools.append(button('Source / référence', () => {
+        const raw = prompt('Adresse HTTP ou HTTPS de la source');
+        if (!raw) return;
+        let url;
+        try { url = new URL(raw); if (!['http:', 'https:'].includes(url.protocol)) throw new Error(); }
+        catch { showNotification('Utilisez une adresse HTTP ou HTTPS valide.'); return; }
+        const label = prompt('Nom de la source', url.hostname);
+        if (!label) return;
+        insert(`\n<h2>Sources et références</h2>\n<ul><li><a href="${escapeHtml(url.href)}">${escapeHtml(label)}</a></li></ul>\n`, '', '');
+      }));
+      tools.append(button('Image légendée', () => {
+        const raw = prompt('Adresse HTTP ou HTTPS de l’image');
+        if (!raw) return;
+        let url;
+        try { url = new URL(raw); if (!['http:', 'https:'].includes(url.protocol)) throw new Error(); }
+        catch { showNotification('Utilisez une adresse HTTP ou HTTPS valide.'); return; }
+        const caption = prompt('Légende et crédit de l’image');
+        if (caption === null) return;
+        insert(`\n<figure><img src="${escapeHtml(url.href)}" alt="${escapeHtml(caption)}"><figcaption>${escapeHtml(caption)}</figcaption></figure>\n`, '', '');
+      }));
       const indicators = document.createElement("div"); indicators.className = "editor-indicators"; indicators.setAttribute("aria-live", "polite");
       contentInput.after(indicators);
       const seoPreview = document.createElement("div"); seoPreview.className = "admin-seo-preview";
@@ -366,7 +392,7 @@ document.addEventListener("DOMContentLoaded", () => {
       for (const p of places.filter(p=>!p.deleted || p.id === a.placeId)) placeSelect.add(new Option(`${p.name} — ${p.city || p.country || ""}`, p.id));
       if (a.placeId && !places.some(p=>p.id === a.placeId)) placeSelect.add(new Option("Lieu actuellement indisponible", a.placeId));
       placeSelect.value = a.placeId || ""; form.elements.placeId.replaceWith(placeSelect);
-      form.querySelector('label[for="f-placeId"]').textContent = "Lieu associé sur la carte";
+      form.querySelector('label[for="f-placeId"]').textContent = "Lieu d’archive associé (facultatif)";
       form.elements.edition.after(button("Proposer le prochain numéro", () => {
         const numbers = [...published,...drafts].map(item => Number(String(item.edition || "").match(/#(\d+)/)?.[1] || 0));
         form.elements.edition.value = `Édition #${String(Math.max(0,...numbers) + 1).padStart(3,"0")}`;
@@ -417,7 +443,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const items = await all(collection, true);
       panel.replaceChildren();
       const toolbar = document.createElement("div"); toolbar.className = "admin-toolbar";
-      toolbar.append(button("Nouvel article", () => editArticle()), button("Exporter cette rubrique (JSON)", async () => download("decorum-" + collection + ".json", await all(collection))));
+      toolbar.append(button("Nouvel article", () => editArticle()), button("Exporter cette rubrique (JSON)", async () => download("latence-" + collection + ".json", await all(collection))));
       panel.append(toolbar);
       collectionView(items, {
         heading: collection === "articles" ? "Articles publiés" : "Brouillons et programmation",
@@ -614,8 +640,6 @@ document.addEventListener("DOMContentLoaded", () => {
           );
         else if (key === "dashboard") await dashboard();
         else if (key === "countdown") await countdown();
-        else if (key === "places") await placeList();
-        else if (key === "submissions") await submissions();
         else await taxonomy(key);
         } finally { navigating = false; }
       });

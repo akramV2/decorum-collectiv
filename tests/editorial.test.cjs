@@ -18,6 +18,33 @@ test("draft needs only a title, publishing requires author, lead and content", (
     /requis/,
   );
 });
+test("editorial fact sheets accept technology fields and keep legacy architecture records readable", () => {
+  const article = C.article({
+    title: "Interface et usage",
+    technical: { product: "Clavier", brand: "Exemple", architect: "Archive", project: "Ancien projet" },
+  });
+  assert.deepEqual(article.technical, {
+    product: "Clavier",
+    brand: "Exemple",
+    model: "",
+    designer: "",
+    launchYear: "",
+    platform: "",
+    compatibility: "",
+    price: "",
+    dimensions: "",
+    testedPeriod: "",
+    materials: "",
+    program: "",
+    architect: "Archive",
+    project: "Ancien projet",
+    year: "",
+    city: "",
+    country: "",
+    height: "",
+    area: "",
+  });
+});
 test("schedule rejects past and missing dates and retains UTC instant", () => {
   for (const publishAt of [null, "2020-01-01T00:00:00Z"])
     assert.throws(

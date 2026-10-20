@@ -1,10 +1,10 @@
-# Le panneau de rédaction DECORUM
+# Le panneau de rédaction LATENCE
 
-Le tableau de bord récapitule les articles publiés, brouillons, programmations, lieux et propositions à examiner. Les prochaines publications sont classées par date. Les heures suivent le fuseau du navigateur ; une publication programmée devient publique à la première consultation du site après l'heure prévue.
+Le tableau de bord récapitule les articles publiés, brouillons et programmations. Les prochaines publications sont classées par date. Les heures suivent le fuseau du navigateur ; une publication programmée devient publique à la première consultation du site après l'heure prévue.
 
 ## Retrouver et organiser
 
-Les rubriques Articles, Brouillons, Lieux et Propositions proposent une recherche sans distinction d'accents, des filtres, un tri et des pages de vingt résultats. La recherche porte sur toute la rubrique chargée. Les listes d'articles chargent leurs métadonnées ; le texte et les images sont récupérés à l'ouverture de l'éditeur ou lors d'un export.
+Les rubriques Articles et Brouillons proposent une recherche sans distinction d'accents, des filtres, un tri et des pages de vingt résultats. La recherche porte sur toute la rubrique chargée. Les listes d'articles chargent leurs métadonnées ; le texte et les images sont récupérés à l'ouverture de l'éditeur ou lors d'un export.
 
 « Dupliquer » ouvre une copie privée à enregistrer. Le numéro d'édition et l'association au lieu sont vidés volontairement. « Voir » ouvre l'article public dans un autre onglet. « Copier le lien » copie son adresse. L'export JSON contient les données complètes de la rubrique sélectionnée ; ce téléchargement n'est pas une sauvegarde complète de Firebase et il n'existe pas de fonction de réimportation.
 
@@ -20,7 +20,7 @@ Ctrl+S (ou Cmd+S) enregistre le formulaire actif selon le statut sélectionné. 
 
 ## Associations et lieux
 
-Choisir les articles et lieux associés dans les listes par leur nom. Le compte à rebours permet de choisir un article publié ou un brouillon ; son lien public reste masqué tant que l'article n'est pas publié. Les lieux retirés restent disponibles avec le filtre correspondant et peuvent être restaurés.
+Choisir les articles et lieux associés dans les listes par leur nom. Le compte à rebours permet de choisir un article publié ou un brouillon ; son lien public reste masqué tant que l'article n'est pas publié. Les associations historiques sont conservées ; la gestion des lieux n’est plus exposée dans la navigation LATENCE.
 
 ## Vérification locale
 
@@ -29,4 +29,8 @@ Choisir les articles et lieux associés dans les listes par leur nom. Le compte 
 
 ## Choisir une publication
 
-Dans Articles → Nouvel article (ou Tableau de bord → Écrire un article), choisissez la **Rubrique du site** : Architecture, Fashion, Design ou Visual Culture. Ce choix détermine la page de rubrique où la publication apparaît. Choisissez ensuite le **Type de publication** : Article, Analyse, Interview, Reportage, Portrait, Portfolio ou Chronique. « Autre format / format existant » permet de conserver ou saisir un format personnalisé. Les anciennes catégories et les anciens formats ne sont pas modifiés automatiquement. Le statut contrôle indépendamment le brouillon, la programmation et la publication. Une rubrique est demandée avant publication ; un brouillon peut rester sans rubrique.
+Dans Articles → Nouvel article (ou Tableau de bord → Écrire un article), choisissez la **Rubrique du site** : À l’usage, Le regard, Sélection ou L’essentiel. Ce choix détermine la page de rubrique où la publication apparaît. Choisissez ensuite le **Type de publication** : Article, Analyse, Interview, Reportage, Portrait, Portfolio ou Chronique. « Autre format / format existant » permet de conserver ou saisir un format personnalisé. Les anciennes catégories et les anciens formats ne sont pas modifiés automatiquement. Le statut contrôle indépendamment le brouillon, la programmation et la publication. Une rubrique est demandée avant publication ; un brouillon peut rester sans rubrique.
+
+## LATENCE : rédaction et archives
+
+Source / référence et Image légendée ajoutent des liens, légendes et crédits. Les repères produits sont facultatifs. Les anciens champs architecturaux et de visite sont repliés, sans supprimer leurs valeurs. Les outils de lieux et propositions historiques ne figurent plus dans la navigation principale.

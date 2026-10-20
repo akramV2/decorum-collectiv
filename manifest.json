@@ -1,14 +1,14 @@
 {
-  "name": "DECORUM COLLECTIV",
-  "short_name": "DECORUM",
-  "description": "Architecture / Fashion / Design / Visual Culture",
+  "name": "LATENCE",
+  "short_name": "latence.",
+  "description": "Média technologique indépendant. Prendre le temps de comprendre.",
   "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#FFFAFA",
-  "theme_color": "#030122",
+  "background_color": "#FAFAF8",
+  "theme_color": "#FAFAF8",
   "icons": [
     {
-      "src": "logo.svg",
+      "src": "/logo.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"

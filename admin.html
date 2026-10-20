@@ -3,23 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Espace Rédaction — Decorum Collectiv</title>
+  <title>Espace rédaction — LATENCE</title>
   <meta name="robots" content="noindex, nofollow">
 
   <meta name="theme-color" content="#030122">
-  <meta name="apple-mobile-web-app-title" content="DECORUM">
-  <meta name="application-name" content="DECORUM">
+  <meta name="apple-mobile-web-app-title" content="LATENCE">
+  <meta name="application-name" content="LATENCE">
   <meta name="apple-mobile-web-app-capable" content="yes">
 
   <link rel="icon" type="image/svg+xml" href="logo.svg">
   <link rel="apple-touch-icon" href="logo.svg">
   <link rel="manifest" href="manifest.json">
 
-  
-  
-
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="editorial.css">
+  <link rel="stylesheet" href="latence.css">
   <script src="editorial.js" defer></script>
   <script src="universes.js" defer></script>
   <script src="admin.js" defer></script>
@@ -32,13 +30,13 @@
   <!-- DOMPurify -->
   <script src="assets/vendor/purify-3.4.16.min.js" defer></script>
 </head>
-<body>
+<body class="latence-admin">
 
   <!-- HEADER -->
   <header class="navbar">
     <div class="nav-container">
       <a href="index.html" class="brand-logo">
-        <img class="logo-d-icon" src="assets/brand/symbol-inverse.svg" alt="DECORUM, retour au site" width="40" height="40">
+        <img class="logo-d-icon" src="assets/brand/latence-wordmark.svg" alt="LATENCE, retour au site" width="148" height="36">
       </a>
       <nav class="nav-links">
         <a href="index.html">← Retour au site</a>
@@ -75,17 +73,18 @@
         <div class="form-group">
           <label for="pub-type">Type de publication *</label>
           <select id="pub-type" class="admin-select" required>
-            <option value="ARTICLE DE JOURNAL">Article de journal</option>
+            <option value="ARTICLE">Article</option>
             <option value="INTERVIEW">Interview / Rencontre</option>
-            <option value="PHOTOGRAPHIE & ŒUVRE">Photographie / Œuvre</option>
-            <option value="ESSAI SPATIAL">Essai Spatial</option>
-            <option value="DOSSIER ARCHITECTURE">Dossier Architecture</option>
+            <option value="ANALYSE">Analyse</option>
+            <option value="REPORTAGE">Reportage</option>
+            <option value="ESSAI">Essai</option>
+            <option value="SÉLECTION">Sélection</option>
           </select>
         </div>
 
         <div class="form-group">
           <label for="category">Thématique / Mots-clés *</label>
-          <input type="text" id="category" placeholder="ex: BRUTALISME, VILLA CAVROIS, BÉTON" required>
+          <input type="text" id="category" placeholder="À l'usage, Le regard, Sélection ou L'essentiel" required>
         </div>
       </div>
 
@@ -95,15 +94,15 @@
       </div>
 
       <div class="form-group">
-        <label for="author">Auteur / Photographe *</label>
+        <label for="author">Auteur *</label>
         <input type="text" id="author" value="Raphaël" placeholder="ex: Raphaël" required>
       </div>
 
       <!-- TÉLÉVERSEMENT PHOTO DIRECT -->
       <div class="form-group">
-        <label for="image-url">Photo Principale (Lien ou Import Direct)</label>
+        <label for="image-url">Image principale (lien ou import)</label>
         <div class="upload-box">
-          <input type="url" id="image-url" placeholder="https://images.unsplash.com/photo-..." style="flex:1;">
+          <input type="url" id="image-url" placeholder="https://…" style="flex:1;">
           <label class="btn-file">
              Choisir un fichier
             <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp,image/avif" style="display:none;" onchange="uploadImageDirect(this)">

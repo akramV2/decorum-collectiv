@@ -33,16 +33,42 @@ window.Decorum = (() => {
     if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
     return data;
   }
+  let articleList;
+  async function listArticles() {
+    if (!articleList) articleList = (async () => {
+      const items = new Map(), cursors = new Set();
+      let cursor;
+      do {
+        const page = await api('articles', { params: cursor ? {cursor} : {} });
+        for (const article of page.items || []) items.set(article.id, article);
+        cursor = page.nextCursor;
+        if (cursor && cursors.has(cursor)) throw new Error('Pagination répétée. Réessayez.');
+        if (cursor) cursors.add(cursor);
+      } while (cursor);
+      return [...items.values()];
+    })().catch(error => { articleList = null; throw error; });
+    return articleList;
+  }
   const TECH = {
+    product: "Produit",
+    brand: "Marque",
+    model: "Modèle",
+    designer: "Conception",
+    launchYear: "Année de sortie",
+    platform: "Plateforme",
+    compatibility: "Compatibilité",
+    price: "Prix indicatif",
+    dimensions: "Dimensions",
+    testedPeriod: "Période de test",
+    materials: "Matériaux",
+    program: "Usage",
     architect: "Architecte",
     project: "Projet",
     year: "Année",
     city: "Lieu",
     country: "Pays",
-    materials: "Matériaux",
     height: "Hauteur",
     area: "Surface",
-    program: "Programme",
   };
   const VISIT = {
     address: "Adresse",
@@ -102,19 +128,15 @@ window.Decorum = (() => {
     if (a.visit?.lat != null && a.visit?.lng != null) {
       const link = document.createElement("a");
       link.className = "btn-link";
-      link.textContent = "Voir sur la Carte DECORUM →";
-      link.href = `index.html?lat=${encodeURIComponent(a.visit.lat)}&lng=${encodeURIComponent(a.visit.lng)}#carte`;
+      link.textContent = "Ouvrir l’emplacement sur la carte →";
+      link.href = `https://www.openstreetmap.org/?mlat=${encodeURIComponent(a.visit.lat)}&mlon=${encodeURIComponent(a.visit.lng)}#map=15/${encodeURIComponent(a.visit.lat)}/${encodeURIComponent(a.visit.lng)}`;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
       (visit || document.getElementById("art-content")).append(link);
     }
     const wrapper = document.getElementById("art-image-wrapper");
     if (wrapper?.querySelector("img")) {
       wrapper.querySelector("img").alt = a.imageAlt || a.title;
-    }
-    if (a.imageCredit && wrapper) {
-      const credit = document.createElement("p");
-      credit.className = "image-credit";
-      credit.textContent = a.imageCredit;
-      wrapper.append(credit);
     }
     if ((await ready()).pdf) {
       const actions = document.getElementById("reader-actions");
@@ -296,5 +318,5 @@ window.Decorum = (() => {
     countdown();
     proposal();
   });
-  return { api, ready, TECH, VISIT, enrichArticle, places };
+  return { api, ready, listArticles, TECH, VISIT, enrichArticle, places };
 })();
