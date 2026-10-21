@@ -10,8 +10,10 @@ const records = {
  articles: [{id:'article-1',title:'La Philharmonie de Paris',edition:'Édition #001',author:'DECORUM',category:'Architecture',status:'published',content:'<p>Un lieu pour écouter la ville.</p>',excerpt:'Architecture et musique.',technical:{architect:'Jean Nouvel'},updatedAt:'2026-10-05T12:00:00Z'}],
  editorialArticles:[{id:'draft-1',title:'Une maison à Mexico',status:'draft',edition:'Édition #002',content:'Texte de travail',updatedAt:'2026-10-05T13:00:00Z'}],
  places:[{id:'place-1',name:'Philharmonie',city:'Paris',country:'France',articleId:'article-1',lat:48,lng:2},{id:'place-2',name:'Maison',city:'Mexico',country:'Mexique',deleted:true}],
- submissions:[{id:'proposal-1',name:'Musée',city:'Lille',country:'France',status:'pending',description:'Un musée',reason:'Sa lumière',email:'test@example.org'}],authors:[],categories:[]
+ submissions:[{id:'proposal-1',name:'Musée',city:'Lille',country:'France',status:'pending',description:'Un musée',reason:'Sa lumière',email:'test@example.org'}],authors:[{id:'author-1',name:'Raphaël'}],categories:[]
 };
+records.articles.push({id:'tech-1',title:'Un écran au quotidien',category:"À l'usage",type:'ARTICLE',status:'published',author:'Raphaël',content:'<h2>À l’usage</h2><p>Texte exemple.</p>',excerpt:'Un exemple local.',publishedAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
+records.editorialArticles.push({id:'scheduled-1',title:'Les objets à venir',category:'Sélection',type:'SÉLECTION',status:'scheduled',author:'Raphaël',content:'<p>Une sélection.</p>',excerpt:'Exemple.',publishAt:new Date(Date.now()+3600000).toISOString()});
 const firebase={auth:()=>({onAuthStateChanged:fn=>fn({uid:'fixture'}),signOut:async()=>location.reload()})};
 const Decorum={TECH:${JSON.stringify(C.TECH)},VISIT:${JSON.stringify(C.VISIT)},ready:async()=>({ready:true}),api:async(action,options={})=>{
  const {params={},body={}}=options;
@@ -24,8 +26,8 @@ const Decorum={TECH:${JSON.stringify(C.TECH)},VISIT:${JSON.stringify(C.VISIT)},r
 }};
 function showNotification(message){console.log(message)}
 `;
-const html = `<!doctype html><html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LATENCE — rédaction locale</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="editorial.css"><link rel="stylesheet" href="latence.css"><body class="latence-admin"><div id="admin-content"></div><script src="assets/vendor/purify-3.4.16.min.js"></script><script>// Plain metadata${helpers}\n${fixture}</script><script src="universes.js"></script><script src="admin.js"></script></body></html>`;
-const allowed = new Set(['latence.css','style.css','editorial.css','admin.js','universes.js','assets/fonts/Bricolage-800.woff2','assets/fonts/Schibsted-400.woff2','assets/fonts/Schibsted-700.woff2','assets/vendor/purify-3.4.16.min.js']);
+const html = `<!doctype html><html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LATENCE — rédaction locale</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="editorial.css"><link rel="stylesheet" href="latence.css"><body class="latence-admin"><div id="admin-content"></div><script src="assets/vendor/purify-3.4.16.min.js"></script><script>// Plain metadata${helpers}\n${fixture}</script><script src="universes.js"></script><script src="admin-workbench.js"></script><script src="admin.js"></script></body></html>`;
+const allowed = new Set(['admin-workbench.js','latence.css','style.css','editorial.css','admin.js','universes.js','assets/fonts/Bricolage-800.woff2','assets/fonts/Schibsted-400.woff2','assets/fonts/Schibsted-700.woff2','assets/vendor/purify-3.4.16.min.js']);
 http.createServer((req,res)=>{
  const name=new URL(req.url,'http://localhost').pathname.slice(1);
  res.setHeader('Cache-Control','no-store');

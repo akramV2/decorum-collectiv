@@ -24,6 +24,7 @@ for (const name of [
   "script.js",
   "editorial.js",
   "admin.js",
+  "admin-workbench.js",
   "style.css",
   "editorial.css",
   "logo.svg",
