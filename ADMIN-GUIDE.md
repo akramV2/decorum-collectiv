@@ -34,3 +34,15 @@ Dans Articles → Nouvel article (ou Tableau de bord → Écrire un article), ch
 ## LATENCE : rédaction et archives
 
 Source / référence et Image légendée ajoutent des liens, légendes et crédits. Les repères produits sont facultatifs. Les anciens champs architecturaux et de visite sont repliés, sans supprimer leurs valeurs. Les outils de lieux et propositions historiques ne figurent plus dans la navigation principale.
+
+## Nouveaux outils de rédaction
+
+- **Toutes les publications** rassemble les versions en ligne et les versions de travail, même lorsqu’elles partagent le même identifiant. Combiner recherche, statut, rubrique et format ; trier par titre ou date de modification. Les résultats sont paginés par quinze versions.
+- **Calendrier** affiche les publications en ligne à leur date de publication et les programmations à leur échéance, dans le fuseau du navigateur. Navigation par mois et retour à aujourd’hui. Sur téléphone, les jours du mois sont présentés en liste.
+- Le tableau de bord présente la répartition des publications dans les quatre rubriques et les cinq dernières versions modifiées.
+- **Modèle de rédaction** fournit une structure vide pour un essai à l’usage, une analyse, une sélection, un décryptage ou un entretien. Le modèle choisit la rubrique et le format. Il demande confirmation avant de remplacer un texte existant ; les autres informations sont conservées.
+- **Contrôles de publication** signale les informations présentes ou à compléter : titre, rubrique, auteur, chapeau, texte, image, description, crédit, intertitres et date future. Ces repères ne remplacent pas la relecture et la vérification des sources.
+- **Récupération locale** conserve les saisies dans sessionStorage, par compte et publication, dans cet onglet. Après rechargement, ouvrir la même publication (ou Nouvelle publication pour un texte neuf), puis choisir Récupérer en brouillon. La récupération ne publie jamais : le statut revient à Brouillon et la programmation est vidée. Un message avertit si la version du serveur a changé. La copie est effacée après enregistrement réussi ou déconnexion ; elle peut disparaître à la fermeture de l’onglet. Si le stockage est plein ou interdit, le panneau le signale. Cette protection ne remplace pas un brouillon enregistré sur le serveur.
+- **Exporter ce travail (JSON)** télécharge les valeurs du formulaire courant, y compris avant enregistrement. Il n’y a pas de réimport automatique.
+
+Validation : npm test ; npm run build ; node tools/verify-admin.cjs avec Playwright disponible. Les tests de parcours utilisent exclusivement des données locales fictives, jamais la base de production.

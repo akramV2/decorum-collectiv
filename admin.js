@@ -44,8 +44,10 @@ document.addEventListener("DOMContentLoaded", () => {
       status = newsroom.querySelector("#workspace-status");
     const labels = {
       dashboard: "Tableau de bord",
+      library: "Toutes les publications",
       articles: "Articles",
       drafts: "Brouillons & programmation",
+      calendar: "Calendrier",
       countdown: "Prochain article",
       authors: "Auteurs",
       categories: "Catégories",
@@ -124,12 +126,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const info = document.createElement("p"); info.textContent = `${a.title} · ${dateLabel(a.publishAt)}`;
         row.append(info, button("Modifier", async () => editArticle(await call("admin-get", {params:{collection:"editorialArticles",id:a.id}})))); schedule.append(row);
       }
+      dashboardOverview(articles, drafts);
     }
     const notify = (message) => {
       status.textContent = message;
     };
     const call = (action, options = {}) =>
       Decorum.api(action, { ...options, admin: true });
+    const {enhanceEditor, clearRecovery, publicationLibrary, calendar, dashboardOverview} = LatenceWorkbench.create({
+      panel, call, all, editArticle, button, notify, values, leave,
+      userId: user.uid, markDirty: () => { dirty = true; },
+    });
     const field = (name, label, value = "", type = "text", required = false) =>
       `<div class="field"><label for="f-${name}">${e(label)}</label>${type === "textarea" ? `<textarea id="f-${name}" name="${name}" ${required ? "required" : ""}>${e(value)}</textarea>` : `<input id="f-${name}" name="${name}" type="${type}" value="${e(value ?? "")}" ${required ? "required" : ""}>`}</div>`;
     const group = (prefix, value, fields) =>
@@ -344,6 +351,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const reader = new FileReader();
         reader.onload = () => {
           form.elements.image.value = reader.result;
+          form.elements.image.dispatchEvent(new Event("input", {bubbles:true}));
           dirty = true;
           updateIndicators();
           notify("Image prête à enregistrer.");
@@ -396,6 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
       form.elements.edition.after(button("Proposer le prochain numéro", () => {
         const numbers = [...published,...drafts].map(item => Number(String(item.edition || "").match(/#(\d+)/)?.[1] || 0));
         form.elements.edition.value = `Édition #${String(Math.max(0,...numbers) + 1).padStart(3,"0")}`;
+        form.elements.edition.dispatchEvent(new Event("input", {bubbles:true}));
         dirty = true;
       }));
       for (const [name, items] of [
@@ -411,6 +420,7 @@ document.addEventListener("DOMContentLoaded", () => {
         form.append(dl);
         form.elements[name].setAttribute("list", dl.id);
       }
+      enhanceEditor(form, a);
       bind(form, async (v) => {
         v.publishAt = v.publishAt ? new Date(v.publishAt).toISOString() : null;
         const result = await call("admin-save", {
@@ -420,6 +430,7 @@ document.addEventListener("DOMContentLoaded", () => {
             revision: a.updatedAt || null,
           },
         });
+        clearRecovery(a);
         dirty = false;
         notify(
           v.status === "published"
@@ -639,6 +650,8 @@ document.addEventListener("DOMContentLoaded", () => {
             key === "articles" ? "articles" : "editorialArticles",
           );
         else if (key === "dashboard") await dashboard();
+        else if (key === "library") await publicationLibrary();
+        else if (key === "calendar") await calendar();
         else if (key === "countdown") await countdown();
         else await taxonomy(key);
         } finally { navigating = false; }

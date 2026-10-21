@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="latence.css">
   <script src="editorial.js" defer></script>
   <script src="universes.js" defer></script>
+  <script src="admin-workbench.js" defer></script>
   <script src="admin.js" defer></script>
 
   <!-- Firebase SDK -->
@@ -51,11 +52,11 @@
     <form id="login-form" class="admin-form">
       <div class="form-group">
         <label for="admin-email">Adresse e-mail admin</label>
-        <input type="email" id="admin-email" placeholder="admin@decorum.fr" required autofocus>
+        <input type="email" id="admin-email" placeholder="Votre adresse de rédaction" autocomplete="username" required autofocus>
       </div>
       <div class="form-group">
         <label for="admin-password">Mot de passe</label>
-        <input type="password" id="admin-password" placeholder="••••••••" required>
+        <input type="password" id="admin-password" placeholder="••••••••" autocomplete="current-password" required>
       </div>
       <button type="submit" class="btn-submit">SE CONNECTER</button>
     </form>
@@ -90,7 +91,7 @@
 
       <div class="form-group">
         <label for="title">Titre de la publication *</label>
-        <input type="text" id="title" placeholder="ex: La Villa Cavrois : Rigueur et Poétique de Mallet-Stevens" required>
+        <input type="text" id="title" placeholder="Le titre de votre publication LATENCE" required>
       </div>
 
       <div class="form-group">
